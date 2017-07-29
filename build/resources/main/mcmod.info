@@ -1,0 +1,14 @@
+[
+    {
+        "modid": "soulbound",
+        "name": "Main",
+        "version": "0.0.1",
+        "description": "Binds items to the users blood!",
+        "authorList": [
+            "DrZoddiak"
+        ],
+        "requiredMods": [
+            "spongeapi@5.1.0"
+        ]
+    }
+]
