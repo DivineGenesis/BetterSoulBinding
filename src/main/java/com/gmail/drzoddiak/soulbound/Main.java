@@ -60,11 +60,9 @@ public class Main
                 this.cfg.getNode("Bind Upon Equip").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_HELMET.getId());}});
                 getLogger().info("Config created.");
                 getCfgMgr().save(cfg);
-            }            
-            else
-            {
-            	this.cfg = getCfgMgr().load();
-            	
+            }
+            
+            	this.cfg = getCfgMgr().load();	
             	Function<Object, String> stringTransformer = new Function<Object, String>()
             	{
 					@Override
@@ -81,11 +79,6 @@ public class Main
             	sb_pickup = this.cfg.getNode("Bind Upon Pickup").getList(stringTransformer);
             	sb_equip = this.cfg.getNode("Bind Upon Equip").getList(stringTransformer);
             	getCfgMgr().save(cfg);
-            }
-            
-            System.out.println(sb_use.toString());
-            System.out.println(sb_pickup.toString());
-            System.out.println(sb_equip.toString());
         } 
         catch (Exception e) 
         {
