@@ -1,9 +1,13 @@
 package com.gmail.drzoddiak.soulbound;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
@@ -14,23 +18,21 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.plugin.Plugin;
-
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
+import static com.gmail.drzoddiak.soulbound.Reference.*;
 @Plugin(
-        id = "soulbound",
-        name = "Main",
-        version = "0.0.1",
-        description = "Binds items to the users blood!",
-        authors = {
-                "DrZoddiak"
-        }
+        name = NAME,
+        id = ID,
+        version = VERSION,
+        description = DESC,
+        authors = AUTHORS
 )
 public class Main {
     public Main instance;
-    private Logger logger;
-
+    private Logger logger; 
     private ConfigurationNode cfg;
 
     private File defaultCfg;
@@ -81,6 +83,17 @@ public class Main {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            
+            try 
+            {
+				sb_use = this.cfg.getNode("Bind Upon Use").getList(TypeToken.of(String.class));
+	        	sb_pickup = this.cfg.getNode("Bind Upon Pickup").getList(TypeToken.of(String.class));
+	           	sb_equip = this.cfg.getNode("Bind Upon Equip").getList(TypeToken.of(String.class));
+			}
+            catch (ObjectMappingException e)
+            {
+				e.printStackTrace();
+			}
         }
 
         public ConfigurationLoader<CommentedConfigurationNode> getCfgMgr() {
