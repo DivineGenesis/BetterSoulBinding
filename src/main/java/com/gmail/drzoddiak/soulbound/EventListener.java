@@ -18,48 +18,62 @@ public class EventListener
 
 	@Listener
     public void onPickup(ChangeInventoryEvent.Pickup event, @First Player player)
-    {
-		//WIP
-		String id = event.getTargetEntity().getItemType().getType().getId();
-		
-		if(Reference.sb_pickup.contains(id))
+	{
+		if(player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm)
 		{
+			ItemStack stack = event.getTargetEntity().item().get().createStack();
+			String id = stack.getItem().getId();
 			List<Text> itemLore = new ArrayList<Text>();
-			itemLore.add(Text.of("Soulbounded"));
-			event.getTargetEntity().offer(Keys.ITEM_LORE, itemLore);
+			
+			if(Reference.sb_pickup.contains(id))
+			{
+				//WIP
+			}
 		}
-    }
+	}
 
 	@Listener
-    private void onEquip(ChangeInventoryEvent.Equipment event, @First Player player){}
+    public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
+	{
+		if(player.hasPermission(Reference.EQUIP) || !Reference.equip_perm)
+		{
+			//WIP
+		}
+	}
 
 	@Listener
     public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
 	{
-		ItemStack stack = event.getItemStack().createStack();
-		String id = event.getItemStack().getType().getId();
-		
-		if(Reference.sb_use.contains(id))
+		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
+			ItemStack stack = event.getItemStack().createStack();
+			String id = event.getItemStack().getType().getId();
 			List<Text> itemLore = new ArrayList<Text>();
-			itemLore.add(Text.of("Soulbounded"));
-			stack.offer(Keys.ITEM_LORE, itemLore);
-			player.setItemInHand(HandTypes.MAIN_HAND, stack);
+		
+			if(Reference.sb_use.contains(id));
+			{
+				itemLore.add(Text.of("Soulbounded"));
+				stack.offer(Keys.ITEM_LORE, itemLore);
+				player.setItemInHand(HandTypes.MAIN_HAND, stack);
+			}
 		}
     }
 
 	@Listener
     public void onSecUse(InteractItemEvent.Primary.OffHand event, @First Player player)
 	{
-		ItemStack stack = event.getItemStack().createStack();
-		String id = event.getItemStack().getType().getId();
-		
-		if(Reference.sb_use.contains(id))
+		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
+			ItemStack stack = event.getItemStack().createStack();
+			String id = event.getItemStack().getType().getId();
 			List<Text> itemLore = new ArrayList<Text>();
-			itemLore.add(Text.of("Soulbounded"));
-			stack.offer(Keys.ITEM_LORE, itemLore);
-			player.setItemInHand(HandTypes.MAIN_HAND, stack);
+			
+			if(Reference.sb_use.contains(id))
+			{
+				itemLore.add(Text.of("Soulbounded"));
+				stack.offer(Keys.ITEM_LORE, itemLore);
+				player.setItemInHand(HandTypes.OFF_HAND, stack);
+			}
 		}
     }
 }
