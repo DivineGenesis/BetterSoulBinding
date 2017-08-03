@@ -7,6 +7,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.entity.HarvestEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
@@ -28,6 +29,7 @@ public class EventListener
 			if(Reference.sb_pickup.contains(id))
 			{
 				//WIP
+				
 			}
 		}
 	}
@@ -41,6 +43,7 @@ public class EventListener
 		}
 	}
 
+	//Left Click - main hand
 	@Listener
     public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
 	{
@@ -52,15 +55,17 @@ public class EventListener
 		
 			if(Reference.sb_use.contains(id));
 			{
-				itemLore.add(Text.of("Soulbounded"));
+				itemLore.add(Text.of("Bounded to: "+player.getName()));
+				itemLore.add(Text.of("-UUID: "+player.getUniqueId()));
 				stack.offer(Keys.ITEM_LORE, itemLore);
 				player.setItemInHand(HandTypes.MAIN_HAND, stack);
 			}
 		}
     }
 
+	//Left Click - offhand
 	@Listener
-    public void onSecUse(InteractItemEvent.Primary.OffHand event, @First Player player)
+    public void onOffHandUse(InteractItemEvent.Primary.OffHand event, @First Player player)
 	{
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
@@ -70,10 +75,60 @@ public class EventListener
 			
 			if(Reference.sb_use.contains(id))
 			{
-				itemLore.add(Text.of("Soulbounded"));
+				itemLore.add(Text.of("Bounded to: "+player.getName()));
+				itemLore.add(Text.of("-UUID: "+player.getUniqueId()));
 				stack.offer(Keys.ITEM_LORE, itemLore);
 				player.setItemInHand(HandTypes.OFF_HAND, stack);
 			}
 		}
     }
+	
+	//Right Click - main hand
+	@Listener
+    public void onSecUse(InteractItemEvent.Secondary.MainHand event, @First Player player)
+	{
+		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
+		{
+			ItemStack stack = event.getItemStack().createStack();
+			String id = event.getItemStack().getType().getId();
+			List<Text> itemLore = new ArrayList<Text>();
+		
+			if(Reference.sb_use.contains(id));
+			{
+				itemLore.add(Text.of("Bounded to: "+player.getName()));
+				itemLore.add(Text.of("-UUID: "+player.getUniqueId()));
+				stack.offer(Keys.ITEM_LORE, itemLore);
+				player.setItemInHand(HandTypes.MAIN_HAND, stack);
+			}
+		}
+    }
+
+	//Right Click - offhand
+	@Listener
+    public void onSecOffHandUse(InteractItemEvent.Secondary.OffHand event, @First Player player)
+	{
+		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
+		{
+			ItemStack stack = event.getItemStack().createStack();
+			String id = event.getItemStack().getType().getId();
+			List<Text> itemLore = new ArrayList<Text>();
+			
+			if(Reference.sb_use.contains(id))
+			{
+				itemLore.add(Text.of("Bounded to: "+player.getName()));
+				itemLore.add(Text.of("-UUID: "+player.getUniqueId()));
+				stack.offer(Keys.ITEM_LORE, itemLore);
+				player.setItemInHand(HandTypes.OFF_HAND, stack);
+			}
+		}
+    }
+	
+	@Listener
+	public void onDeathHarvest(HarvestEntityEvent.TargetPlayer event, @First Player player)
+	{
+		if(player.hasPermission(Reference.KEEP_ON_DEATH))
+		{
+			
+		}
+	}
 }

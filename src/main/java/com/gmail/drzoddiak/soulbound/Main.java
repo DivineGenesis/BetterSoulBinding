@@ -56,19 +56,19 @@ public class Main
                 getLogger().info("Config not yet created... Don't worry, we got that covered!");
                 getLogger().info("Creating config...");
                 defaultCfg.createNewFile();
-                this.cfg = getCfgMgr().load();
-                this.cfg.getNode("Bind Upon Use").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_SWORD.getId());}});
-                this.cfg.getNode("Bind Upon Pickup").setValue(new ArrayList<String>(){{add(ItemTypes.COAL.getId());}});
-                this.cfg.getNode("Bind Upon Equip").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_HELMET.getId());}});
-                this.cfg.getNode("Modules", "Permission-check", "Use-Enabled").setValue(false);
-                this.cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").setValue(false);
-                this.cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
-                this.cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
+                cfg = getCfgMgr().load();
+                cfg.getNode("Bind Upon Use").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_SWORD.getId());}});
+                cfg.getNode("Bind Upon Pickup").setValue(new ArrayList<String>(){{add(ItemTypes.COAL.getId());}});
+                cfg.getNode("Bind Upon Equip").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_HELMET.getId());}});
+                cfg.getNode("Modules", "Permission-check", "Use-Enabled").setValue(false);
+                cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").setValue(false);
+                cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
+                cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
                 getLogger().info("Config created.");
                 getCfgMgr().save(cfg);
             }
             
-            	this.cfg = getCfgMgr().load();	
+            	cfg = getCfgMgr().load();	
             	Function<Object, String> stringTransformer = new Function<Object, String>()
             	{
 					@Override
@@ -83,33 +83,34 @@ public class Main
             	
 				getLogger().info("Saving config data into variables!");
 				
-				if(this.cfg.getNode("Bind Upon Use").isVirtual())
-					this.cfg.getNode("Bind Upon Use").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_SWORD.getId());}});
-				sb_use = this.cfg.getNode("Bind Upon Use").getList(stringTransformer);
+				if(cfg.getNode("Bind Upon Use").isVirtual())
+					cfg.getNode("Bind Upon Use").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_SWORD.getId());}});
+				sb_use = cfg.getNode("Bind Upon Use").getList(stringTransformer);
 				
-				if(this.cfg.getNode("Bind Upon Pickup").isVirtual())
-					this.cfg.getNode("Bind Upon Pickup").setValue(new ArrayList<String>(){{add(ItemTypes.COAL.getId());}});
-				sb_pickup = this.cfg.getNode("Bind Upon Pickup").getList(stringTransformer);
+				if(cfg.getNode("Bind Upon Pickup").isVirtual())
+					cfg.getNode("Bind Upon Pickup").setValue(new ArrayList<String>(){{add(ItemTypes.COAL.getId());}});
+				sb_pickup = cfg.getNode("Bind Upon Pickup").getList(stringTransformer);
             	
-            	if(this.cfg.getNode("Bind Upon Equip").isVirtual())
-            		this.cfg.getNode("Bind Upon Equip").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_HELMET.getId());}});
-            	sb_equip = this.cfg.getNode("Bind Upon Equip").getList(stringTransformer);
+            	if(cfg.getNode("Bind Upon Equip").isVirtual())
+            		cfg.getNode("Bind Upon Equip").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_HELMET.getId());}});
+            	sb_equip = cfg.getNode("Bind Upon Equip").getList(stringTransformer);
             	
-            	if(this.cfg.getNode("Modules", "Permission-check", "Use-Enabled").isVirtual())
-            		this.cfg.getNode("Modules", "Permission-check", "Use-Enabled").setValue(false);
-            	use_perm = this.cfg.getNode("Modules", "Permission", "Use-Enabled").getBoolean();
+            	if(cfg.getNode("Modules", "Permission-check", "Use-Enabled").isVirtual())
+            		cfg.getNode("Modules", "Permission-check", "Use-Enabled").setValue(false);
+            	use_perm = cfg.getNode("Modules", "Permission", "Use-Enabled").getBoolean();
             	
-            	if(this.cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").isVirtual())
-            		this.cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").setValue(false);
-            	pickup_perm = this.cfg.getNode("Modules", "Permission", "Pickup-Enabled").getBoolean();
+            	if(cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").isVirtual())
+            		cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").setValue(false);
+            	pickup_perm = cfg.getNode("Modules", "Permission", "Pickup-Enabled").getBoolean();
             	
-            	if(this.cfg.getNode("Modules", "Permission-check", "Equip-Enabled").isVirtual())
-            		this.cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
-            	equip_perm = this.cfg.getNode("Modules", "Permission", "Equip-Enabled").getBoolean();
+            	if(cfg.getNode("Modules", "Permission-check", "Equip-Enabled").isVirtual())
+            		cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
+            	equip_perm = cfg.getNode("Modules", "Permission", "Equip-Enabled").getBoolean();
             	
-            	if(this.cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").isVirtual())
-            		this.cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
-            	keep_perm = this.cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").getBoolean();
+            	if(cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").isVirtual())
+            		cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
+            	keep_perm = cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").getBoolean();
+            	
             	getCfgMgr().save(cfg);
             	getLogger().info("Yay! data was saved :D");
         } 
@@ -129,7 +130,7 @@ public class Main
     @Listener
     public void onServerStart(GameStartedServerEvent event) 
     {
-        this.logger.info("Hello world!");
+        logger.info("Hello world!");
     }
 
     public ConfigurationLoader<CommentedConfigurationNode> getCfgMgr() 
