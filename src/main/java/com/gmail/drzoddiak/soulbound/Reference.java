@@ -28,5 +28,4 @@ public class Reference
 	public static boolean use_perm;
 	public static boolean equip_perm;
 	public static boolean keep_perm;
-	
 }
