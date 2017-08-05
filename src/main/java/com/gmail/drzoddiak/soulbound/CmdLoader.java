@@ -1,4 +1,4 @@
-package com.gmail.drzoddiak.soulbound.commands;
+package com.gmail.drzoddiak.soulbound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +13,12 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.format.TextColors;
 
-import com.gmail.drzoddiak.soulbound.Reference;
+import com.google.common.collect.Lists;
 
 public class CmdLoader
 {
@@ -44,7 +47,8 @@ public class CmdLoader
                 .build();
         
         public CommandResult help(CommandSource src, CommandContext args) throws CommandException
-        {
+        {		
+        	//triggered when they type only the base cmd /sb
         	return CommandResult.success();
         }
         
@@ -59,26 +63,26 @@ public class CmdLoader
         		{
         			if(id.equalsIgnoreCase("pickup"))
         			{
-        				if( Reference.addPickup(id) )
+        				if( Reference.addToList(id, 0) )
         					src.sendMessage(Text.of("Successfully added to pickupList!"));
         				else
         					src.sendMessage(Text.of("Already exists in pickupList!"));
         			}
-        			
-        			if(id.equalsIgnoreCase("equip"))
-        			{
-        				if(Reference.addEquip(id))
-        					src.sendMessage(Text.of("Successfully added to equipList!"));
-        				else
-        					src.sendMessage(Text.of("Already exists in equipList!"));
-        			}
-        			
+
         			if(id.equalsIgnoreCase("use"))
         			{
-        				if(Reference.addUse(id))
+        				if(Reference.addToList(id, 1))
         					src.sendMessage(Text.of("Successfully added to useList!"));
         				else
         					src.sendMessage(Text.of("Already exists in useList!"));
+        			}
+        			
+        			if(id.equalsIgnoreCase("equip"))
+        			{
+        				if(Reference.addToList(id, 2))
+        					src.sendMessage(Text.of("Successfully added to equipList!"));
+        				else
+        					src.sendMessage(Text.of("Already exists in equipList!"));
         			}
         		}
         			
@@ -97,27 +101,28 @@ public class CmdLoader
         		{
         			if(id.equalsIgnoreCase("pickup"))
         			{
-        				if(Reference.removePickup(id))
+        				if(Reference.removeFromList(id, 0))
         					src.sendMessage(Text.of("Successfully removed from pickupList!"));
         				else
         					src.sendMessage(Text.of("Doesn't exist in pickupList!"));
         			}
         			
+        			if(id.equalsIgnoreCase("use"))
+        			{
+        				if(Reference.removeFromList(id, 1))
+        					src.sendMessage(Text.of("Successfully removed from useList!"));
+        				else
+        					src.sendMessage(Text.of("Doesn't exist in useList!"));
+        			}
+        			
         			if(id.equalsIgnoreCase("equip"))
         			{
-        				if(Reference.removeEquip(id))
+        				if(Reference.removeFromList(id, 2))
         					src.sendMessage(Text.of("Successfully removed to equipList!"));
         				else
         					src.sendMessage(Text.of("Doesn't exist in equipList!"));
         			}
         			
-        			if(id.equalsIgnoreCase("use"))
-        			{
-        				if(Reference.removeUse(id))
-        					src.sendMessage(Text.of("Successfully removed from useList!"));
-        				else
-        					src.sendMessage(Text.of("Doesn't exist in useList!"));
-        			}
         		}
         			
         	}

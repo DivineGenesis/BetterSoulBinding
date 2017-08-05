@@ -15,10 +15,10 @@ public class Reference
 
 //Permissions
 	//users
-	public static final String PICKUP = "soulbound.users.pickup";
-	public static final String USE = "soulbound.users.use";
-	public static final String EQUIP = "soulbound.users.equip";
-	public static final String KEEP_ON_DEATH = "soulbound.users.keep";
+	public static final String PICKUP = "soulbound.user.pickup";
+	public static final String USE = "soulbound.user.use";
+	public static final String EQUIP = "soulbound.user.equip";
+	public static final String KEEP_ON_DEATH = "soulbound.user.keep";
 	//admins
 	public static final String HELP = "soulbound.admin";
 	public static final String ADD_LIST = "soulbound.admin.addlist";
@@ -35,62 +35,60 @@ public class Reference
 	public static boolean equip_perm;
 	public static boolean keep_perm;
 	
-	public static boolean addPickup(String id)
+	public static boolean addToList(String id, int index)
 	{
-		if(sb_pickup.contains(id))
-			return false;
-		sb_pickup.add(id);
-		Main.saveFile();
-		return true;
-	}
-	
-	public static boolean addUse(String id)
-	{
-		if (sb_use.contains(id)) 
-			return false;
-		sb_use.add(id);
-		Main.saveFile();
-		return true;
-	}
-	
-	public static boolean addEquip(String id)
-	{
-		if(sb_equip.contains(id))
-			return false;
-		sb_equip.add(id);
-		Main.saveFile();
-		return true;
-	}
-	
-	public static boolean removePickup(String id)
-	{
-		if(!sb_pickup.contains(id))
+		switch (index)
 		{
-			sb_pickup.remove(id);
-			Main.saveFile();
+		case 0: //pick up
+			if(sb_pickup.contains(id))
+				return false;
+			sb_pickup.add(id);
+			Main.savetoFile();
+			return true;
+		case 1: //use
+			if (sb_use.contains(id)) 
+				return false;
+			sb_use.add(id);
+			Main.savetoFile();
+			return true;
+		case 2: //equip
+			if(sb_equip.contains(id))
+				return false;
+			sb_equip.add(id);
+			Main.savetoFile();
 			return true;
 		}
 		return false;
 	}
 	
-	public static boolean removeUse(String id)
+	public static boolean removeFromList(String id, int index)
 	{
-		if(!sb_use.contains(id))
+		switch (index)
 		{
-			sb_use.remove(id);
-			Main.saveFile();
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean removeEquip(String id)
-	{
-		if(!sb_equip.contains(id))
-		{
-			sb_equip.remove(id);
-			Main.saveFile();
-			return true;
+		case 0: //pickup
+			if(!sb_pickup.contains(id))
+			{
+				sb_pickup.remove(id);
+				Main.savetoFile();
+				return true;
+			}
+			return false;
+		case 1://use
+			if(!sb_use.contains(id))
+			{
+				sb_use.remove(id);
+				Main.savetoFile();
+				return true;
+			}
+			return false;
+		case 2://equip
+			if(!sb_equip.contains(id))
+			{
+				sb_equip.remove(id);
+				Main.savetoFile();
+				return true;
+			}
+			return false;
 		}
 		return false;
 	}
