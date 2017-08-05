@@ -43,19 +43,19 @@ public class Reference
 			if(sb_pickup.contains(id))
 				return false;
 			sb_pickup.add(id);
-			Main.savetoFile();
+			SBConfig.savetoFile();
 			return true;
 		case 1: //use
 			if (sb_use.contains(id)) 
 				return false;
 			sb_use.add(id);
-			Main.savetoFile();
+			SBConfig.savetoFile();
 			return true;
 		case 2: //equip
 			if(sb_equip.contains(id))
 				return false;
 			sb_equip.add(id);
-			Main.savetoFile();
+			SBConfig.savetoFile();
 			return true;
 		}
 		return false;
@@ -69,7 +69,7 @@ public class Reference
 			if(!sb_pickup.contains(id))
 			{
 				sb_pickup.remove(id);
-				Main.savetoFile();
+				SBConfig.savetoFile();
 				return true;
 			}
 			return false;
@@ -77,7 +77,7 @@ public class Reference
 			if(!sb_use.contains(id))
 			{
 				sb_use.remove(id);
-				Main.savetoFile();
+				SBConfig.savetoFile();
 				return true;
 			}
 			return false;
@@ -85,7 +85,7 @@ public class Reference
 			if(!sb_equip.contains(id))
 			{
 				sb_equip.remove(id);
-				Main.savetoFile();
+				SBConfig.savetoFile();
 				return true;
 			}
 			return false;
