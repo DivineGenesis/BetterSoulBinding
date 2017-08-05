@@ -1,25 +1,13 @@
 package com.gmail.drzoddiak.soulbound;
 
-import static com.gmail.drzoddiak.soulbound.Reference.equip_perm;
-import static com.gmail.drzoddiak.soulbound.Reference.keep_perm;
-import static com.gmail.drzoddiak.soulbound.Reference.pickup_perm;
-import static com.gmail.drzoddiak.soulbound.Reference.sb_equip;
-import static com.gmail.drzoddiak.soulbound.Reference.sb_pickup;
-import static com.gmail.drzoddiak.soulbound.Reference.sb_use;
-import static com.gmail.drzoddiak.soulbound.Reference.use_perm;
-
+import static com.gmail.drzoddiak.soulbound.Reference.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.function.Function;
-
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.item.ItemTypes;
-
-import com.google.inject.Inject;
-
+import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -29,16 +17,12 @@ public class SBConfig
     public Main instance;
     private Logger logger; 
     private static ConfigurationNode cfg;
-
     private File defaultCfg;
-
     private static ConfigurationLoader<CommentedConfigurationNode> cfgMgr;
-
     private Game game;
     
-    @Inject
-    public SBConfig(Logger logger, Game game, @DefaultConfig(sharedRoot = false) File defaultCfg, 
-    		@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> cfgMgr, Main instance) 
+    public SBConfig(Logger logger, Game game, File defaultCfg, ConfigurationLoader<CommentedConfigurationNode> cfgMgr, 
+    		Main instance) 
     {
     	this.logger = logger;
         this.game = game;
@@ -105,32 +89,19 @@ public class SBConfig
                 getCfgMgr().save(cfg);
             }
             
-            	cfg = getCfgMgr().load();	
-            	Function<Object, String> stringTransformer = new Function<Object, String>()
-            	{
-					@Override
-					public String apply(Object input)
-					{
-						if(input instanceof String)
-							return (String) input;
-						else
-							return null;
-					}
-				};
-            	
 				getLogger().info("Saving config data into variables!");
 				
 				if(cfg.getNode("Bind Upon Use").isVirtual())
 					cfg.getNode("Bind Upon Use").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_SWORD.getId());}});
-				sb_use = cfg.getNode("Bind Upon Use").getList(stringTransformer);
+				sb_use = cfg.getNode("Bind Upon Use").getList(TypeToken.of(String.class));
 				
 				if(cfg.getNode("Bind Upon Pickup").isVirtual())
 					cfg.getNode("Bind Upon Pickup").setValue(new ArrayList<String>(){{add(ItemTypes.COAL.getId());}});
-				sb_pickup = cfg.getNode("Bind Upon Pickup").getList(stringTransformer);
+				sb_pickup = cfg.getNode("Bind Upon Pickup").getList(TypeToken.of(String.class));
             	
             	if(cfg.getNode("Bind Upon Equip").isVirtual())
             		cfg.getNode("Bind Upon Equip").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_HELMET.getId());}});
-            	sb_equip = cfg.getNode("Bind Upon Equip").getList(stringTransformer);
+            	sb_equip = cfg.getNode("Bind Upon Equip").getList(TypeToken.of(String.class));
             	
             	if(cfg.getNode("Modules", "Permission-check", "Use-Enabled").isVirtual())
             		cfg.getNode("Modules", "Permission-check", "Use-Enabled").setValue(false);
