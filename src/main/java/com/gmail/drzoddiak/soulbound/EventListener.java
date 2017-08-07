@@ -32,7 +32,7 @@ public class EventListener
 		if(player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm)
 		{
 			ItemStack stack = event.getTargetEntity().item().get().createStack();
-			String id = stack.getItem().getId();
+			String id = Reference.getID(stack.getItem().getTemplate().createStack());
 			List<Text> itemLore = new ArrayList<Text>();
 			
 			if(Reference.sb_pickup.contains(id))
@@ -59,10 +59,10 @@ public class EventListener
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
 			ItemStack stack = event.getItemStack().createStack();
-			String id = event.getItemStack().getType().getId();
+			String id = Reference.getID(event.getItemStack().createStack());
 			List<Text> itemLore = new ArrayList<Text>();
-		
-			if(Reference.sb_use.contains(id));
+			System.out.println(id+" "+Reference.sb_use.contains(id));
+			if(Reference.sb_use.contains(id))
 			{
 				itemLore.add(Text.of("Bound to: "+player.getName()));
 				itemLore.add(Text.of("UUID: "+player.getUniqueId()));
@@ -79,7 +79,7 @@ public class EventListener
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
 			ItemStack stack = event.getItemStack().createStack();
-			String id = event.getItemStack().getType().getId();
+			String id = Reference.getID(event.getItemStack().createStack());
 			List<Text> itemLore = new ArrayList<Text>();
 			
 			if(Reference.sb_use.contains(id))
@@ -99,10 +99,10 @@ public class EventListener
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
 			ItemStack stack = event.getItemStack().createStack();
-			String id = event.getItemStack().getType().getId();
+			String id = Reference.getID(event.getItemStack().createStack());
 			List<Text> itemLore = new ArrayList<Text>();
 		
-			if(Reference.sb_use.contains(id));
+			if(Reference.sb_use.contains(id))
 			{
 				itemLore.add(Text.of("Bound to: "+player.getName()));
 				itemLore.add(Text.of("UUID: "+player.getUniqueId()));

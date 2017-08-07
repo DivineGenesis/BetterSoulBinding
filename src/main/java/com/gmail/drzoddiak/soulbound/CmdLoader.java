@@ -9,16 +9,14 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-
-import com.google.common.collect.Lists;
 
 public class CmdLoader
 {
@@ -57,32 +55,32 @@ public class CmdLoader
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
-        		String id = args.getOne("id").toString();
+        		String arg = args.getOne("id").get().toString();
         		
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && id != "")
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && arg != "")
         		{
-        			if(id.equalsIgnoreCase("pickup"))
+        			String id = Reference.getID(player.getItemInHand(HandTypes.MAIN_HAND).get()); 
+        			
+        			if(arg.equalsIgnoreCase("pickup"))
         			{
         				if( Reference.addToList(id, 0) )
-        					src.sendMessage(Text.of("Successfully added to pickupList!"));
+        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully added ", TextColors.WHITE, id, TextColors.GREEN," to the 'pickup' list!"));
         				else
-        					src.sendMessage(Text.of("Already exists in pickupList!"));
+        					src.sendMessage(Text.of(id,TextColors.RED," Already exists in the 'pickup' list!"));
         			}
-
-        			if(id.equalsIgnoreCase("use"))
+        			else if(arg.equalsIgnoreCase("use"))
         			{
         				if(Reference.addToList(id, 1))
-        					src.sendMessage(Text.of("Successfully added to useList!"));
+        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully added ", TextColors.WHITE, id, TextColors.GREEN," to 'use' list!"));
         				else
-        					src.sendMessage(Text.of("Already exists in useList!"));
+        					src.sendMessage(Text.of(id,TextColors.RED," Already exists in the 'use' list!"));
         			}
-        			
-        			if(id.equalsIgnoreCase("equip"))
+        			else if(arg.equalsIgnoreCase("equip"))
         			{
         				if(Reference.addToList(id, 2))
-        					src.sendMessage(Text.of("Successfully added to equipList!"));
+        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully added ", TextColors.WHITE, id, TextColors.GREEN," to the 'equip' list!"));
         				else
-        					src.sendMessage(Text.of("Already exists in equipList!"));
+        					src.sendMessage(Text.of(id,TextColors.RED," Already exists in the 'equip' list!"));
         			}
         		}
         			
@@ -95,32 +93,34 @@ public class CmdLoader
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
-        		String id = args.getOne("id").toString();
+        		String arg = args.getOne("id").get().toString();
         		
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && id != "")
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && arg != "")
         		{
-        			if(id.equalsIgnoreCase("pickup"))
+        			String id = Reference.getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
+        			
+        			if(arg.equalsIgnoreCase("pickup"))
         			{
         				if(Reference.removeFromList(id, 0))
-        					src.sendMessage(Text.of("Successfully removed from pickupList!"));
+        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully removed ", TextColors.WHITE, id, TextColors.GREEN," from the 'pickup' list!"));
         				else
-        					src.sendMessage(Text.of("Doesn't exist in pickupList!"));
+        					src.sendMessage(Text.of(id,TextColors.RED," Doesn't exist in the 'pickup' list!"));
         			}
         			
-        			if(id.equalsIgnoreCase("use"))
+        			if(arg.equalsIgnoreCase("use"))
         			{
         				if(Reference.removeFromList(id, 1))
-        					src.sendMessage(Text.of("Successfully removed from useList!"));
+        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully removed ", TextColors.WHITE, id, TextColors.GREEN," from 'use' list!"));
         				else
-        					src.sendMessage(Text.of("Doesn't exist in useList!"));
+        					src.sendMessage(Text.of(id,TextColors.RED," Doesn't exist in the 'use' list!"));
         			}
         			
-        			if(id.equalsIgnoreCase("equip"))
+        			if(arg.equalsIgnoreCase("equip"))
         			{
         				if(Reference.removeFromList(id, 2))
-        					src.sendMessage(Text.of("Successfully removed to equipList!"));
+        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully removed ", TextColors.WHITE, id, TextColors.GREEN," from the 'equip' list!"));
         				else
-        					src.sendMessage(Text.of("Doesn't exist in equipList!"));
+        					src.sendMessage(Text.of(id,TextColors.RED," doesn't exist in the 'equip' list!"));
         			}
         			
         		}
@@ -133,7 +133,7 @@ public class CmdLoader
         {
         	if(src instanceof Player)
         	{
-        		Player player = (Player)src;
+        		Player player = (Player) src;
         		
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
         		{

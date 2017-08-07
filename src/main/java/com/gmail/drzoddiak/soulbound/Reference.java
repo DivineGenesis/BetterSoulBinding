@@ -2,6 +2,10 @@ package com.gmail.drzoddiak.soulbound;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.item.inventory.ItemStack;
  
 
 public class Reference 
@@ -66,7 +70,7 @@ public class Reference
 		switch (index)
 		{
 		case 0: //pickup
-			if(!sb_pickup.contains(id))
+			if(sb_pickup.contains(id))
 			{
 				sb_pickup.remove(id);
 				SBConfig.savetoFile();
@@ -74,7 +78,7 @@ public class Reference
 			}
 			return false;
 		case 1://use
-			if(!sb_use.contains(id))
+			if(sb_use.contains(id))
 			{
 				sb_use.remove(id);
 				SBConfig.savetoFile();
@@ -82,7 +86,7 @@ public class Reference
 			}
 			return false;
 		case 2://equip
-			if(!sb_equip.contains(id))
+			if(sb_equip.contains(id))
 			{
 				sb_equip.remove(id);
 				SBConfig.savetoFile();
@@ -92,4 +96,17 @@ public class Reference
 		}
 		return false;
 	}
+	
+	public static String getID(ItemStack stack)
+    {
+    	String ID = stack.getItem().getId();
+    	DataContainer container = stack.toContainer();
+    	DataQuery data = DataQuery.of('/', "UnsafeDamage");
+    	int meta = Integer.parseInt(container.get(data).get().toString());
+    	if(meta != 0)
+    	{
+    		ID = ID+":"+meta;
+    	}
+    	return ID;
+    }
 }

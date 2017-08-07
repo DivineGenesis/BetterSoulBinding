@@ -1,4 +1,4 @@
-package com.gmail.drzoddiak.soulbound;
+ package com.gmail.drzoddiak.soulbound;
 
 import static com.gmail.drzoddiak.soulbound.Reference.*;
 import java.io.File;
@@ -72,6 +72,7 @@ public class SBConfig
     	getLogger().info("Checking config...");
         try 
         {
+        	cfg = getCfgMgr().load();
             if (!defaultCfg.exists()) 
             {
                 getLogger().info("Config not yet created... Don't worry, we got that covered!");
