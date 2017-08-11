@@ -69,14 +69,13 @@ public class SBConfig
     
     public void configCheck()
     {
-    	getLogger().info("Checking config...");
+    	getLogger().info("Reloading...\nChecking config...");
         try 
         {
         	cfg = getCfgMgr().load();
             if (!defaultCfg.exists()) 
             {
-                getLogger().info("Config not yet created... Don't worry, we got that covered!");
-                getLogger().info("Creating config...");
+                getLogger().info("Config not yet created... Don't worry, we got that covered!\nCreating config...");
                 defaultCfg.createNewFile();
                 cfg = getCfgMgr().load();
                 cfg.getNode("Bind Upon Use").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_SWORD.getId());}});

@@ -40,8 +40,7 @@ public class Main
     @Listener
     public void onReload(GameReloadEvent event)
     {
-    	config.getLogger().info("Reloading...");
-    	config.configCheck();
+        config.configCheck();
     }
 
     @Listener

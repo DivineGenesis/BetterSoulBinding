@@ -9,8 +9,6 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.data.DataContainer;
-import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -55,9 +53,9 @@ public class CmdLoader
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
-        		String arg = args.getOne("id").get().toString();
+				String arg = args.getOne("id").get().toString();
         		
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && arg != "")
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
         		{
         			String id = Reference.getID(player.getItemInHand(HandTypes.MAIN_HAND).get()); 
         			
@@ -95,7 +93,7 @@ public class CmdLoader
         		Player player = (Player) src;
         		String arg = args.getOne("id").get().toString();
         		
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && arg != "")
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
         		{
         			String id = Reference.getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
         			
@@ -138,7 +136,7 @@ public class CmdLoader
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
         		{
         			ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
-        			List<Text> loreList = new ArrayList<Text>();
+        			List<Text> loreList = new ArrayList<>();
         			loreList.add(Text.of("Bounded to: "+player.getName()));
         			loreList.add(Text.of("UUID: "+player.getUniqueId()));
         			stack.offer(Keys.ITEM_LORE, loreList);
@@ -160,5 +158,6 @@ public class CmdLoader
         		}
         	}
         	return CommandResult.success();
+
         }
 }

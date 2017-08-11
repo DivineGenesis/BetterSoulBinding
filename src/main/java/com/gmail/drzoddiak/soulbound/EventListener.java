@@ -22,8 +22,9 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.item.inventory.type.GridInventory;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
-public class EventListener 
+public class EventListener
 {
 
 	@Listener
@@ -33,7 +34,7 @@ public class EventListener
 		{
 			ItemStack stack = event.getTargetEntity().item().get().createStack();
 			String id = Reference.getID(stack.getItem().getTemplate().createStack());
-			List<Text> itemLore = new ArrayList<Text>();
+			List<Text> itemLore = new ArrayList<>();
 			
 			if(Reference.sb_pickup.contains(id))
 			{
@@ -52,27 +53,49 @@ public class EventListener
 		}
 	}
 
-	//Left Click - main hand
+	//Left Click - main hand & Done
+
 	@Listener
-    public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
+	public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
 	{
-		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
+
+
+		if((player.hasPermission(Reference.USE) || !Reference.use_perm))
 		{
 			ItemStack stack = event.getItemStack().createStack();
 			String id = Reference.getID(event.getItemStack().createStack());
-			List<Text> itemLore = new ArrayList<Text>();
-			System.out.println(id+" "+Reference.sb_use.contains(id));
-			if(Reference.sb_use.contains(id))
+			List<Text> itemLore = new ArrayList<>();
+			if (stack.get(Keys.ITEM_LORE).isPresent())
 			{
-				itemLore.add(Text.of("Bound to: "+player.getName()));
-				itemLore.add(Text.of("UUID: "+player.getUniqueId()));
-				stack.offer(Keys.ITEM_LORE, itemLore);
-				player.setItemInHand(HandTypes.MAIN_HAND, stack);
+
+				for(int i=0; i<stack.get(Keys.ITEM_LORE).get().size();i++)
+				{
+					if(stack.get(Keys.ITEM_LORE).get().get(i).toPlain().startsWith("UUID: "))
+						{
+							String UUID = stack.get(Keys.ITEM_LORE).get().get(i).toPlain().substring(6);
+							if(!(UUID.equals(player.getUniqueId().toString())))
+								{
+									event.setCancelled(true);
+									errorMessage(player);
+								}
+
+								break;
+						}
+				}
+
 			}
+            else if (Reference.sb_use.contains(id))
+            {
+                itemLore.add(Text.of("Bound to: "+player.getName()));
+                itemLore.add(Text.of("UUID: "+player.getUniqueId()));
+                stack.offer(Keys.ITEM_LORE, itemLore);
+                player.setItemInHand(HandTypes.MAIN_HAND, stack);
+            }
+
 		}
     }
 
-	//Left Click - offhand
+	//Left Click - offhand & Done
 	@Listener
     public void onOffHandUse(InteractItemEvent.Primary.OffHand event, @First Player player)
 	{
@@ -80,39 +103,70 @@ public class EventListener
 		{
 			ItemStack stack = event.getItemStack().createStack();
 			String id = Reference.getID(event.getItemStack().createStack());
-			List<Text> itemLore = new ArrayList<Text>();
-			
-			if(Reference.sb_use.contains(id))
+			List<Text> itemLore = new ArrayList<>();
+			if (stack.get(Keys.ITEM_LORE).isPresent())
 			{
-				itemLore.add(Text.of("Bound to: "+player.getName()));
-				itemLore.add(Text.of("UUID: "+player.getUniqueId()));
-				stack.offer(Keys.ITEM_LORE, itemLore);
-				player.setItemInHand(HandTypes.OFF_HAND, stack);
+
+				for(int i=0; i<stack.get(Keys.ITEM_LORE).get().size();i++)
+				{
+					if(stack.get(Keys.ITEM_LORE).get().get(i).toPlain().startsWith("UUID: "))
+					{
+						String UUID = stack.get(Keys.ITEM_LORE).get().get(i).toPlain().substring(6);
+						if(!(UUID.equals(player.getUniqueId().toString())))
+						{
+							event.setCancelled(true);
+							errorMessage(player);
+						}
+						break;
+					}
+				}
+
 			}
+            else if (Reference.sb_use.contains(id))
+            {
+                itemLore.add(Text.of("Bound to: "+player.getName()));
+                itemLore.add(Text.of("UUID: "+player.getUniqueId()));
+                stack.offer(Keys.ITEM_LORE, itemLore);
+                player.setItemInHand(HandTypes.OFF_HAND, stack);
+            }
 		}
     }
 	
-	//Right Click - main hand
+	//Right Click - main hand & Done
 	@Listener
-    public void onSecUse(InteractItemEvent.Secondary.MainHand event, @First Player player)
+    public void onMainSecUse(InteractItemEvent.Secondary.MainHand event, @First Player player)
 	{
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
 			ItemStack stack = event.getItemStack().createStack();
 			String id = Reference.getID(event.getItemStack().createStack());
 			List<Text> itemLore = new ArrayList<Text>();
-		
-			if(Reference.sb_use.contains(id))
-			{
-				itemLore.add(Text.of("Bound to: "+player.getName()));
-				itemLore.add(Text.of("UUID: "+player.getUniqueId()));
-				stack.offer(Keys.ITEM_LORE, itemLore);
-				player.setItemInHand(HandTypes.MAIN_HAND, stack);
+			if (stack.get(Keys.ITEM_LORE).isPresent()) {
+
+				for (int i = 0; i < stack.get(Keys.ITEM_LORE).get().size(); i++) {
+					if (stack.get(Keys.ITEM_LORE).get().get(i).toPlain().startsWith("UUID: ")) {
+						String UUID = stack.get(Keys.ITEM_LORE).get().get(i).toPlain().substring(6);
+						if (!(UUID.equals(player.getUniqueId().toString()))) {
+                            event.setCancelled(true);
+							errorMessage(player);
+						}
+						break;
+					}
+
+				}
+
 			}
+            else if (Reference.sb_use.contains(id))
+            {
+                itemLore.add(Text.of("Bound to: "+player.getName()));
+                itemLore.add(Text.of("UUID: "+player.getUniqueId()));
+                stack.offer(Keys.ITEM_LORE, itemLore);
+                player.setItemInHand(HandTypes.MAIN_HAND, stack);
+            }
 		}
     }
 
-	//Right Click - offhand
+	//Right Click - offhand & Done
 	@Listener
     public void onSecOffHandUse(InteractItemEvent.Secondary.OffHand event, @First Player player)
 	{
@@ -121,14 +175,27 @@ public class EventListener
 			ItemStack stack = event.getItemStack().createStack();
 			String id = event.getItemStack().getType().getId();
 			List<Text> itemLore = new ArrayList<Text>();
-			
-			if(Reference.sb_use.contains(id))
-			{
-				itemLore.add(Text.of("Bound to: "+player.getName()));
-				itemLore.add(Text.of("UUID: "+player.getUniqueId()));
-				stack.offer(Keys.ITEM_LORE, itemLore);
-				player.setItemInHand(HandTypes.OFF_HAND, stack);
+			if (stack.get(Keys.ITEM_LORE).isPresent()) {
+
+				for (int i = 0; i < stack.get(Keys.ITEM_LORE).get().size(); i++) {
+					if (stack.get(Keys.ITEM_LORE).get().get(i).toPlain().startsWith("UUID: ")) {
+						String UUID = stack.get(Keys.ITEM_LORE).get().get(i).toPlain().substring(6);
+						if (!(UUID.equals(player.getUniqueId().toString()))) {
+							event.setCancelled(true);
+							errorMessage(player);
+						}
+						break;
+					}
+
+				}
 			}
+            else if (Reference.sb_use.contains(id))
+            {
+                itemLore.add(Text.of("Bound to: "+player.getName()));
+                itemLore.add(Text.of("UUID: "+player.getUniqueId()));
+                stack.offer(Keys.ITEM_LORE, itemLore);
+                player.setItemInHand(HandTypes.OFF_HAND, stack);
+            }
 		}
     }
 	
@@ -178,5 +245,10 @@ public class EventListener
 				}
 			}
 		}
+	}
+	// Done
+	private void errorMessage(Player player)
+	{
+		player.sendMessage(Text.of(TextColors.DARK_RED, "This Item is not Soulbound to you!"));
 	}
 }

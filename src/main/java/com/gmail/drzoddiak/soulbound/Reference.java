@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.inventory.ItemStack;
  
 
@@ -14,7 +15,7 @@ public class Reference
 	public static final String NAME = "Main";
 	public static final String ID = "soulbound";
 	public static final String VERSION = "0.0.1";
-	public static final String DESC = "Binds items to the users blood!";
+	public static final String DESC = "Binds items to the users soul!";
 	public static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
 //Permissions
@@ -31,9 +32,9 @@ public class Reference
 	public static final String REMOVE_SB = "soulbound.admin.removesb";
 	
 	//Plugin config data
-	public static List<String> sb_pickup = new ArrayList<String>();
-	public static List<String> sb_use = new ArrayList<String>(); 
-	public static List<String> sb_equip = new ArrayList<String>(); 
+	public static List<String> sb_pickup = new ArrayList<>();
+	public static List<String> sb_use = new ArrayList<>();
+	public static List<String> sb_equip = new ArrayList<>();
 	public static boolean pickup_perm;
 	public static boolean use_perm;
 	public static boolean equip_perm;
@@ -96,17 +97,17 @@ public class Reference
 		}
 		return false;
 	}
-	
+
 	public static String getID(ItemStack stack)
-    {
-    	String ID = stack.getItem().getId();
-    	DataContainer container = stack.toContainer();
-    	DataQuery data = DataQuery.of('/', "UnsafeDamage");
-    	int meta = Integer.parseInt(container.get(data).get().toString());
-    	if(meta != 0)
-    	{
-    		ID = ID+":"+meta;
-    	}
-    	return ID;
-    }
+	{
+		String ID = stack.getItem().getId();
+		DataContainer container = stack.toContainer();
+		DataQuery data = DataQuery.of('/', "UnsafeDamage");
+		int meta = Integer.parseInt(container.get(data).get().toString());
+		if(meta != 0 && stack.getValue(Keys.UNBREAKABLE).get().get())
+		{
+			ID = ID+":"+meta;
+		}
+		return ID;
+	}
 }
