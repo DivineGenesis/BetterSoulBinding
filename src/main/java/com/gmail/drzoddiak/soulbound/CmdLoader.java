@@ -16,11 +16,8 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-<<<<<<< HEAD
-=======
 import static com.gmail.drzoddiak.soulbound.Reference.getLore;
 
->>>>>>> refs/remotes/origin/Test-branch
 public class CmdLoader
 {
     private CommandSpec addList = CommandSpec.builder()
@@ -142,11 +139,7 @@ public class CmdLoader
         		{
         			ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
         			List<Text> loreList = new ArrayList<>();
-<<<<<<< HEAD
-        			loreList.add(Text.of("Bounded to: "+player.getName()));
-=======
         			loreList.add(Text.of("Bound to: "+player.getName()));
->>>>>>> refs/remotes/origin/Test-branch
         			loreList.add(Text.of("UUID: "+player.getUniqueId()));
         			stack.offer(Keys.ITEM_LORE, loreList);
         			player.setItemInHand(HandTypes.MAIN_HAND, stack);
@@ -163,13 +156,6 @@ public class CmdLoader
         		
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
         		{
-<<<<<<< HEAD
-        			ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
-        		}
-        	}
-        	return CommandResult.success();
-
-=======
                     ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
 					List<Text> loreList = stack.get(Keys.ITEM_LORE).get();
                     if(!stack.get(Keys.ITEM_LORE).isPresent())
@@ -206,6 +192,5 @@ public class CmdLoader
         		}
         	}
         	return CommandResult.success();
->>>>>>> refs/remotes/origin/Test-branch
         }
 }
