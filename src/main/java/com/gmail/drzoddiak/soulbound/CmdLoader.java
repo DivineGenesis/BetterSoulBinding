@@ -16,6 +16,11 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+<<<<<<< HEAD
+=======
+import static com.gmail.drzoddiak.soulbound.Reference.getLore;
+
+>>>>>>> refs/remotes/origin/Test-branch
 public class CmdLoader
 {
     private CommandSpec addList = CommandSpec.builder()
@@ -137,7 +142,11 @@ public class CmdLoader
         		{
         			ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
         			List<Text> loreList = new ArrayList<>();
+<<<<<<< HEAD
         			loreList.add(Text.of("Bounded to: "+player.getName()));
+=======
+        			loreList.add(Text.of("Bound to: "+player.getName()));
+>>>>>>> refs/remotes/origin/Test-branch
         			loreList.add(Text.of("UUID: "+player.getUniqueId()));
         			stack.offer(Keys.ITEM_LORE, loreList);
         			player.setItemInHand(HandTypes.MAIN_HAND, stack);
@@ -154,10 +163,49 @@ public class CmdLoader
         		
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
         		{
+<<<<<<< HEAD
         			ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
         		}
         	}
         	return CommandResult.success();
 
+=======
+                    ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
+					List<Text> loreList = stack.get(Keys.ITEM_LORE).get();
+                    if(!stack.get(Keys.ITEM_LORE).isPresent())
+                    {
+                    	player.sendMessage(Text.of(TextColors.DARK_RED, "This item does not contain any lore!"));
+                    }
+                    else
+                    	for(int i=0; i<getLore(stack).size();i++)
+                    	{
+                    		if(getLore(stack).get(i).toPlain().startsWith("Bound to: "))
+                    		{
+                    			loreList.remove(i);
+                    			stack.offer(Keys.ITEM_LORE, loreList);
+                    			player.setItemInHand(HandTypes.MAIN_HAND, stack);
+
+                    			if(getLore(stack).get(i).toPlain().startsWith("UUID: "))
+                    			{
+                    				loreList.remove(i);
+                    				if(loreList.isEmpty())
+                    					stack.remove(Keys.ITEM_LORE);
+                    				else
+                    					stack.offer(Keys.ITEM_LORE, loreList);
+                    				player.setItemInHand(HandTypes.MAIN_HAND, stack);
+                    				player.sendMessage(Text.of(TextColors.GREEN, "Item has been successfully unbound!"));
+                    			}
+                    			break;
+                    		}
+                    		else
+                    		{
+                    			player.sendMessage(Text.of(TextColors.DARK_RED, "This item is not bound to anyone!"));
+                    			break;
+                    		}
+                    	}
+        		}
+        	}
+        	return CommandResult.success();
+>>>>>>> refs/remotes/origin/Test-branch
         }
 }

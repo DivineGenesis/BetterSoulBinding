@@ -6,20 +6,32 @@ import java.util.List;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
+<<<<<<< HEAD
 import org.spongepowered.api.item.inventory.ItemStack;
  
+=======
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
+
+>>>>>>> refs/remotes/origin/Test-branch
 
 public class Reference 
 {
 //@Plugin data parameters
 	public static final String NAME = "Main";
 	public static final String ID = "soulbound";
+<<<<<<< HEAD
 	public static final String VERSION = "0.0.1";
+=======
+	public static final String VERSION = "0.6.48";
+>>>>>>> refs/remotes/origin/Test-branch
 	public static final String DESC = "Binds items to the users soul!";
 	public static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
 //Permissions
 	//users
+<<<<<<< HEAD
 	public static final String PICKUP = "soulbound.user.pickup";
 	public static final String USE = "soulbound.user.use";
 	public static final String EQUIP = "soulbound.user.equip";
@@ -41,6 +53,29 @@ public class Reference
 	public static boolean keep_perm;
 	
 	public static boolean addToList(String id, int index)
+=======
+	 public static final String PICKUP = "soulbound.user.pickup";
+	 public static final String USE = "soulbound.user.use";
+	 public static final String EQUIP = "soulbound.user.equip";
+	 public static final String KEEP_ON_DEATH = "soulbound.user.keep";
+	 //admins
+	 public static final String HELP = "soulbound.admin.help";
+	 public static final String ADD_LIST = "soulbound.admin.addlist";
+	 public static final String REMOVE_LIST = "soulbound.admin.removelist";
+	 public static final String ADD_SB = "soulbound.admin.addsb";
+	 public static final String REMOVE_SB = "soulbound.admin.removesb";
+
+	 //Plugin config data
+	 public static List<String> sb_pickup = new ArrayList<>();
+	 public static List<String> sb_use = new ArrayList<>();
+	 public static List<String> sb_equip = new ArrayList<>();
+	 public static boolean pickup_perm;
+	 public static boolean use_perm;
+	 public static boolean equip_perm;
+	 public static boolean keep_perm;
+
+    public static boolean addToList(String id, int index)
+>>>>>>> refs/remotes/origin/Test-branch
 	{
 		switch (index)
 		{
@@ -98,6 +133,14 @@ public class Reference
 		return false;
 	}
 
+<<<<<<< HEAD
+=======
+    public static List<Text> getLore(ItemStack stack)
+    {
+        return stack.get(Keys.ITEM_LORE).get();
+    }
+
+>>>>>>> refs/remotes/origin/Test-branch
 	public static String getID(ItemStack stack)
 	{
 		String ID = stack.getItem().getId();
