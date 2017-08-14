@@ -158,32 +158,39 @@ public class CmdLoader
         		{
                     ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
 					List<Text> loreList = stack.get(Keys.ITEM_LORE).get();
-                    for(int i=0; i<getLore(stack).size();i++)
+                    if(!stack.get(Keys.ITEM_LORE).isPresent())
                     {
-                        if(getLore(stack).get(i).toPlain().startsWith("Bound to: "))
-                        {
-                            loreList.remove(i);
-                            stack.offer(Keys.ITEM_LORE, loreList);
-                            player.setItemInHand(HandTypes.MAIN_HAND, stack);
-
-                            if(getLore(stack).get(i).toPlain().startsWith("UUID: "))
-                            {
-                                loreList.remove(i);
-                                stack.offer(Keys.ITEM_LORE, loreList);
-                                player.setItemInHand(HandTypes.MAIN_HAND, stack);
-                                player.sendMessage(Text.of(TextColors.GREEN, "Item has been successfully unbound!"));
-                            }
-                            break;
-                        }
-                        else
-                        {
-                            player.sendMessage(Text.of(TextColors.DARK_RED, "This item is not bound to anyone!"));
-                            break;
-                        }
+                    	player.sendMessage(Text.of(TextColors.DARK_RED, "This item does not contain any lore!"));
                     }
+                    else
+                    	for(int i=0; i<getLore(stack).size();i++)
+                    	{
+                    		if(getLore(stack).get(i).toPlain().startsWith("Bound to: "))
+                    		{
+                    			loreList.remove(i);
+                    			stack.offer(Keys.ITEM_LORE, loreList);
+                    			player.setItemInHand(HandTypes.MAIN_HAND, stack);
+
+                    			if(getLore(stack).get(i).toPlain().startsWith("UUID: "))
+                    			{
+                    				loreList.remove(i);
+                    				if(loreList.isEmpty())
+                    					stack.remove(Keys.ITEM_LORE);
+                    				else
+                    					stack.offer(Keys.ITEM_LORE, loreList);
+                    				player.setItemInHand(HandTypes.MAIN_HAND, stack);
+                    				player.sendMessage(Text.of(TextColors.GREEN, "Item has been successfully unbound!"));
+                    			}
+                    			break;
+                    		}
+                    		else
+                    		{
+                    			player.sendMessage(Text.of(TextColors.DARK_RED, "This item is not bound to anyone!"));
+                    			break;
+                    		}
+                    	}
         		}
         	}
         	return CommandResult.success();
-
         }
 }
