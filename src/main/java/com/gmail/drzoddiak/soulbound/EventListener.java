@@ -2,27 +2,34 @@ package com.gmail.drzoddiak.soulbound;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.entity.Item;
+
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.entity.HarvestEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
-import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.Slot;
-import org.spongepowered.api.item.inventory.type.GridInventory;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+
+import static com.gmail.drzoddiak.soulbound.Reference.getLore;
+
+/* **Imports for death harvest**
+import java.util.Optional;
+
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.entity.HarvestEntityEvent;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.Slot;
+import org.spongepowered.api.item.inventory.type.GridInventory;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.Item;
+*/
 
 public class EventListener
 {
@@ -65,7 +72,6 @@ public class EventListener
 			String id = Reference.getID(event.getItemStack().createStack());
 			List<Text> itemLore = new ArrayList<>();
 			char hand = 'm';
-            System.out.println(hand+" MAIN USE");
 			HandUse(player, stack, id, itemLore, hand);
 		}
     }
@@ -81,7 +87,6 @@ public class EventListener
 			List<Text> itemLore = new ArrayList<>();
             char hand = 'o';
             HandUse(player, stack, id, itemLore, hand);
-            System.out.println(hand+ "OFF USE");
 		}
     }
 	
@@ -96,7 +101,6 @@ public class EventListener
 			List<Text> itemLore = new ArrayList<>();
             char hand = 'm';
             HandUse(player, stack, id, itemLore, hand);
-            System.out.println(hand+" MAIN SECONDARY USE");
 		}
     }
 
@@ -111,10 +115,9 @@ public class EventListener
 			List<Text> itemLore = new ArrayList<>();
             char hand = 'o';
             HandUse(player, stack, id, itemLore, hand);
-            System.out.println(hand+" OFF SECONDARY USE");
 		}
     }
-	
+	/*
 	@Listener
 	public void onDeathHarvest(HarvestEntityEvent.TargetPlayer event, @First Player player)
 	{
@@ -137,13 +140,11 @@ public class EventListener
 				if(stack.isPresent())
 				{
 					List<Text> lore = stack.get().get(Keys.ITEM_LORE).get();
-					System.out.println(stack.get().getItem().getId());
 					for(int k=0; k<lore.size();k++)
 					{
 						if(lore.get(k).toPlain().startsWith("UUID:"))
 						{
 							uuid = lore.get(k).toPlain().substring(6);
-							System.out.println(uuid);
 							break;
 						}
 					}
@@ -162,39 +163,52 @@ public class EventListener
 			}
 		}
 	}
+	*/
 	// Done
+
+
     private void HandUse(Player player, ItemStack stack, String id, List<Text> itemLore, char hand)
     {
         if (stack.get(Keys.ITEM_LORE).isPresent())
         {
-            for(int i=0; i<stack.get(Keys.ITEM_LORE).get().size();i++)
+            for(int i=0; i<getLore(stack).size();i++)
             {
-                if(stack.get(Keys.ITEM_LORE).get().get(i).toPlain().startsWith("UUID: "))
+                if(getLore(stack).get(i).toPlain().startsWith("UUID: "))
                 {
-                    String UUID = stack.get(Keys.ITEM_LORE).get().get(i).toPlain().substring(6);
+                    String UUID = getLore(stack).get(i).toPlain().substring(6);
                     if(!(UUID.equals(player.getUniqueId().toString()))) {
                         errorMessage(player);
                     }
                     break;
                 }
+                if(i == (getLore(stack).size()) -1 )
+                {
+                    itemLore = getLore(stack);
+                    loreAdd(itemLore,player,stack,hand);
+                }
             }
         }
         else if (Reference.sb_use.contains(id))
         {
-            itemLore.add(Text.of("Bound to: "+player.getName()));
-            itemLore.add(Text.of("UUID: "+player.getUniqueId()));
-            stack.offer(Keys.ITEM_LORE, itemLore);
-            retHand(player, stack, hand);
+            loreAdd(itemLore,player,stack,hand);
         }
     }
-    private void retHand(Player player, ItemStack stack, char hand)
+    private void loreAdd(List<Text> itemLore, Player player, ItemStack stack, char hand)
     {
-        if(hand == 'm')
+
+        stack.offer(Keys.ITEM_LORE, itemLore);
+        switch (hand)
+        {
+        case 'm':
             player.setItemInHand(HandTypes.MAIN_HAND, stack);
-        else if(hand == 'o')
+            break;
+        case 'o':
             player.setItemInHand(HandTypes.OFF_HAND, stack);
-        else
+            break;
+        default:
             player.sendMessage(Text.of(TextColors.DARK_RED, "ERROR HAS OCCURRED"));
+            break;
+        }
     }
 	private void errorMessage(Player player)
 	{
