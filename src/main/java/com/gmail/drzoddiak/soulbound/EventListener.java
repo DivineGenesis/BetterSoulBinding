@@ -68,7 +68,7 @@ public class EventListener
 		if((player.hasPermission(Reference.USE) || !Reference.use_perm))
 		{
 			ItemStack stack = event.getItemStack().createStack();
-			handUse(player, stack, 'm');
+			event.setCancelled(handUse(player, stack, 'm'));
 		}
     }
 
@@ -79,7 +79,7 @@ public class EventListener
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
 			ItemStack stack = event.getItemStack().createStack();
-            handUse(player, stack, 'o');
+            event.setCancelled(handUse(player, stack, 'o'));
 		}
     }
 	
@@ -90,7 +90,7 @@ public class EventListener
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
 			ItemStack stack = event.getItemStack().createStack();
-            handUse(player, stack, 'm');
+            event.setCancelled(handUse(player, stack, 'm'));
 		}
     }
 
@@ -101,7 +101,7 @@ public class EventListener
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
 			ItemStack stack = event.getItemStack().createStack();
-            handUse(player, stack, 'o');
+            event.setCancelled(handUse(player, stack, 'o'));
 		}
     }
 	
@@ -154,12 +154,11 @@ public class EventListener
 	*/
 	// Done
 
-	private void handUse(Player player, ItemStack stack, char hand)
+	private boolean handUse(Player player, ItemStack stack, char hand)
 	{
 		String id = Reference.getID(stack);
-		List<Text> itemLore = new ArrayList<Text>();
-		
-		if(stack.get(Keys.ITEM_LORE).isPresent())
+		List<Text> itemLore = new ArrayList<>();
+		if((stack.get(Keys.ITEM_LORE).isPresent()))
 		{
 			for(Text t: getLore(stack))
 			{
@@ -169,42 +168,45 @@ public class EventListener
 					if(!UUID.equals(player.getUniqueId().toString()))
 					{
 						errorMessage(player);
+						return true;
 					}
 					break;
 				}
-				if(t.toPlain().equals( getLore(stack).get(getLore(stack).size()-1) ))
-				{
-					itemLore = getLore(stack);
-					loreAdd(itemLore, player, stack, hand);
-				}
+                if(t.toPlain().equals( getLore(stack).get(getLore(stack).size()-1).toPlain() ))
+                {
+                    itemLore = getLore(stack);
+                    loreAdd(itemLore, player, stack, hand);
+                }
 			}
 		}
 		else if(Reference.sb_use.contains(id))
 		{
 			loreAdd(itemLore, player, stack, hand);
 		}
-	}
-    
+        return false;
+    }
     private void loreAdd(List<Text> itemLore, Player player, ItemStack stack, char hand)
     {
-    	itemLore.add(Text.of("Bound to: "+player.getName()));
+		itemLore.add(Text.of("Bound to: "+player.getName()));
     	itemLore.add(Text.of("UUID: "+player.getUniqueId().toString()));
         stack.offer(Keys.ITEM_LORE, itemLore);
-        
+        setHand(hand,player,stack);
+    }
+    private void setHand(char hand, Player player, ItemStack stack)
+    {
         switch(hand)
         {
-        	case 'm':
-        		player.setItemInHand(HandTypes.MAIN_HAND, stack);
-        		break;
-        	case 'o':
-        		player.setItemInHand(HandTypes.OFF_HAND, stack);
-        		break;
-        	default:
-        		player.sendMessage(Text.of(TextColors.DARK_RED, "ERROR HAS OCCURRED, OH NOES!"));
-        		break;
+            case 'm':
+                player.setItemInHand(HandTypes.MAIN_HAND, stack);
+                break;
+            case 'o':
+                player.setItemInHand(HandTypes.OFF_HAND, stack);
+                break;
+            default:
+                player.sendMessage(Text.of(TextColors.DARK_RED, "ERROR HAS OCCURRED, OH NOES!"));
+                break;
         }
     }
-    
 	private void errorMessage(Player player)
 	{
 		player.sendMessage(Text.of(TextColors.DARK_RED, "This item is not soulbound to you!"));

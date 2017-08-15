@@ -6,7 +6,6 @@ import java.util.List;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 
@@ -50,19 +49,19 @@ public class Reference
 			if(sb_pickup.contains(id))
 				return false;
 			sb_pickup.add(id);
-			SBConfig.savetoFile();
+			SBConfig.saveToFile();
 			return true;
 		case 1: //use
 			if (sb_use.contains(id)) 
 				return false;
 			sb_use.add(id);
-			SBConfig.savetoFile();
+			SBConfig.saveToFile();
 			return true;
 		case 2: //equip
 			if(sb_equip.contains(id))
 				return false;
 			sb_equip.add(id);
-			SBConfig.savetoFile();
+			SBConfig.saveToFile();
 			return true;
 		}
 		return false;
@@ -76,7 +75,7 @@ public class Reference
 			if(sb_pickup.contains(id))
 			{
 				sb_pickup.remove(id);
-				SBConfig.savetoFile();
+				SBConfig.saveToFile();
 				return true;
 			}
 			return false;
@@ -84,7 +83,7 @@ public class Reference
 			if(sb_use.contains(id))
 			{
 				sb_use.remove(id);
-				SBConfig.savetoFile();
+				SBConfig.saveToFile();
 				return true;
 			}
 			return false;
@@ -92,7 +91,7 @@ public class Reference
 			if(sb_equip.contains(id))
 			{
 				sb_equip.remove(id);
-				SBConfig.savetoFile();
+				SBConfig.saveToFile();
 				return true;
 			}
 			return false;

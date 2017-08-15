@@ -51,7 +51,7 @@ public class SBConfig
         return game;
     }
     
-    public static void savetoFile()
+    public static void saveToFile()
     {
     	try 
     	{
@@ -120,7 +120,7 @@ public class SBConfig
             	keep_perm = cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").getBoolean();
             	
             	getCfgMgr().save(cfg);
-            	getLogger().info("Yay! data was saved :D");
+            	getLogger().info("Yay! Data was saved :D");
         } 
         catch (Exception e) 
         {
