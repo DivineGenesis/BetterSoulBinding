@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import javafx.scene.text.TextAlignment;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -21,52 +20,57 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+import static com.gmail.drzoddiak.soulbound.Reference.*;
 import static com.gmail.drzoddiak.soulbound.Reference.getLore;
 
 public class CmdLoader
 {
-    private CommandSpec addConfig = CommandSpec.builder()//Possibly allow for more than 1 ohoice or all in the future!
+    private CommandSpec addConfig = CommandSpec.builder()//Possibly allow for more than 1 choice or all in the future!
             .description(Text.of("Adds items to soulbind into config")).executor( this::add_list ).arguments(GenericArguments.onlyOne(GenericArguments
-            .string(Text.of("id")))).permission(Reference.ADD_LIST).build();
+            .string(Text.of("id")))).permission(ADD_LIST).build();
 
     private CommandSpec removeConfig = CommandSpec.builder()
     		.description(Text.of("Removes items to soulbind from the config")).executor( this::remove_list ).arguments(GenericArguments.onlyOne(GenericArguments
-    		.string(Text.of("id")))).permission(Reference.REMOVE_LIST).build();
+    		.string(Text.of("id")))).permission(REMOVE_LIST).build();
         
     private CommandSpec addSB = CommandSpec.builder()
-            .description(Text.of("Binds the item to the player holding it")).executor(this::add_sb).permission(Reference.ADD_SB).build();
+            .description(Text.of("Binds the item to the player holding it")).executor(this::add_sb).permission(ADD_SB).build();
 
     private CommandSpec removeSB = CommandSpec.builder()
-                .description(Text.of("Removes the binding from the item")).executor(this::remove_sb).permission(Reference.REMOVE_SB).build();
+                .description(Text.of("Removes the binding from the item")).executor(this::remove_sb).permission(REMOVE_SB).build();
 
             //Base Command for above commands, as commands are added, create additional children
 
-        public CommandSpec sb = CommandSpec.builder()
-            .description(Text.of("Shows this list")).executor(this::help).permission(Reference.HELP)
-                .child(addConfig, "add")
-                .child(removeConfig, "remove")
+        CommandSpec sb = CommandSpec.builder()
+            .description(Text.of("Shows this list")).executor(this::help).permission(HELP)
+                .child(addConfig, "addConfig")
+                .child(removeConfig, "removeConfig")
                 .child(addSB, "addSB")
                 .child(removeSB, "removeSB")
                 .build();
         
-        public CommandResult help(CommandSource src, CommandContext args) throws CommandException
+        private CommandResult help(CommandSource src, CommandContext args) throws CommandException
         {
             List<Text> commandHelp = Lists.newArrayList();
-        	commandHelp.add(textStructure("addList","Adds items to allow soulbinding into config!"));
-			commandHelp.add(textStructure("removeList","Removes items from the config!"));
-			commandHelp.add(textStructure("addSB","Bind the item to the player holding it!"));
-			commandHelp.add(textStructure("removeSB","Removes the binding from the item!"));
+        	commandHelp.add(helpTextStructure("addConfig","Adds items to allow soulbinding into config!"));
+			commandHelp.add(helpTextStructure("removeConfig","Removes items from the config!"));
+			commandHelp.add(helpTextStructure("addSB","Bind the item to the player holding it!"));
+			commandHelp.add(helpTextStructure("removeSB","Removes the binding from the item!"));
 
 			PaginationList.builder()
 					.title(Text.of(TextColors.GOLD, "BetterSoulbinding Help Menu"))
 					.padding(Text.of(TextColors.YELLOW, TextStyles.STRIKETHROUGH,'='))
 					.contents(commandHelp)
 					.sendTo(src);
-			//triggered when they type only the base cmd /sb
         	return CommandResult.success();
         }
+	private Text helpTextStructure(String command, String reason)
+	{
+		return Text.of(TextColors.GREEN, Text.builder(command).onClick(TextActions.suggestCommand("/sb "+command)),
+				TextColors.GRAY,TextStyles.ITALIC," - ", reason);
+	}
         
-        public CommandResult add_list(CommandSource src, CommandContext args) throws CommandException
+        private CommandResult add_list(CommandSource src, CommandContext args) throws CommandException
         {
         	if(src instanceof Player)
         	{
@@ -75,74 +79,77 @@ public class CmdLoader
         		
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
         		{
-        			String id = Reference.getID(player.getItemInHand(HandTypes.MAIN_HAND).get()); 
-        			
-        			if(arg.equalsIgnoreCase("pickup"))
-        			{
-        				if( Reference.addToList(id, 0) )
-        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully added ", TextColors.WHITE, id, TextColors.GREEN," to the 'pickup' list!"));
-        				else
-        					src.sendMessage(Text.of(id,TextColors.RED," Already exists in the 'pickup' list!"));
-        			}
-        			else if(arg.equalsIgnoreCase("use"))
-        			{
-        				if(Reference.addToList(id, 1))
-        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully added ", TextColors.WHITE, id, TextColors.GREEN," to 'use' list!"));
-        				else
-        					src.sendMessage(Text.of(id,TextColors.RED," Already exists in the 'use' list!"));
-        			}
-        			else if(arg.equalsIgnoreCase("equip"))
-        			{
-        				if(Reference.addToList(id, 2))
-        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully added ", TextColors.WHITE, id, TextColors.GREEN," to the 'equip' list!"));
-        				else
-        					src.sendMessage(Text.of(id,TextColors.RED," Already exists in the 'equip' list!"));
-        			}
+        			String id = getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
+                    listFunction(arg,'a',src,id,"added");
         		}
-        			
+                else
+                    src.sendMessage(Text.of(TextColors.DARK_RED, "INVALID ARGUMENTS: ", TextColors.GOLD, "pickup|use|equip"));
         	}
         	return CommandResult.success();
         }
-        private Text textStructure(String command, String reason)
-		{
-			return Text.of(TextColors.GREEN, Text.builder(command).onClick(TextActions.suggestCommand("/sb "+command)),
-                    TextColors.GRAY,TextStyles.ITALIC," - ", reason);
-		}
-
-		public CommandResult remove_list(CommandSource src, CommandContext args) throws CommandException
+		private CommandResult remove_list(CommandSource src, CommandContext args) throws CommandException
         {
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
         		String arg = args.getOne("id").get().toString();
-        		
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
         		{
-        			String id = Reference.getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
-        			
-        			if(arg.equalsIgnoreCase("pickup"))
-        				if(Reference.removeFromList(id, 0))
-        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully removed ", TextColors.WHITE, id, TextColors.GREEN," from the 'pickup' list!"));
-        				else
-        					src.sendMessage(Text.of(id,TextColors.RED," Doesn't exist in the 'pickup' list!"));
-        			
-        			if(arg.equalsIgnoreCase("use"))
-        				if(Reference.removeFromList(id, 1))
-        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully removed ", TextColors.WHITE, id, TextColors.GREEN," from 'use' list!"));
-        				else
-        					src.sendMessage(Text.of(id,TextColors.RED," Doesn't exist in the 'use' list!"));
-
-        			if(arg.equalsIgnoreCase("equip"))
-        				if(Reference.removeFromList(id, 2))
-        					src.sendMessage(Text.of(TextColors.GREEN,"Successfully removed ", TextColors.WHITE, id, TextColors.GREEN," from the 'equip' list!"));
-        				else
-        					src.sendMessage(Text.of(id,TextColors.RED," doesn't exist in the 'equip' list!"));
+        			String id = getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
+        			listFunction(arg,'r',src,id,"removed");
         		}
+                else
+                    src.sendMessage(Text.of(TextColors.DARK_RED, "INVALID ARGUMENTS: ", TextColors.GOLD, "pickup|use|equip"));
         	}
         	return CommandResult.success();
         }
+	private void listFunction(String arg, char type,CommandSource src, String id, String action){
 
-        public CommandResult add_sb(CommandSource src, CommandContext args) throws CommandException
+        if(arg.equalsIgnoreCase("pickup")) {
+			if(type=='a'){
+				if(addToList(id,0))
+					mailMan(src,action,id,"pickup");
+                else errorMessage(src,id,"already","use");
+			}
+			else if(type == 'r'){
+			    if(removeFromList(id,0))
+                    mailMan(src,action,id,"pickup");
+                else errorMessage(src,id,"doesn't","pickup");
+            }
+        }
+		if(arg.equalsIgnoreCase("use")){
+            if(type=='a'){
+                if(addToList(id,1))
+                    mailMan(src,action,id,"use");
+                else errorMessage(src,id,"already","use");
+            }
+            else if(type == 'r'){
+                if(removeFromList(id,1))
+                    mailMan(src,action,id,"use");
+                else errorMessage(src,id,"doesn't","use");
+            }
+		}
+		if(arg.equalsIgnoreCase("equip")){
+            if(type=='a'){
+                if(addToList(id,2))
+                    mailMan(src,action,id,"equip");
+                else errorMessage(src,id,"already","equip");
+            }
+            else if(type == 'r'){
+                if(removeFromList(id,2))
+                    mailMan(src,action,id,"equip");
+                else errorMessage(src,id,"doesn't","equip");
+            }
+		}
+	}
+	private static void mailMan(CommandSource src, String action, String id, String type){
+		src.sendMessage(Text.of(TextColors.GREEN, "Succesfully ",action,' ', TextColors.WHITE, id,TextColors.GREEN," to/from the ", type, " list!"));
+	}
+	private static void errorMessage(CommandSource src,String id,String exist,String configType) {
+        src.sendMessage(Text.of(Text.of(TextColors.RED,id, exist, " exist(s) in the ", configType," list!")));
+	}
+
+        private CommandResult add_sb(CommandSource src, CommandContext args) throws CommandException
         {//Allow user to select user to add to item in future?
         	if(src instanceof Player)
         	{
@@ -161,7 +168,7 @@ public class CmdLoader
         	return CommandResult.success();
         }
         
-        public CommandResult remove_sb(CommandSource src, CommandContext args) throws CommandException
+        private CommandResult remove_sb(CommandSource src, CommandContext args) throws CommandException
         {
         	if(src instanceof Player)
         	{

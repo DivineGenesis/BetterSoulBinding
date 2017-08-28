@@ -28,7 +28,7 @@ public class Main
     public Main(Logger logger, Game game, @DefaultConfig(sharedRoot = false) File defaultCfg, 
     		@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> cfgMgr) 
     {
-    	config = new SBConfig(logger, game, defaultCfg, cfgMgr, this);
+    	config = new SBConfig(logger, game, defaultCfg, cfgMgr);
     }
 	
     @Listener

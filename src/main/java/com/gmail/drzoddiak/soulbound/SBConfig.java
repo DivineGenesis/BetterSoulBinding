@@ -14,29 +14,26 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 public class SBConfig 
 {
-    public Main instance;
-    private Logger logger; 
+    private Logger logger;
     private static ConfigurationNode cfg;
     private File defaultCfg;
     private static ConfigurationLoader<CommentedConfigurationNode> cfgMgr;
     private Game game;
     
-    public SBConfig(Logger logger, Game game, File defaultCfg, ConfigurationLoader<CommentedConfigurationNode> cfgMgr, 
-    		Main instance) 
+    SBConfig(Logger logger, Game game, File defaultCfg, ConfigurationLoader<CommentedConfigurationNode> cfgMgr)
     {
     	this.logger = logger;
         this.game = game;
         this.defaultCfg = defaultCfg;
         SBConfig.cfgMgr = cfgMgr;
-        this.instance = instance;
     }
     
-    public static ConfigurationLoader<CommentedConfigurationNode> getCfgMgr() 
+    private static ConfigurationLoader<CommentedConfigurationNode> getCfgMgr()
     {
         return cfgMgr;
     }
 
-    public Logger getLogger() 
+    Logger getLogger()
     {
         return logger;
     }
@@ -51,7 +48,7 @@ public class SBConfig
         return game;
     }
     
-    public static void saveToFile()
+    static void saveToFile()
     {
     	try 
     	{
@@ -67,7 +64,7 @@ public class SBConfig
 		}
     }
     
-    public void configCheck()
+    void configCheck()
     {
     	getLogger().info("Reloading...\nChecking config...");
         try 
@@ -117,7 +114,7 @@ public class SBConfig
             	
             	if(cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").isVirtual())
             		cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
-            	keep_perm = cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").getBoolean();
+            	//keep_perm = cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").getBoolean();
             	
             	getCfgMgr().save(cfg);
             	getLogger().info("Yay! Data was saved :D");

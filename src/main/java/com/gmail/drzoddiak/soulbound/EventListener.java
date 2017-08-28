@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.type.HandTypes;
 
 import org.spongepowered.api.entity.living.player.Player;
@@ -43,24 +44,32 @@ public class EventListener
 			ItemStack stack = event.getTargetEntity().item().get().createStack();
 			String id = Reference.getID(stack.getItem().getTemplate().createStack());
 			List<Text> itemLore = new ArrayList<>();
-			
+			loreAdd(itemLore,player,stack,'p');
+			player.sendMessage(Text.of("Broke out of Case Statement"));
+
+            player.sendMessage(Text.of("Pickup Event fired"));
 			if(Reference.sb_pickup.contains(id))
 			{
-				//WIP
-				
+
+				player.sendMessage(Text.of("Contains id"));
 			}
 		}
 	}
 
-	@Listener
-    public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
-	{
-		if(player.hasPermission(Reference.EQUIP) || !Reference.equip_perm)
-		{
-			//WIP
-		}
-	}
 
+
+	/* Not Implemented Yet `6.0.0`
+        @Listener
+        public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
+        {
+
+            player.sendMessage(Text.of("Equip event fired"));
+            if(player.hasPermission(Reference.EQUIP) || !Reference.equip_perm)
+            {
+                //WIP
+            }
+        }
+    */
 	//Left Click - main hand & Done
 	@Listener
 	public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
@@ -70,6 +79,7 @@ public class EventListener
 			ItemStack stack = event.getItemStack().createStack();
 			event.setCancelled(handUse(player, stack, 'm'));
 		}
+
     }
 
 	//Left Click - offhand & Done
@@ -202,6 +212,11 @@ public class EventListener
             case 'o':
                 player.setItemInHand(HandTypes.OFF_HAND, stack);
                 break;
+			case 'p':
+				player.sendMessage(Text.of("Got Into Case Statement"));
+				player.offer((DataManipulator<?, ?>) stack);
+				player.sendMessage(Text.of("Got to END of Case Statement"));
+				break;
             default:
                 player.sendMessage(Text.of(TextColors.DARK_RED, "ERROR HAS OCCURRED, OH NOES!"));
                 break;
