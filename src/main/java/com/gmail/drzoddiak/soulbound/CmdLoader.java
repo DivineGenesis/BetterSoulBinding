@@ -21,7 +21,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import static com.gmail.drzoddiak.soulbound.Reference.*;
-import static com.gmail.drzoddiak.soulbound.Reference.getLore;
 
 public class CmdLoader
 {

@@ -10,20 +10,20 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 
 
-public class Reference 
+public class Reference
 {
 //@Plugin data parameters
 	static final String NAME = "Main";
 	static final String ID = "soulbound";
-	static final String VERSION = "0.6.48";
+	static final String VERSION = "0.7";
 	static final String DESC = "Binds items to the users soul!";
 	static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
 //Permissions
 	//users
-	 static final String PICKUP = "soulbound.user.pickup";
-	 static final String USE = "soulbound.user.use";
-	 static final String EQUIP = "soulbound.user.equip";
+	 public static final String PICKUP = "soulbound.user.pickup";
+	 public static final String USE = "soulbound.user.use";
+	 //public static final String EQUIP = "soulbound.user.equip";
 	 //static final String KEEP_ON_DEATH = "soulbound.user.keep";
 	 //admins
 	 static final String HELP = "soulbound.admin.help";
@@ -33,12 +33,12 @@ public class Reference
 	 static final String REMOVE_SB = "soulbound.admin.removesb";
 
 	 //Plugin config data
-	 static List<String> sb_pickup = new ArrayList<>();
-	 static List<String> sb_use = new ArrayList<>();
-	 static List<String> sb_equip = new ArrayList<>();
-	 static boolean pickup_perm;
-	 static boolean use_perm;
-	 static boolean equip_perm;
+	 public static List<String> sb_pickup = new ArrayList<>();
+	 public static List<String> sb_use = new ArrayList<>();
+	 public static List<String> sb_equip = new ArrayList<>();
+	 public static boolean pickup_perm;
+	 public static boolean use_perm;
+	 public static boolean equip_perm;
 	 //static boolean keep_perm;
 
     static boolean addToList(String id, int index)
@@ -99,12 +99,12 @@ public class Reference
 		return false;
 	}
 
-    static List<Text> getLore(ItemStack stack)
+    public static List<Text> getLore(ItemStack stack)
     {
         return stack.get(Keys.ITEM_LORE).get();
     }
 
-	static String getID(ItemStack stack)
+	public static String getID(ItemStack stack)
 	{
 		String ID = stack.getItem().getId();
 		DataContainer container = stack.toContainer();

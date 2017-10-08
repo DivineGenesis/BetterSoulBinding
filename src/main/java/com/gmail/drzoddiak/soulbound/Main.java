@@ -1,5 +1,6 @@
 package com.gmail.drzoddiak.soulbound;
 
+import com.gmail.drzoddiak.soulbound.EventListeners.EventListener;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
