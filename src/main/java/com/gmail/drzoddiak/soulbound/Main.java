@@ -1,5 +1,6 @@
 package com.gmail.drzoddiak.soulbound;
 
+import com.gmail.drzoddiak.soulbound.EventListeners.EventListener;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
@@ -28,7 +29,7 @@ public class Main
     public Main(Logger logger, Game game, @DefaultConfig(sharedRoot = false) File defaultCfg, 
     		@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> cfgMgr) 
     {
-    	config = new SBConfig(logger, game, defaultCfg, cfgMgr, this);
+    	config = new SBConfig(logger, game, defaultCfg, cfgMgr);
     }
 	
     @Listener

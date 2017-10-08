@@ -1,12 +1,10 @@
-package com.gmail.drzoddiak.soulbound;
+package com.gmail.drzoddiak.soulbound.EventListeners;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gmail.drzoddiak.soulbound.Reference;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.DataManipulator;
-import org.spongepowered.api.data.type.HandTypes;
-
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
@@ -14,8 +12,8 @@ import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
+import static com.gmail.drzoddiak.soulbound.EventListeners.EventUtils.*;
 import static com.gmail.drzoddiak.soulbound.Reference.getLore;
 
 /* **Imports for death harvest**
@@ -36,29 +34,35 @@ public class EventListener
 {
 
 	@Listener
-    public void onPickup(ChangeInventoryEvent.Pickup event, @First Player player)
-	{
-		if(player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm)
-		{
+    public void onPickup(ChangeInventoryEvent.Pickup event, @First Player player) {
+        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
+            ItemStack stack = event.getTargetEntity().item().get().createStack();
+            List<Text> itemLore = new ArrayList<>();
+            String id = Reference.getID(stack);
+                if ((stack.get(Keys.ITEM_LORE).isPresent())) {
+                    for (Text t : getLore(stack)) {
+                        if (t.toPlain().startsWith("UUID: ")) {
+                            String UUID = t.toPlain().substring(6);
+                            if (!UUID.equals(player.getUniqueId().toString())) {
+                                errorMessage(player);
+                                event.setCancelled(true);
+                            }
+                            break;
+                        }
+                        if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) {
+                            loreAdd(itemLore, player, stack);
+                            event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
+                        }
+                    }
+                }
+                else if (Reference.sb_pickup.contains(id)) {
+                    loreAdd(itemLore, player, stack);
+                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
+                }
+        }
+    }
 
-			ItemStack stack = event.getTargetEntity().item().get().createStack();
-			String id = Reference.getID(stack.getItem().getTemplate().createStack());
-			List<Text> itemLore = new ArrayList<>();
-			loreAdd(itemLore,player,stack,'p');
-			player.sendMessage(Text.of("Broke out of Case Statement"));
-
-            player.sendMessage(Text.of("Pickup Event fired"));
-			if(Reference.sb_pickup.contains(id))
-			{
-
-				player.sendMessage(Text.of("Contains id"));
-			}
-		}
-	}
-
-
-
-	/* Not Implemented Yet `6.0.0`
+	/*Not Implemented Yet `6.0.0`
         @Listener
         public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
         {
@@ -66,11 +70,10 @@ public class EventListener
             player.sendMessage(Text.of("Equip event fired"));
             if(player.hasPermission(Reference.EQUIP) || !Reference.equip_perm)
             {
-                //WIP
+
             }
-        }
-    */
-	//Left Click - main hand & Done
+        }*/
+
 	@Listener
 	public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
 	{
@@ -82,7 +85,6 @@ public class EventListener
 
     }
 
-	//Left Click - offhand & Done
 	@Listener
     public void onOffHandUse(InteractItemEvent.Primary.OffHand event, @First Player player)
 	{
@@ -92,8 +94,7 @@ public class EventListener
             event.setCancelled(handUse(player, stack, 'o'));
 		}
     }
-	
-	//Right Click - main hand & Done
+
 	@Listener
     public void onMainSecUse(InteractItemEvent.Secondary.MainHand event, @First Player player)
 	{
@@ -104,7 +105,6 @@ public class EventListener
 		}
     }
 
-	//Right Click - offhand & Done
 	@Listener
     public void onSecOffHandUse(InteractItemEvent.Secondary.OffHand event, @First Player player)
 	{
@@ -163,67 +163,4 @@ public class EventListener
 	}
 	*/
 	// Done
-
-	private boolean handUse(Player player, ItemStack stack, char hand)
-	{
-		String id = Reference.getID(stack);
-		List<Text> itemLore = new ArrayList<>();
-		if((stack.get(Keys.ITEM_LORE).isPresent()))
-		{
-			for(Text t: getLore(stack))
-			{
-				if(t.toPlain().startsWith("UUID: "))
-				{
-					String UUID = t.toPlain().substring(6);
-					if(!UUID.equals(player.getUniqueId().toString()))
-					{
-						errorMessage(player);
-						return true;
-					}
-					break;
-				}
-                if(t.toPlain().equals( getLore(stack).get(getLore(stack).size()-1).toPlain() ))
-                {
-                    itemLore = getLore(stack);
-                    loreAdd(itemLore, player, stack, hand);
-                }
-			}
-		}
-		else if(Reference.sb_use.contains(id))
-		{
-			loreAdd(itemLore, player, stack, hand);
-		}
-        return false;
-    }
-    private void loreAdd(List<Text> itemLore, Player player, ItemStack stack, char hand)
-    {
-		itemLore.add(Text.of("Bound to: "+player.getName()));
-    	itemLore.add(Text.of("UUID: "+player.getUniqueId().toString()));
-        stack.offer(Keys.ITEM_LORE, itemLore);
-        setHand(hand,player,stack);
-    }
-    private void setHand(char hand, Player player, ItemStack stack)
-    {
-        switch(hand)
-        {
-            case 'm':
-                player.setItemInHand(HandTypes.MAIN_HAND, stack);
-                break;
-            case 'o':
-                player.setItemInHand(HandTypes.OFF_HAND, stack);
-                break;
-			case 'p':
-				player.sendMessage(Text.of("Got Into Case Statement"));
-				player.offer((DataManipulator<?, ?>) stack);
-				player.sendMessage(Text.of("Got to END of Case Statement"));
-				break;
-            default:
-                player.sendMessage(Text.of(TextColors.DARK_RED, "ERROR HAS OCCURRED, OH NOES!"));
-                break;
-        }
-    }
-	private void errorMessage(Player player)
-	{
-		player.sendMessage(Text.of(TextColors.DARK_RED, "This item is not soulbound to you!"));
-	}
 }
