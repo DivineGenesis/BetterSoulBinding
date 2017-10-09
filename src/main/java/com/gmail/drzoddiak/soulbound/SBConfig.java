@@ -54,7 +54,7 @@ public class SBConfig
     	{
 			cfg = getCfgMgr().load();
 			cfg.getNode("Bind Upon Use").setValue(Reference.sb_use);
-			cfg.getNode("Bind Upon Equip").setValue(Reference.sb_equip);
+			//cfg.getNode("Bind Upon Equip").setValue(Reference.sb_equip);
 			cfg.getNode("Bind Upon Pickup").setValue(Reference.sb_pickup);
 			getCfgMgr().save(cfg);
 		}
@@ -80,8 +80,8 @@ public class SBConfig
                 cfg.getNode("Bind Upon Equip").setValue(new ArrayList<String>(){{add(ItemTypes.DIAMOND_HELMET.getId());}});
                 cfg.getNode("Modules", "Permission-check", "Use-Enabled").setValue(false);
                 cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").setValue(false);
-                cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
-                cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
+                //cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
+                //cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
                 getLogger().info("Config created.");
                 getCfgMgr().save(cfg);
             }
@@ -108,12 +108,12 @@ public class SBConfig
             		cfg.getNode("Modules", "Permission-check", "Pickup-Enabled").setValue(false);
             	pickup_perm = cfg.getNode("Modules", "Permission", "Pickup-Enabled").getBoolean();
             	
-            	if(cfg.getNode("Modules", "Permission-check", "Equip-Enabled").isVirtual())
-            		cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
-            	equip_perm = cfg.getNode("Modules", "Permission", "Equip-Enabled").getBoolean();
-            	
-            	if(cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").isVirtual())
-            		cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
+            	//if(cfg.getNode("Modules", "Permission-check", "Equip-Enabled").isVirtual())
+            	//	cfg.getNode("Modules", "Permission-check", "Equip-Enabled").setValue(false);
+            	//equip_perm = cfg.getNode("Modules", "Permission", "Equip-Enabled").getBoolean();
+            	//
+            	//if(cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").isVirtual())
+            	//	cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").setValue(false);
             	//keep_perm = cfg.getNode("Modules", "Permission-check", "KeepUponDeath-Enabled").getBoolean();
             	
             	getCfgMgr().save(cfg);
