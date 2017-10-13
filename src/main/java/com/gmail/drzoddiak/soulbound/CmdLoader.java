@@ -104,47 +104,58 @@ public class CmdLoader
         }
 	private void listFunction(String arg, char type,CommandSource src, String id, String action){
 
-        if(arg.equalsIgnoreCase("pickup")) {
-			if(type=='a'){
+        if(arg.equalsIgnoreCase("pickup")) 
+        {
+			if(type=='a')
+			{
 				if(addToList(id,0))
 					mailMan(src,action,id,"pickup");
                 else errorMessage(src,id,"already","use");
 			}
-			else if(type == 'r'){
+			else if(type == 'r')
+			{
 			    if(removeFromList(id,0))
                     mailMan(src,action,id,"pickup");
                 else errorMessage(src,id,"doesn't","pickup");
             }
         }
-		if(arg.equalsIgnoreCase("use")){
-            if(type=='a'){
+		if(arg.equalsIgnoreCase("use"))
+		{
+            if(type=='a')
+            {
                 if(addToList(id,1))
                     mailMan(src,action,id,"use");
                 else errorMessage(src,id,"already","use");
             }
-            else if(type == 'r'){
+            else if(type == 'r')
+            {
                 if(removeFromList(id,1))
                     mailMan(src,action,id,"use");
                 else errorMessage(src,id,"doesn't","use");
             }
 		}
-		if(arg.equalsIgnoreCase("equip")){
-            if(type=='a'){
+		if(arg.equalsIgnoreCase("equip"))
+		{
+            if(type=='a')
+            {
                 if(addToList(id,2))
                     mailMan(src,action,id,"equip");
                 else errorMessage(src,id,"already","equip");
             }
-            else if(type == 'r'){
+            else if(type == 'r')
+            {
                 if(removeFromList(id,2))
                     mailMan(src,action,id,"equip");
                 else errorMessage(src,id,"doesn't","equip");
             }
 		}
 	}
-	private static void mailMan(CommandSource src, String action, String id, String type){
+	private static void mailMan(CommandSource src, String action, String id, String type)
+	{
 		src.sendMessage(Text.of(TextColors.GREEN, "Succesfully ",action,' ', TextColors.WHITE, id,TextColors.GREEN," to/from the ", type, " list!"));
 	}
-	private static void errorMessage(CommandSource src,String id,String exist,String configType) {
+	private static void errorMessage(CommandSource src,String id,String exist,String configType)
+	{
         src.sendMessage(Text.of(Text.of(TextColors.RED,id, exist, " exist(s) in the ", configType," list!")));
 	}
 
@@ -158,8 +169,7 @@ public class CmdLoader
         		{
         			ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
         			List<Text> loreList = new ArrayList<>();
-        			loreList.add(Text.of("Bound to: "+player.getName()));
-        			loreList.add(Text.of("UUID: "+player.getUniqueId()));
+        			loreList.add(Text.of("Bound to: none"));
         			stack.offer(Keys.ITEM_LORE, loreList);
         			player.setItemInHand(HandTypes.MAIN_HAND, stack);
         		}

@@ -34,28 +34,42 @@ public class EventListener
 {
 
 	@Listener
-    public void onPickup(ChangeInventoryEvent.Pickup event, @First Player player) {
-        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
+    public void onPickup(ChangeInventoryEvent.Pickup event, @First Player player)
+	{
+        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) 
+        {
             ItemStack stack = event.getTargetEntity().item().get().createStack();
             List<Text> itemLore = new ArrayList<>();
             String id = Reference.getID(stack);
-                if ((stack.get(Keys.ITEM_LORE).isPresent())) {
-                    for (Text t : getLore(stack)) {
-                        if (t.toPlain().startsWith("UUID: ")) {
+                if ((stack.get(Keys.ITEM_LORE).isPresent())) 
+                {
+                    for (Text t : getLore(stack)) 
+                    {
+                    	if(t.toPlain().equals("Bound to: none"))
+                    	{
+                    		loreAdd(itemLore, player, stack);
+                    		event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
+                    		break;
+                    	}
+                    	else if (t.toPlain().startsWith("UUID: ")) 
+                        {
                             String UUID = t.toPlain().substring(6);
-                            if (!UUID.equals(player.getUniqueId().toString())) {
+                            if (!UUID.equals(player.getUniqueId().toString())) 
+                            {
                                 errorMessage(player);
                                 event.setCancelled(true);
                             }
                             break;
                         }
-                        if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) {
+                        if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) 
+                        {
                             loreAdd(itemLore, player, stack);
                             event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                         }
                     }
                 }
-                else if (Reference.sb_pickup.contains(id)) {
+                else if (Reference.sb_pickup.contains(id)) 
+                {
                     loreAdd(itemLore, player, stack);
                     event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                 }
