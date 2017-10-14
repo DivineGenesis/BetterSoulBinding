@@ -15,7 +15,7 @@ public class Reference
 //@Plugin data parameters
 	static final String NAME = "Main";
 	static final String ID = "soulbound";
-	static final String VERSION = "0.7.1";
+	static final String VERSION = "0.8";
 	static final String DESC = "Binds items to the users soul!";
 	static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
