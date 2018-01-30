@@ -1,4 +1,6 @@
-*
-!build.gradle
-!gradle.properties
-!**/src
+.idea
+.gradle
+gradle
+gradlew.bat
+gradlew
+README.md
