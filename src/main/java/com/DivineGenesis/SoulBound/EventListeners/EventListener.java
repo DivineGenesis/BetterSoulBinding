@@ -20,7 +20,7 @@ public class EventListener
 {
 
 	@Listener
-    public void onPickup(ChangeInventoryEvent.Pickup event, @First Player player)
+    public void onPickup(ChangeInventoryEvent.Pickup.Pre event, @First Player player)
 	{
         if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) 
         {
@@ -61,8 +61,9 @@ public class EventListener
                 }
         }
     }
+/*
+//Waiting implementation
 
-	/*Not Implemented Yet `6.0.0`
         @Listener
         public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
         {
@@ -72,8 +73,8 @@ public class EventListener
             {
 
             }
-        }*/
-
+        }
+*/
 	@Listener
 	public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
 	{

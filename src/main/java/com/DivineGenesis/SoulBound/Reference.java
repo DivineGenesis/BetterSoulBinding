@@ -15,7 +15,7 @@ public class Reference
 //@Plugin data parameters
 	static final String NAME = "Soulbound";
 	static final String ID = "soulbound";
-	static final String VERSION = "0.8";
+	static final String VERSION = "0.8.1";
 	static final String DESC = "Binds items to the users soul!";
 	static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
@@ -106,7 +106,7 @@ public class Reference
 
 	public static String getID(ItemStack stack)
 	{
-		String ID = stack.getItem().getId();
+		@SuppressWarnings("deprecation") String ID = stack.getItem().getId();
 		DataContainer container = stack.toContainer();
 		DataQuery data = DataQuery.of('/', "UnsafeDamage");
 		int meta = Integer.parseInt(container.get(data).get().toString());
