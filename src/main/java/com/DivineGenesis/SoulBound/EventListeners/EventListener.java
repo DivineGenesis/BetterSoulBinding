@@ -5,12 +5,18 @@ import java.util.List;
 
 import com.DivineGenesis.SoulBound.Reference;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.value.BaseValue;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
 
 import static com.DivineGenesis.SoulBound.EventListeners.EventUtils.*;
@@ -62,7 +68,7 @@ public class EventListener
         }
     }
 /*
-//Waiting implementation
+//Waiting implementation Not in API7
 
         @Listener
         public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
@@ -76,7 +82,7 @@ public class EventListener
         }
 */
 	@Listener
-	public void onUse(InteractItemEvent.Primary.MainHand event, @First Player player)
+	public void onUse(InteractItemEvent.Primary.MainHand event, @Root Player player)
 	{
 		if((player.hasPermission(Reference.USE) || !Reference.use_perm))
 		{
@@ -87,7 +93,7 @@ public class EventListener
     }
 
 	@Listener
-    public void onOffHandUse(InteractItemEvent.Primary.OffHand event, @First Player player)
+    public void onOffHandUse(InteractItemEvent.Primary.OffHand event, @Root Player player)
 	{
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
@@ -97,7 +103,7 @@ public class EventListener
     }
 
 	@Listener
-    public void onMainSecUse(InteractItemEvent.Secondary.MainHand event, @First Player player)
+    public void onMainSecUse(InteractItemEvent.Secondary.MainHand event, @Root Player player)
 	{
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
@@ -107,7 +113,7 @@ public class EventListener
     }
 
 	@Listener
-    public void onSecOffHandUse(InteractItemEvent.Secondary.OffHand event, @First Player player)
+    public void onSecOffHandUse(InteractItemEvent.Secondary.OffHand event, @Root Player player)
 	{
 		if(player.hasPermission(Reference.USE) || !Reference.use_perm)
 		{
@@ -115,8 +121,44 @@ public class EventListener
             event.setCancelled(handUse(player, stack, 'o'));
 		}
     }
-	
-	/*Not Implemented Yet '6.0.0'
-	@Listener
-	public void onDeathHarvest(HarvestEntityEvent.TargetPlayer event, @First Player player){}*/
+
+   @Listener
+   public void onDropItem(final DropItemEvent.Destruct event, @Root Player player) {
+
+	    if(player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
+
+            final List<? extends Entity> soulboundItems = event.filterEntities(entity ->
+                    !(entity instanceof Item) || !isSoulbound((Item) entity, player));
+
+            soulboundItems.stream()
+                    .map(Item.class::cast)
+                    .map(Item::item)
+                    .map(BaseValue::get)
+                    .map(ItemStackSnapshot::createStack)
+                    .forEach(itemStack -> player.getInventory().offer(itemStack)
+                    );
+        }
+   }
+
+        private boolean isSoulbound(Item e, Player player) {
+            final ItemStack stack = e.item().get().createStack();
+                if ((stack.get(Keys.ITEM_LORE).isPresent()))
+                {
+                    for (Text t : getLore(stack))
+                    {
+                        System.out.println("Checking for loop for soulbound");
+                        if(t.toPlain().equals("Bound to: none"))
+                            return false;
+                        else if (t.toPlain().startsWith("UUID: "))
+                        {
+                            String UUID = t.toPlain().substring(6);
+                            return UUID.equals(player.getUniqueId().toString());
+                        }
+                        if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain()))
+                            return false;
+
+                    }
+                }
+            return false;
+        }
 }

@@ -24,7 +24,7 @@ public class Reference
 	 public static final String PICKUP = "soulbound.user.pickup";
 	 public static final String USE = "soulbound.user.use";
 	 public static final String EQUIP = "soulbound.user.equip";
-	 static final String KEEP_ON_DEATH = "soulbound.user.keep";
+	 public static final String KEEP_ON_DEATH = "soulbound.user.keep";
 	 //admins
 	 static final String HELP = "soulbound.admin.help";
 	 static final String ADD_LIST = "soulbound.admin.addlist";
@@ -35,11 +35,11 @@ public class Reference
 	 //Plugin config data
 	 public static List<String> sb_pickup = new ArrayList<>();
 	 public static List<String> sb_use = new ArrayList<>();
-	 public static List<String> sb_equip = new ArrayList<>();
+	 //public static List<String> sb_equip = new ArrayList<>();
 	 public static boolean pickup_perm;
 	 public static boolean use_perm;
-	 public static boolean equip_perm;
-	 //static boolean keep_perm;
+	 //public static boolean equip_perm;
+	 public static boolean keep_perm;
 
     static boolean addToList(String id, int index)
 	{
@@ -56,14 +56,14 @@ public class Reference
 				return false;
 			sb_use.add(id);
 			SBConfig.saveToFile();
-			return true;
-		case 2: //equip
+			return true;}
+		/*case 2: //equip
 			if(sb_equip.contains(id))
 				return false;
 			sb_equip.add(id);
 			SBConfig.saveToFile();
 			return true;
-		}
+		}*/
 		return false;
 	}
 	
@@ -87,14 +87,14 @@ public class Reference
 				return true;
 			}
 			return false;
-		case 2://equip
+		/*case 2://equip
 			if(sb_equip.contains(id))
 			{
 				sb_equip.remove(id);
 				SBConfig.saveToFile();
 				return true;
 			}
-			return false;
+			return false;*/
 		}
 		return false;
 	}
