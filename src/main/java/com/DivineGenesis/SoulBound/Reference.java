@@ -1,4 +1,4 @@
-package com.DivineGenesis.SoulBound;
+package com.divinegenesis.soulbound;
 
 import java.util.ArrayList;
 import java.util.List;

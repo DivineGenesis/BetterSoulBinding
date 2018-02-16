@@ -1,4 +1,4 @@
-package com.DivineGenesis.SoulBound;
+package com.divinegenesis.soulbound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-import static com.DivineGenesis.SoulBound.Reference.*;
+import static com.divinegenesis.soulbound.Reference.*;
 
 public class CmdLoader
 {

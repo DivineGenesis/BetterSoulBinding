@@ -1,6 +1,6 @@
- package com.DivineGenesis.SoulBound;
+ package com.divinegenesis.soulbound;
 
-import static com.DivineGenesis.SoulBound.Reference.*;
+import static com.divinegenesis.soulbound.Reference.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
