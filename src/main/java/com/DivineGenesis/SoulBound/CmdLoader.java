@@ -1,4 +1,4 @@
-package com.divinegenesis.soulbound;
+package com.DivineGenesis.SoulBound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +20,20 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-import static com.divinegenesis.soulbound.Reference.*;
+
+import static com.DivineGenesis.SoulBound.Reference.*;
 
 public class CmdLoader
 {
+	String craftType = "pickup|use|craft";
+
     private CommandSpec addConfig = CommandSpec.builder()//Possibly allow for more than 1 choice or all in the future!
             .description(Text.of("Adds items to soulbind into config")).executor( this::add_list ).arguments(GenericArguments.onlyOne(GenericArguments
-            .string(Text.of("id")))).permission(ADD_LIST).build();
+            .string(Text.of(craftType)))).permission(ADD_LIST).build();
 
     private CommandSpec removeConfig = CommandSpec.builder()
     		.description(Text.of("Removes items to soulbind from the config")).executor( this::remove_list ).arguments(GenericArguments.onlyOne(GenericArguments
-    		.string(Text.of("id")))).permission(REMOVE_LIST).build();
+    		.string(Text.of(craftType)))).permission(REMOVE_LIST).build();
         
     private CommandSpec addSB = CommandSpec.builder()
             .description(Text.of("Binds the item to the player holding it")).executor(this::add_sb).permission(ADD_SB).build();
@@ -74,7 +77,8 @@ public class CmdLoader
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
-				String arg = args.getOne("id").get().toString();
+
+				String arg = args.getOne(craftType).get().toString();
         		
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
         		{
@@ -82,7 +86,9 @@ public class CmdLoader
                     listFunction(arg,'a',src,id,"added");
         		}
                 else
-                    src.sendMessage(Text.of(TextColors.DARK_RED, "INVALID ARGUMENTS: ", TextColors.GOLD, "pickup|use|equip"));
+
+                    src.sendMessage(Text.of(TextColors.DARK_RED, "INVALID ARGUMENTS: ", TextColors.GOLD, craftType));
+
         	}
         	return CommandResult.success();
         }
@@ -91,14 +97,15 @@ public class CmdLoader
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
-        		String arg = args.getOne("id").get().toString();
+
+        		String arg = args.getOne(craftType).get().toString();
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
         		{
         			String id = getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
         			listFunction(arg,'r',src,id,"removed");
         		}
                 else
-                    src.sendMessage(Text.of(TextColors.DARK_RED, "INVALID ARGUMENTS: ", TextColors.GOLD, "pickup|use|equip"));
+                    src.sendMessage(Text.of(TextColors.DARK_RED, "INVALID ARGUMENTS: ", TextColors.GOLD, craftType));
         	}
         	return CommandResult.success();
         }
@@ -134,19 +141,21 @@ public class CmdLoader
                 else errorMessage(src,id,"doesn't","use");
             }
 		}
-		if(arg.equalsIgnoreCase("equip"))
+		if(arg.equalsIgnoreCase("craft"))
 		{
             if(type=='a')
             {
                 if(addToList(id,2))
-                    mailMan(src,action,id,"equip");
-                else errorMessage(src,id,"already","equip");
+
+                    mailMan(src,action,id,"craft");
+                else errorMessage(src,id,"already","craft");
             }
             else if(type == 'r')
             {
                 if(removeFromList(id,2))
-                    mailMan(src,action,id,"equip");
-                else errorMessage(src,id,"doesn't","equip");
+
+                    mailMan(src,action,id,"craft");
+                else errorMessage(src,id,"doesn't","craft");
             }
 		}
 	}

@@ -1,4 +1,6 @@
-package com.divinegenesis.soulbound;
+
+package com.DivineGenesis.SoulBound;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,9 @@ public class Reference
 //@Plugin data parameters
 	static final String NAME = "Soulbound";
 	static final String ID = "soulbound";
-	static final String VERSION = "0.9.0";
+
+	static final String VERSION = "0.10.1";
+
 	static final String DESC = "Binds items to the users soul!";
 	static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
@@ -23,8 +27,10 @@ public class Reference
 	//users
 	 public static final String PICKUP = "soulbound.user.pickup";
 	 public static final String USE = "soulbound.user.use";
-	 public static final String EQUIP = "soulbound.user.equip";
+
 	 public static final String KEEP_ON_DEATH = "soulbound.user.keep";
+	 public static final String CRAFT = "soulbound.user.craft";
+
 	 //admins
 	 static final String HELP = "soulbound.admin.help";
 	 static final String ADD_LIST = "soulbound.admin.addlist";
@@ -36,9 +42,13 @@ public class Reference
 	 public static List<String> sb_pickup = new ArrayList<>();
 	 public static List<String> sb_use = new ArrayList<>();
 	 //public static List<String> sb_equip = new ArrayList<>();
+
+	 public static List<String> sb_craft = new ArrayList<>();
 	 public static boolean pickup_perm;
 	 public static boolean use_perm;
 	 //public static boolean equip_perm;
+	 public static boolean craft_perm;
+
 	 public static boolean keep_perm;
 
     static boolean addToList(String id, int index)
@@ -51,13 +61,23 @@ public class Reference
 			sb_pickup.add(id);
 			SBConfig.saveToFile();
 			return true;
-		case 1: //use
-			if (sb_use.contains(id)) 
-				return false;
-			sb_use.add(id);
-			SBConfig.saveToFile();
-			return true;}
-		/*case 2: //equip
+
+			case 1: //use
+				if (sb_use.contains(id))
+					return false;
+				sb_use.add(id);
+				SBConfig.saveToFile();
+			return true;
+
+			case 2: //Craft
+				if(sb_craft.contains(id))
+					return false;
+				sb_craft.add(id);
+				SBConfig.saveToFile();
+				return true;
+			}
+		/*case 3: //equip
+
 			if(sb_equip.contains(id))
 				return false;
 			sb_equip.add(id);
@@ -87,7 +107,16 @@ public class Reference
 				return true;
 			}
 			return false;
-		/*case 2://equip
+
+			case 2: //Craft
+				if(sb_craft.contains(id))
+				{
+					sb_craft.remove(id);
+					SBConfig.saveToFile();
+					return true;
+				}
+		/*case 3://equip
+
 			if(sb_equip.contains(id))
 			{
 				sb_equip.remove(id);
@@ -110,10 +139,15 @@ public class Reference
 		DataContainer container = stack.toContainer();
 		DataQuery data = DataQuery.of('/', "UnsafeDamage");
 		int meta = Integer.parseInt(container.get(data).get().toString());
-		if(meta != 0 && stack.getValue(Keys.UNBREAKABLE).get().get())
-		{
-			ID = ID+":"+meta;
-		}
+
+		if(meta != 0 && stack.getValue(Keys.UNBREAKABLE).isPresent()){
+			if(stack.getValue(Keys.UNBREAKABLE).get().get())
+			{
+				ID += ":"+meta;
+			}
+		} else
+			System.out.println("Broke");
+
 		return ID;
 	}
 }
