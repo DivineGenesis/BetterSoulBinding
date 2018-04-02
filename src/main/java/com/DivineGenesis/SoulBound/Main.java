@@ -1,3 +1,4 @@
+
 package com.DivineGenesis.SoulBound;
 
 import com.DivineGenesis.SoulBound.EventListeners.EventListener;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.DefaultConfig;
+
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -20,11 +22,13 @@ import com.google.inject.Inject;
 import java.io.File;
 import static com.DivineGenesis.SoulBound.Reference.*;
 
+
 @Plugin(name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS)
 public class Main 
 {
 	private static SBConfig config;
     
+
     @Inject
     public Main(Logger logger, Game game, @DefaultConfig(sharedRoot = false) File defaultCfg, 
     		@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> cfgMgr) 

@@ -1,12 +1,16 @@
+
  package com.DivineGenesis.SoulBound;
 
 import static com.DivineGenesis.SoulBound.Reference.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
+
 import org.spongepowered.api.item.ItemType;
+
 import org.spongepowered.api.item.ItemTypes;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -49,6 +53,7 @@ public class SBConfig
         return game;
     }
 
+
     private static String use = "Bind Upon Use";
     private static String pickup = "Bind Upon Pickup";
     private static String craft = "Bind Upon Craft";
@@ -57,14 +62,17 @@ public class SBConfig
     private static String itemCraft = ItemTypes.DIAMOND_HELMET.getId();
 
 
+
     static void saveToFile()
     {
     	try 
     	{
 			cfg = getCfgMgr().load();
+
 			cfg.getNode(use).setValue(Reference.sb_use);
 			cfg.getNode(pickup).setValue(Reference.sb_pickup);
 			cfg.getNode(craft).setValue(Reference.sb_craft);
+
 			getCfgMgr().save(cfg);
 		}
     	catch (IOException e) 
@@ -81,6 +89,7 @@ public class SBConfig
         	cfg = getCfgMgr().load();
 
 
+
             String useEn = "Use-Enabled";
             String pickupEn = "Pickup-Enabled";
             String keepEn = "KeepUponDeath-Enabled";
@@ -90,10 +99,12 @@ public class SBConfig
 
 
             if (!defaultCfg.exists())
+
             {
                 getLogger().info("Config not yet created... Don't worry, we got that covered!\nCreating config...");
                 defaultCfg.createNewFile();
                 cfg = getCfgMgr().load();
+
 
                 cfg.getNode(use).setValue(new ArrayList<String>(){{add(itemUse);}});
                 cfg.getNode(pickup).setValue(new ArrayList<String>(){{add(itemPickup);}});
@@ -106,12 +117,14 @@ public class SBConfig
                 cfg.getNode(mod, permCheck, keepEn).setValue(false);
 
 
+
                 getLogger().info("Config created.");
                 getCfgMgr().save(cfg);
             }
             
 				getLogger().info("Saving config data into variables!");
 				
+
 				if(cfg.getNode(use).isVirtual())
 					cfg.getNode(use).setValue(new ArrayList<String>(){{add(itemUse);}});
 				sb_use = cfg.getNode(use).getList(TypeToken.of(String.class));
@@ -143,6 +156,7 @@ public class SBConfig
             	if(cfg.getNode(mod, permCheck, keepEn).isVirtual())
             		cfg.getNode(mod, permCheck, keepEn).setValue(false);
             	keep_perm = cfg.getNode(mod, permCheck, keepEn).getBoolean();
+
             	
             	getCfgMgr().save(cfg);
             	getLogger().info("Yay! Data was saved :D");

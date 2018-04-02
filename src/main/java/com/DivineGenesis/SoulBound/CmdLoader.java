@@ -20,6 +20,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
+
 import static com.DivineGenesis.SoulBound.Reference.*;
 
 public class CmdLoader
@@ -76,6 +77,7 @@ public class CmdLoader
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
+
 				String arg = args.getOne(craftType).get().toString();
         		
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
@@ -84,7 +86,9 @@ public class CmdLoader
                     listFunction(arg,'a',src,id,"added");
         		}
                 else
+
                     src.sendMessage(Text.of(TextColors.DARK_RED, "INVALID ARGUMENTS: ", TextColors.GOLD, craftType));
+
         	}
         	return CommandResult.success();
         }
@@ -93,6 +97,7 @@ public class CmdLoader
         	if(src instanceof Player)
         	{
         		Player player = (Player) src;
+
         		String arg = args.getOne(craftType).get().toString();
         		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
         		{
@@ -141,12 +146,14 @@ public class CmdLoader
             if(type=='a')
             {
                 if(addToList(id,2))
+
                     mailMan(src,action,id,"craft");
                 else errorMessage(src,id,"already","craft");
             }
             else if(type == 'r')
             {
                 if(removeFromList(id,2))
+
                     mailMan(src,action,id,"craft");
                 else errorMessage(src,id,"doesn't","craft");
             }
