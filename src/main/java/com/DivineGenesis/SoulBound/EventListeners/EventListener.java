@@ -32,8 +32,11 @@ public class EventListener
         {
             ItemStack stack = event.getTargetEntity().item().get().createStack();
             List<Text> itemLore = new ArrayList<>();
-            String id = getID(stack);
-                if ((stack.get(Keys.ITEM_LORE).isPresent())) 
+            
+            if(!stack.isEmpty())
+            {
+            	String id = getID(stack);
+            	if ((stack.get(Keys.ITEM_LORE).isPresent())) 
                 {
                     for (Text t : getLore(stack)) 
                     {
@@ -65,6 +68,7 @@ public class EventListener
                     loreAdd(itemLore, player, stack);
                     event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                 }
+            }
         }
     }
 /*
