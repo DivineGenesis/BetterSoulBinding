@@ -18,7 +18,7 @@ public class Reference
 	static final String NAME = "Soulbound";
 	static final String ID = "soulbound";
 
-	static final String VERSION = "0.10.1";
+	static final String VERSION = "0.10.2";
 
 	static final String DESC = "Binds items to the users soul!";
 	static final String AUTHORS = "DrZoddiak & Burpingdog1";
@@ -135,19 +135,16 @@ public class Reference
 
 	public static String getID(ItemStack stack)
 	{
-		@SuppressWarnings("deprecation") String ID = stack.getItem().getId();
+		String ID = stack.getType().getId();
 		DataContainer container = stack.toContainer();
 		DataQuery data = DataQuery.of('/', "UnsafeDamage");
 		int meta = Integer.parseInt(container.get(data).get().toString());
-
 		if(meta != 0 && stack.getValue(Keys.UNBREAKABLE).isPresent()){
 			if(stack.getValue(Keys.UNBREAKABLE).get().get())
 			{
 				ID += ":"+meta;
 			}
-		} else
-			System.out.println("Broke");
-
+		}
 		return ID;
 	}
 }

@@ -106,19 +106,15 @@ public void onHandUse(InteractItemEvent event, @Root Player player)
 public void onCraft(CraftItemEvent.Preview event, @Root Player player){
     if((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)){
         if(!event.getPreview().getFinal().isEmpty()) {
-            System.out.println("Item there");
             ItemStack stack = event.getPreview().getFinal().createStack();
             String id = getID(stack);
-            System.out.println("Set ID " +id);
             if (Reference.sb_craft.contains(id)) {
-                System.out.println("Contains ID " + id);
                 List<Text> itemLore = new ArrayList<>();
                 loreAdd(itemLore, player, stack);
                 event.getPreview().setCustom(stack);
             }
         }
     }
-    System.out.println("Event fired");
 }
 
    @Listener
