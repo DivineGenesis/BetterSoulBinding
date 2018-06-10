@@ -118,7 +118,7 @@ public void onCraft(CraftItemEvent.Preview event, @Root Player player){
 }
 
    @Listener
-   public void onDeath(final DropItemEvent.Destruct event, @Root Player player) {
+   public void onDeath(final DropItemEvent.Destruct event, @First Player player) {
 
 	    if(player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
 

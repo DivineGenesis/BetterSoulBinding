@@ -18,7 +18,7 @@ public class Reference
 	static final String NAME = "Soulbound";
 	static final String ID = "soulbound";
 
-	static final String VERSION = "0.10.2";
+	static final String VERSION = "0.10.3";
 
 	static final String DESC = "Binds items to the users soul!";
 	static final String AUTHORS = "DrZoddiak & Burpingdog1";
