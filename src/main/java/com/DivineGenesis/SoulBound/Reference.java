@@ -1,6 +1,4 @@
-
 package com.DivineGenesis.SoulBound;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +8,6 @@ import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
-
 
 public class Reference
 {
@@ -51,10 +48,8 @@ public class Reference
 
 	 public static boolean keep_perm;
 
-    static boolean addToList(String id, int index)
-	{
-		switch (index)
-		{
+    static boolean addToList(String id, int index) {
+		switch (index) {
 		case 0: //pick up
 			if(sb_pickup.contains(id))
 				return false;
@@ -87,21 +82,17 @@ public class Reference
 		return false;
 	}
 	
-	static boolean removeFromList(String id, int index)
-	{
-		switch (index)
-		{
+	static boolean removeFromList(String id, int index) {
+		switch (index) {
 		case 0: //pickup
-			if(sb_pickup.contains(id))
-			{
+			if(sb_pickup.contains(id)) {
 				sb_pickup.remove(id);
 				SBConfig.saveToFile();
 				return true;
 			}
 			return false;
 		case 1://use
-			if(sb_use.contains(id))
-			{
+			if(sb_use.contains(id)) {
 				sb_use.remove(id);
 				SBConfig.saveToFile();
 				return true;
@@ -109,8 +100,7 @@ public class Reference
 			return false;
 
 			case 2: //Craft
-				if(sb_craft.contains(id))
-				{
+				if(sb_craft.contains(id)) {
 					sb_craft.remove(id);
 					SBConfig.saveToFile();
 					return true;
@@ -133,15 +123,13 @@ public class Reference
         return stack.get(Keys.ITEM_LORE).get();
     }
 
-	public static String getID(ItemStack stack)
-	{
+	public static String getID(ItemStack stack) {
 		String ID = stack.getType().getId();
 		DataContainer container = stack.toContainer();
 		DataQuery data = DataQuery.of('/', "UnsafeDamage");
 		int meta = Integer.parseInt(container.get(data).get().toString());
 		if(meta != 0 && stack.getValue(Keys.UNBREAKABLE).isPresent()){
-			if(stack.getValue(Keys.UNBREAKABLE).get().get())
-			{
+			if(stack.getValue(Keys.UNBREAKABLE).get().get()) {
 				ID += ":"+meta;
 			}
 		}

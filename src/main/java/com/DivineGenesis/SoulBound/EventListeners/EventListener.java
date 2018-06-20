@@ -3,10 +3,7 @@ package com.DivineGenesis.SoulBound.EventListeners;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.DivineGenesis.SoulBound.Reference;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.type.HandType;
-import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
@@ -19,52 +16,40 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
 
+import com.DivineGenesis.SoulBound.Reference;
 import static com.DivineGenesis.SoulBound.EventListeners.EventUtils.*;
 import static com.DivineGenesis.SoulBound.Reference.getLore;
 import static com.DivineGenesis.SoulBound.Reference.getID;
 
-public class EventListener
-{
+public class EventListener {
 	@Listener
-    public void onPickup(ChangeInventoryEvent.Pickup.Pre event, @First Player player)
-	{
-        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) 
-        {
+    public void onPickup(ChangeInventoryEvent.Pickup.Pre event, @First Player player) {
+        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
             ItemStack stack = event.getTargetEntity().item().get().createStack();
             List<Text> itemLore = new ArrayList<>();
             
-            if(!stack.isEmpty())
-            {
+            if(!stack.isEmpty()) {
             	String id = getID(stack);
-            	if ((stack.get(Keys.ITEM_LORE).isPresent())) 
-                {
-                    for (Text t : getLore(stack)) 
-                    {
-                    	if(t.toPlain().equals("Bound to: none"))
-                    	{
+            	if ((stack.get(Keys.ITEM_LORE).isPresent())) {
+                    for (Text t : getLore(stack)) {
+                    	if(t.toPlain().equals("Bound to: none")) {
                     		loreAdd(itemLore, player, stack);
                     		event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                     		break;
-                    	}
-                    	else if (t.toPlain().startsWith("UUID: ")) 
-                        {
+                    	} else if (t.toPlain().startsWith("UUID: ")) {
                             String UUID = t.toPlain().substring(6);
-                            if (!UUID.equals(player.getUniqueId().toString())) 
-                            {
+                            if (!UUID.equals(player.getUniqueId().toString())) {
                                 errorMessage(player);
                                 event.setCancelled(true);
                             }
                             break;
                         }
-                        if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) 
-                        {
+                        if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) {
                             loreAdd(itemLore, player, stack);
                             event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                         }
                     }
-                }
-                else if (Reference.sb_pickup.contains(id)) 
-                {
+                } else if (Reference.sb_pickup.contains(id)) {
                     loreAdd(itemLore, player, stack);
                     event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                 }
@@ -85,37 +70,35 @@ public class EventListener
             }
         }
 */
-@Listener
-public void onHandUse(InteractItemEvent event, @Root Player player)
-{
-    if((player.hasPermission(Reference.USE) || !Reference.use_perm))
-    {
-        char hand;
+    @Listener
+    public void onHandUse(InteractItemEvent event, @Root Player player) {
+        if((player.hasPermission(Reference.USE) || !Reference.use_perm)) {
+            char hand;
 
-        if(event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
-            hand = 'm';
-        else
-            hand = 'o';
+            if(event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
+                hand = 'm';
+            else
+                hand = 'o';
 
-        ItemStack stack = event.getItemStack().createStack();
-        event.setCancelled(handUse(player, stack, hand));
+            ItemStack stack = event.getItemStack().createStack();
+            event.setCancelled(handUse(player, stack, hand));
+        }
     }
-}
 
-@Listener
-public void onCraft(CraftItemEvent.Preview event, @Root Player player){
-    if((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)){
-        if(!event.getPreview().getFinal().isEmpty()) {
-            ItemStack stack = event.getPreview().getFinal().createStack();
-            String id = getID(stack);
-            if (Reference.sb_craft.contains(id)) {
-                List<Text> itemLore = new ArrayList<>();
-                loreAdd(itemLore, player, stack);
-                event.getPreview().setCustom(stack);
+    @Listener
+    public void onCraft(CraftItemEvent.Preview event, @Root Player player) {
+        if((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)) {
+            if(!event.getPreview().getFinal().isEmpty()) {
+                ItemStack stack = event.getPreview().getFinal().createStack();
+                String id = getID(stack);
+                if (Reference.sb_craft.contains(id)) {
+                    List<Text> itemLore = new ArrayList<>();
+                    loreAdd(itemLore, player, stack);
+                    event.getPreview().setCustom(stack);
+                }
             }
         }
     }
-}
 
    @Listener
    public void onDeath(final DropItemEvent.Destruct event, @First Player player) {
@@ -130,10 +113,7 @@ public void onCraft(CraftItemEvent.Preview event, @Root Player player){
                     .map(Item::item)
                     .map(BaseValue::get)
                     .map(ItemStackSnapshot::createStack)
-                    .forEach(itemStack -> player.getInventory().offer(itemStack)
-                    );
+                    .forEach(itemStack -> player.getInventory().offer(itemStack));
         }
    }
-
-
 }

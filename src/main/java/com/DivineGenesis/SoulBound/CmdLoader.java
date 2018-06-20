@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -20,12 +21,10 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
-
 import static com.DivineGenesis.SoulBound.Reference.*;
 
-public class CmdLoader
-{
-	String craftType = "pickup|use|craft";
+public class CmdLoader {
+	private String craftType = "pickup|use|craft";
 
     private CommandSpec addConfig = CommandSpec.builder()//Possibly allow for more than 1 choice or all in the future!
             .description(Text.of("Adds items to soulbind into config")).executor( this::add_list ).arguments(GenericArguments.onlyOne(GenericArguments
@@ -51,8 +50,7 @@ public class CmdLoader
                 .child(removeSB, "removeSB")
                 .build();
         
-        private CommandResult help(CommandSource src, CommandContext args) throws CommandException
-        {
+        private CommandResult help(CommandSource src, CommandContext args) throws CommandException {
             List<Text> commandHelp = Lists.newArrayList();
         	commandHelp.add(helpTextStructure("addConfig","Adds items to allow soulbinding into config!"));
 			commandHelp.add(helpTextStructure("removeConfig","Removes items from the config!"));
@@ -66,22 +64,18 @@ public class CmdLoader
 					.sendTo(src);
         	return CommandResult.success();
         }
-	private Text helpTextStructure(String command, String reason)
-	{
+	private Text helpTextStructure(String command, String reason) {
 		return Text.of(TextColors.GREEN, Text.builder(command).onClick(TextActions.suggestCommand("/sb "+command)),
 				TextColors.GRAY,TextStyles.ITALIC," - ", reason);
 	}
         
-        private CommandResult add_list(CommandSource src, CommandContext args) throws CommandException
-        {
-        	if(src instanceof Player)
-        	{
+        private CommandResult add_list(CommandSource src, CommandContext args) throws CommandException {
+        	if(src instanceof Player) {
         		Player player = (Player) src;
 
 				String arg = args.getOne(craftType).get().toString();
         		
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
-        		{
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals("")) {
         			String id = getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
                     listFunction(arg,'a',src,id,"added");
         		}
@@ -92,15 +86,12 @@ public class CmdLoader
         	}
         	return CommandResult.success();
         }
-		private CommandResult remove_list(CommandSource src, CommandContext args) throws CommandException
-        {
-        	if(src instanceof Player)
-        	{
+		private CommandResult remove_list(CommandSource src, CommandContext args) throws CommandException {
+        	if(src instanceof Player) {
         		Player player = (Player) src;
 
         		String arg = args.getOne(craftType).get().toString();
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals(""))
-        		{
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals("")) {
         			String id = getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
         			listFunction(arg,'r',src,id,"removed");
         		}
@@ -111,47 +102,35 @@ public class CmdLoader
         }
 	private void listFunction(String arg, char type,CommandSource src, String id, String action){
 
-        if(arg.equalsIgnoreCase("pickup")) 
-        {
-			if(type=='a')
-			{
+        if(arg.equalsIgnoreCase("pickup")) {
+			if(type=='a') {
 				if(addToList(id,0))
 					mailMan(src,action,id,"pickup");
                 else errorMessage(src,id,"already","use");
-			}
-			else if(type == 'r')
-			{
+			} else if(type == 'r') {
 			    if(removeFromList(id,0))
                     mailMan(src,action,id,"pickup");
                 else errorMessage(src,id,"doesn't","pickup");
             }
         }
-		if(arg.equalsIgnoreCase("use"))
-		{
-            if(type=='a')
-            {
+		if(arg.equalsIgnoreCase("use")) {
+            if(type=='a') {
                 if(addToList(id,1))
                     mailMan(src,action,id,"use");
                 else errorMessage(src,id,"already","use");
-            }
-            else if(type == 'r')
-            {
+            } else if(type == 'r') {
                 if(removeFromList(id,1))
                     mailMan(src,action,id,"use");
                 else errorMessage(src,id,"doesn't","use");
             }
 		}
-		if(arg.equalsIgnoreCase("craft"))
-		{
-            if(type=='a')
-            {
+		if(arg.equalsIgnoreCase("craft")) {
+            if(type=='a') {
                 if(addToList(id,2))
 
                     mailMan(src,action,id,"craft");
                 else errorMessage(src,id,"already","craft");
-            }
-            else if(type == 'r')
-            {
+            } else if(type == 'r') {
                 if(removeFromList(id,2))
 
                     mailMan(src,action,id,"craft");
@@ -159,23 +138,19 @@ public class CmdLoader
             }
 		}
 	}
-	private static void mailMan(CommandSource src, String action, String id, String type)
-	{
+	private static void mailMan(CommandSource src, String action, String id, String type) {
 		src.sendMessage(Text.of(TextColors.GREEN, "Succesfully ",action,' ', TextColors.WHITE, id,TextColors.GREEN," to/from the ", type, " list!"));
 	}
-	private static void errorMessage(CommandSource src,String id,String exist,String configType)
-	{
+	private static void errorMessage(CommandSource src,String id,String exist,String configType) {
         src.sendMessage(Text.of(Text.of(TextColors.RED,id, exist, " exist(s) in the ", configType," list!")));
 	}
 
-        private CommandResult add_sb(CommandSource src, CommandContext args) throws CommandException
-        {//Allow user to select user to add to item in future?
-        	if(src instanceof Player)
-        	{
+        private CommandResult add_sb(CommandSource src, CommandContext args) throws CommandException {
+        	//Allow user to select user to add to item in future?
+        	if(src instanceof Player) {
         		Player player = (Player) src;
         		
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
-        		{
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
         			ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
         			List<Text> loreList = new ArrayList<>();
         			loreList.add(Text.of("Bound to: none"));
@@ -186,31 +161,24 @@ public class CmdLoader
         	return CommandResult.success();
         }
         
-        private CommandResult remove_sb(CommandSource src, CommandContext args) throws CommandException
-        {
-        	if(src instanceof Player)
-        	{
+        private CommandResult remove_sb(CommandSource src, CommandContext args) throws CommandException {
+        	if(src instanceof Player) {
         		Player player = (Player)src;
         		
-        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent())
-        		{
+        		if(player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
                     ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
 					List<Text> loreList = stack.get(Keys.ITEM_LORE).get();
-                    if(!stack.get(Keys.ITEM_LORE).isPresent())
-                    {
+                    if(!stack.get(Keys.ITEM_LORE).isPresent()) {
                     	player.sendMessage(Text.of(TextColors.DARK_RED, "This item does not contain any lore!"));
                     }
                     else
-                    	for(int i=0; i<getLore(stack).size();i++)
-                    	{
-                    		if(getLore(stack).get(i).toPlain().startsWith("Bound to:"))
-                    		{
+                    	for(int i=0; i<getLore(stack).size();i++) {
+                    		if(getLore(stack).get(i).toPlain().startsWith("Bound to:")) {
                     			loreList.remove(i);
                     			stack.offer(Keys.ITEM_LORE, loreList);
                     			player.setItemInHand(HandTypes.MAIN_HAND, stack);
 
-                    			if(getLore(stack).get(i).toPlain().startsWith("UUID:"))
-                    			{
+                    			if(getLore(stack).get(i).toPlain().startsWith("UUID:")) {
                     				loreList.remove(i);
                     				if(loreList.isEmpty())
                     					stack.remove(Keys.ITEM_LORE);
@@ -220,9 +188,7 @@ public class CmdLoader
                     				player.sendMessage(Text.of(TextColors.GREEN, "Item has been successfully unbound!"));
                     			}
                     			break;
-                    		}
-                    		else if(i == loreList.size()-1)
-                    		{
+                    		} else if(i == loreList.size()-1) {
                     			player.sendMessage(Text.of(TextColors.DARK_RED, "This item is not bound to anyone!"));
                     			break;
                     		}
