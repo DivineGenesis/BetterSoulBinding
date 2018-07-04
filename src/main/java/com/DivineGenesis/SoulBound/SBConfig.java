@@ -71,7 +71,6 @@ public class SBConfig {
             List<String> itemType = new ArrayList<>(Arrays.asList(itemUse,itemPickup,itemCraft));
             List<String> enableType= new ArrayList<>(Arrays.asList(useEn,pickupEn,craftEn,keepEn));
             List<List<String>> sbType = new ArrayList<>(Arrays.asList(sb_use,sb_pickup,sb_craft));
-            List<Boolean> boolType = new ArrayList<>(Arrays.asList(use_perm,pickup_perm,craft_perm,keep_perm));
 
             if (!defaultCfg.exists()) {
                 getLogger().info("No configuration file yet? Don't worry, we got that covered!\nCreating config...");
@@ -79,7 +78,7 @@ public class SBConfig {
                 defaultCfg.createNewFile();
                 cfg = getCfgMgr().load();
 
-                for(String i : bindTypes){
+                for(String i : bindTypes) {
                     cfg.getNode(i).setValue(new ArrayList<String>(){{add(i);}});
                 }
 
