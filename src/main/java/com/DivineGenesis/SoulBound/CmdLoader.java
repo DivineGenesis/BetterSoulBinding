@@ -51,7 +51,7 @@ public class CmdLoader {
 			.child(removeSB, "removeSB")
 			.build();
         
-    private CommandResult help(CommandSource src, CommandContext args) throws CommandException {
+    private CommandResult help(CommandSource src, CommandContext args) {
     	List<Text> commandHelp = Lists.newArrayList();
     	commandHelp.add(helpTextStructure("addConfig","Adds items to allow soulbinding into config!"));
     	commandHelp.add(helpTextStructure("removeConfig","Removes items from the config!"));
@@ -70,7 +70,7 @@ public class CmdLoader {
 				TextColors.GRAY,TextStyles.ITALIC," - ", reason);
     }
 
-    private CommandResult add_list(CommandSource src, CommandContext args) throws CommandException {
+    private CommandResult add_list(CommandSource src, CommandContext args) {
     	if(src instanceof Player) {
     		Player player = (Player) src;
     		String arg = args.getOne(craftType).get().toString();
@@ -84,7 +84,7 @@ public class CmdLoader {
     	return CommandResult.success();
     }
 
-    private CommandResult remove_list(CommandSource src, CommandContext args) throws CommandException {
+    private CommandResult remove_list(CommandSource src, CommandContext args) {
     	if(src instanceof Player) {
     		Player player = (Player) src;
 
@@ -120,7 +120,7 @@ public class CmdLoader {
     	src.sendMessage(Text.of(Text.of(TextColors.RED,id, exist, " exist(s) in the ", configType," list!")));
 	}
 
-	private CommandResult add_sb(CommandSource src, CommandContext args) throws CommandException {
+	private CommandResult add_sb(CommandSource src, CommandContext args) {
     	if(src instanceof Player) {
     		Player player = (Player) src;
 
@@ -134,7 +134,7 @@ public class CmdLoader {
     	}
     	return CommandResult.success();
     }
-    private CommandResult remove_sb(CommandSource src, CommandContext args) throws CommandException {
+    private CommandResult remove_sb(CommandSource src, CommandContext args) {
     	if(src instanceof Player) {
     		Player player = (Player) src;
 
@@ -168,4 +168,57 @@ public class CmdLoader {
     	}
     	return CommandResult.success();
     }
+
+	private static boolean addToList(String id, int index) {
+		switch (index) {
+			case 0: //pick up
+				if(sb_pickup.contains(id))
+					return false;
+				sb_pickup.add(id);
+				SBConfig.saveToFile();
+				return true;
+
+			case 1: //use
+				if (sb_use.contains(id))
+					return false;
+				sb_use.add(id);
+				SBConfig.saveToFile();
+				return true;
+
+			case 2: //Craft
+				if(sb_craft.contains(id))
+					return false;
+				sb_craft.add(id);
+				SBConfig.saveToFile();
+				return true;
+		}
+		return false;
+	}
+
+	private static boolean removeFromList(String id, int index) {
+		switch (index) {
+			case 0: //pickup
+				if(sb_pickup.contains(id)) {
+					sb_pickup.remove(id);
+					SBConfig.saveToFile();
+					return true;
+				}
+				return false;
+			case 1://use
+				if(sb_use.contains(id)) {
+					sb_use.remove(id);
+					SBConfig.saveToFile();
+					return true;
+				}
+				return false;
+
+			case 2: //Craft
+				if(sb_craft.contains(id)) {
+					sb_craft.remove(id);
+					SBConfig.saveToFile();
+					return true;
+				}
+		}
+		return false;
+	}
 }

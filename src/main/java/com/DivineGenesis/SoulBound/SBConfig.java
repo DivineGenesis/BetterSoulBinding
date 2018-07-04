@@ -2,6 +2,7 @@ package com.DivineGenesis.SoulBound;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,6 +72,7 @@ public class SBConfig {
             List<String> itemType = new ArrayList<>(Arrays.asList(itemUse,itemPickup,itemCraft));
             List<String> enableType= new ArrayList<>(Arrays.asList(useEn,pickupEn,craftEn,keepEn));
             List<List<String>> sbType = new ArrayList<>(Arrays.asList(sb_use,sb_pickup,sb_craft));
+            List<Boolean> boolType = new ArrayList<>(Arrays.asList(use_perm,pickup_perm,craft_perm,keep_perm));
 
             if (!defaultCfg.exists()) {
                 getLogger().info("No configuration file yet? Don't worry, we got that covered!\nCreating config...");
@@ -78,7 +80,7 @@ public class SBConfig {
                 defaultCfg.createNewFile();
                 cfg = getCfgMgr().load();
 
-                for(String i : bindTypes){
+                for(String i : bindTypes) {
                     cfg.getNode(i).setValue(new ArrayList<String>(){{add(i);}});
                 }
 
@@ -91,18 +93,20 @@ public class SBConfig {
             }
 				getLogger().info("Saving config data into variables!");
 
-                for(int i=0; i < sbType.size(); i++){
-                      if(cfg.getNode(bindTypes.get(i)).isVirtual()) {
-                          int finalI = i;
+            for(int i=0; i < sbType.size(); i++) {
+                List<String> sbTypeList = sbType.get(i);
+                Boolean boolTypeList = boolType.get(i);
+                if(cfg.getNode(bindTypes.get(i)).isVirtual()) {
+                    int finalI = i;
 
-                          cfg.getNode(bindTypes.get(i)).setValue(new ArrayList<String>(){{add(itemType.get(finalI)); }});
-                      }
-                    cfg.getNode(bindTypes.get(i)).getList(TypeToken.of(String.class));
-
-                    if(cfg.getNode(mod, permCheck, enableType.get(i)).isVirtual())
-                        cfg.getNode(mod, permCheck, enableType.get(i)).setValue(false);
-                    cfg.getNode(mod, permCheck, enableType.get(i)).getBoolean();
+                    cfg.getNode(bindTypes.get(i)).setValue(new ArrayList<String>(){{add(itemType.get(finalI)); }});
                 }
+                sbTypeList = cfg.getNode(bindTypes.get(i)).getList(TypeToken.of(String.class));
+
+                if(cfg.getNode(mod, permCheck, enableType.get(i)).isVirtual())
+                    cfg.getNode(mod, permCheck, enableType.get(i)).setValue(false);
+                boolTypeList = cfg.getNode(mod, permCheck, enableType.get(i)).getBoolean();
+            }
 
             	getCfgMgr().save(cfg);
             	getLogger().info("Yay! Data was saved :D");

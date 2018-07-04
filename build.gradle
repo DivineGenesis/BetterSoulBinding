@@ -4,9 +4,10 @@ plugins {
 
 group = pluginGroup
 version = pluginVersion
+sponge.plugin.id = pluginId
 
 dependencies {
     compile 'org.spongepowered:spongeapi:'+ spongeAPIVersion
 }
 
-sponge.plugin.id = pluginId
+

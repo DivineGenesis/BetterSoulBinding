@@ -16,7 +16,6 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
 import com.DivineGenesis.SoulBound.Reference;
 import static com.DivineGenesis.SoulBound.EventListeners.EventUtils.*;
-import static com.DivineGenesis.SoulBound.Reference.getLore;
 import static com.DivineGenesis.SoulBound.Reference.getID;
 
 public class EventListener {
@@ -25,30 +24,12 @@ public class EventListener {
         if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
             ItemStack stack = event.getTargetEntity().item().get().createStack();
             List<Text> itemLore = new ArrayList<>();
-            if(!stack.isEmpty()) {
-            	String id = getID(stack);
-            	if ((stack.get(Keys.ITEM_LORE).isPresent())) {
-                    for (Text t : getLore(stack)) {
-                    	if(t.toPlain().equals("Bound to: none")) {
-                    	    loreAdd(itemLore, player, stack);
-                    		event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
-                    		break;
-                    	} else if (t.toPlain().startsWith("UUID: ")) {
-                    	    String UUID = t.toPlain().substring(6);
-                    	    if (!UUID.equals(player.getUniqueId().toString())) {
-                    	        errorMessage(player);
-                    	        event.setCancelled(true);
-                    	    }
-                    	    break;
-                    	}if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) {
-                            loreAdd(itemLore, player, stack);
-                            event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
-                    	}
-                    }
-                } else if (Reference.sb_pickup.contains(id)) {
-                    loreAdd(itemLore, player, stack);
-                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
-                }
+            if (!isSoulbound(player, stack)) {
+                loreAdd( player,itemLore,stack);
+                event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
+            } else {
+                errorMessage(player);
+                event.setCancelled(true);
             }
         }
     }
@@ -73,7 +54,7 @@ public class EventListener {
                 String id = getID(stack);
                 if (Reference.sb_craft.contains(id)) {
                     List<Text> itemLore = new ArrayList<>();
-                    loreAdd(itemLore, player, stack);
+                    loreAdd(player,itemLore,stack);
                     event.getPreview().setCustom(stack);
                 }
             }
@@ -84,7 +65,7 @@ public class EventListener {
    public void onDeath(final DropItemEvent.Destruct event, @First Player player) {
 	    if(player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
             final List<? extends Entity> soulboundItems = event.filterEntities(entity ->
-                    !(entity instanceof Item) || !isSoulbound((Item) entity, player));
+                    !(entity instanceof Item) || !isSoulbound(player, (Item) entity));
             soulboundItems.stream()
                     .map(Item.class::cast)
                     .map(Item::item)
@@ -92,5 +73,5 @@ public class EventListener {
                     .map(ItemStackSnapshot::createStack)
                     .forEach(itemStack -> player.getInventory().offer(itemStack));
 	    }
-    }
+   }
 }

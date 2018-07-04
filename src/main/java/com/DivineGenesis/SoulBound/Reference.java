@@ -41,59 +41,6 @@ public class Reference
 	 public static boolean craft_perm;
 	 public static boolean keep_perm;
 
-    static boolean addToList(String id, int index) {
-		switch (index) {
-		case 0: //pick up
-			if(sb_pickup.contains(id))
-				return false;
-			sb_pickup.add(id);
-			SBConfig.saveToFile();
-			return true;
-
-			case 1: //use
-				if (sb_use.contains(id))
-					return false;
-				sb_use.add(id);
-				SBConfig.saveToFile();
-			return true;
-
-			case 2: //Craft
-				if(sb_craft.contains(id))
-					return false;
-				sb_craft.add(id);
-				SBConfig.saveToFile();
-				return true;
-			}
-		return false;
-	}
-	
-	static boolean removeFromList(String id, int index) {
-		switch (index) {
-		case 0: //pickup
-			if(sb_pickup.contains(id)) {
-				sb_pickup.remove(id);
-				SBConfig.saveToFile();
-				return true;
-			}
-			return false;
-		case 1://use
-			if(sb_use.contains(id)) {
-				sb_use.remove(id);
-				SBConfig.saveToFile();
-				return true;
-			}
-			return false;
-
-			case 2: //Craft
-				if(sb_craft.contains(id)) {
-					sb_craft.remove(id);
-					SBConfig.saveToFile();
-					return true;
-				}
-		}
-		return false;
-	}
-
     public static List<Text> getLore(ItemStack stack)
     {
         return stack.get(Keys.ITEM_LORE).get();
