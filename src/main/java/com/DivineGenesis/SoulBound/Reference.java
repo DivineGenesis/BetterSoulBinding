@@ -14,9 +14,7 @@ public class Reference
 //@Plugin data parameters
 	static final String NAME = "Soulbound";
 	static final String ID = "soulbound";
-
 	static final String VERSION = "0.10.3";
-
 	static final String DESC = "Binds items to the users soul!";
 	static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
@@ -24,7 +22,6 @@ public class Reference
 	//users
 	 public static final String PICKUP = "soulbound.user.pickup";
 	 public static final String USE = "soulbound.user.use";
-
 	 public static final String KEEP_ON_DEATH = "soulbound.user.keep";
 	 public static final String CRAFT = "soulbound.user.craft";
 
@@ -38,14 +35,10 @@ public class Reference
 	 //Plugin config data
 	 public static List<String> sb_pickup = new ArrayList<>();
 	 public static List<String> sb_use = new ArrayList<>();
-	 //public static List<String> sb_equip = new ArrayList<>();
-
 	 public static List<String> sb_craft = new ArrayList<>();
 	 public static boolean pickup_perm;
 	 public static boolean use_perm;
-	 //public static boolean equip_perm;
 	 public static boolean craft_perm;
-
 	 public static boolean keep_perm;
 
     static boolean addToList(String id, int index) {
@@ -71,14 +64,6 @@ public class Reference
 				SBConfig.saveToFile();
 				return true;
 			}
-		/*case 3: //equip
-
-			if(sb_equip.contains(id))
-				return false;
-			sb_equip.add(id);
-			SBConfig.saveToFile();
-			return true;
-		}*/
 		return false;
 	}
 	
@@ -105,15 +90,6 @@ public class Reference
 					SBConfig.saveToFile();
 					return true;
 				}
-		/*case 3://equip
-
-			if(sb_equip.contains(id))
-			{
-				sb_equip.remove(id);
-				SBConfig.saveToFile();
-				return true;
-			}
-			return false;*/
 		}
 		return false;
 	}
@@ -128,7 +104,7 @@ public class Reference
 		DataContainer container = stack.toContainer();
 		DataQuery data = DataQuery.of('/', "UnsafeDamage");
 		int meta = Integer.parseInt(container.get(data).get().toString());
-		if(meta != 0 && stack.getValue(Keys.UNBREAKABLE).isPresent()){
+		if(meta != 0 && stack.getValue(Keys.UNBREAKABLE).isPresent()) {
 			if(stack.getValue(Keys.UNBREAKABLE).get().get()) {
 				ID += ":"+meta;
 			}

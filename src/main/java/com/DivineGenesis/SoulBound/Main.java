@@ -25,12 +25,11 @@ import static com.DivineGenesis.SoulBound.Reference.*;
 @Plugin(name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS)
 public class Main {
 	private static SBConfig config;
-    
 
     @Inject
-    public Main(Logger logger, Game game, @DefaultConfig(sharedRoot = false) File defaultCfg, 
+    public Main(Logger logger, @DefaultConfig(sharedRoot = false) File defaultCfg,
     		@DefaultConfig(sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> cfgMgr) {
-    	config = new SBConfig(logger, game, defaultCfg, cfgMgr);
+    	config = new SBConfig(logger, defaultCfg, cfgMgr);
     }
 	
     @Listener

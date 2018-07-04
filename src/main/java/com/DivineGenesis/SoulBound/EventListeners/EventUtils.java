@@ -16,7 +16,6 @@ import static com.DivineGenesis.SoulBound.Reference.getLore;
 import static com.DivineGenesis.SoulBound.Reference.getID;
 
 class EventUtils {
-
     static boolean handUse(Player player, ItemStack stack, char hand) {
         String id = getID(stack);
         List<Text> itemLore = new ArrayList<>();
@@ -34,8 +33,7 @@ class EventUtils {
                         return true;
                     }
                     break;
-                }
-                if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) {
+                }if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain())) {
                     itemLore = getLore(stack);
                     loreAdd(itemLore, player, stack);
                     setHand(hand, player, stack);
@@ -77,8 +75,7 @@ class EventUtils {
                 else if (t.toPlain().startsWith("UUID: ")) {
                     String UUID = t.toPlain().substring(6);
                     return UUID.equals(player.getUniqueId().toString());
-                }
-                if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain()))
+                }if (t.toPlain().equals(getLore(stack).get(getLore(stack).size() - 1).toPlain()))
                     return false;
             }
         }
