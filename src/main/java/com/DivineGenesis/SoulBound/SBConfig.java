@@ -78,7 +78,7 @@ public class SBConfig {
                 defaultCfg.createNewFile();
                 cfg = getCfgMgr().load();
 
-                for(String i : bindTypes) {
+                for(String i : bindTypes){
                     cfg.getNode(i).setValue(new ArrayList<String>(){{add(i);}});
                 }
 
