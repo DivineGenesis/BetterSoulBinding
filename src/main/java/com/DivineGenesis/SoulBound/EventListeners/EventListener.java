@@ -20,58 +20,59 @@ import static com.DivineGenesis.SoulBound.Reference.getID;
 
 public class EventListener {
     @Listener
-    public void onPickup(ChangeInventoryEvent.Pickup.Pre event, @First Player player) {
-        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
-            ItemStack stack = event.getTargetEntity().item().get().createStack();
-            List<Text> itemLore = new ArrayList<>();
-            if (!isSoulbound(player, stack)) {
-                loreAdd( player,itemLore,stack);
-                event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
+    public void onPickup (ChangeInventoryEvent.Pickup.Pre event,@First Player player) {
+        if (player.hasPermission (Reference.PICKUP) || !Reference.pickup_perm) {
+            ItemStack stack = event.getTargetEntity ().item ().get ().createStack ();
+            List<Text> itemLore = new ArrayList<> ();
+            if (!isSoulbound (player,stack)) {
+                loreAdd (player,itemLore,stack);
+                event.getTargetEntity ().offer (Keys.REPRESENTED_ITEM,stack.createSnapshot ());
             } else {
-                errorMessage(player);
-                event.setCancelled(true);
+                errorMessage (player);
+                event.setCancelled (true);
             }
-        }
-    }
-    @Listener
-    public void onHandUse(InteractItemEvent event, @Root Player player) {
-        if((player.hasPermission(Reference.USE) || !Reference.use_perm)) {
-            char hand;
-            if(event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
-                hand = 'm';
-            else
-                hand = 'o';
-            ItemStack stack = event.getItemStack().createStack();
-            event.setCancelled(handUse(player, stack, hand));
         }
     }
 
     @Listener
-    public void onCraft(CraftItemEvent.Preview event, @Root Player player) {
-        if((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)) {
-            if(!event.getPreview().getFinal().isEmpty()) {
-                ItemStack stack = event.getPreview().getFinal().createStack();
-                String id = getID(stack);
-                if (Reference.sb_craft.contains(id)) {
-                    List<Text> itemLore = new ArrayList<>();
-                    loreAdd(player,itemLore,stack);
-                    event.getPreview().setCustom(stack);
+    public void onHandUse (InteractItemEvent event,@Root Player player) {
+        if ((player.hasPermission (Reference.USE) || !Reference.use_perm)) {
+            char hand;
+            if (event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
+                hand = 'm';
+            else
+                hand = 'o';
+            ItemStack stack = event.getItemStack ().createStack ();
+            event.setCancelled (handUse (player,stack,hand));
+        }
+    }
+
+    @Listener
+    public void onCraft (CraftItemEvent.Preview event,@Root Player player) {
+        if ((player.hasPermission (Reference.CRAFT) || !Reference.craft_perm)) {
+            if (!event.getPreview ().getFinal ().isEmpty ()) {
+                ItemStack stack = event.getPreview ().getFinal ().createStack ();
+                String id = getID (stack);
+                if (Reference.sb_craft.contains (id)) {
+                    List<Text> itemLore = new ArrayList<> ();
+                    loreAdd (player,itemLore,stack);
+                    event.getPreview ().setCustom (stack);
                 }
             }
         }
     }
 
-   @Listener
-   public void onDeath(final DropItemEvent.Destruct event, @First Player player) {
-	    if(player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
-            final List<? extends Entity> soulboundItems = event.filterEntities(entity ->
-                    !(entity instanceof Item) || !isSoulbound(player, (Item) entity));
-            soulboundItems.stream()
-                    .map(Item.class::cast)
-                    .map(Item::item)
-                    .map(BaseValue::get)
-                    .map(ItemStackSnapshot::createStack)
-                    .forEach(itemStack -> player.getInventory().offer(itemStack));
-	    }
-   }
+    @Listener
+    public void onDeath (final DropItemEvent.Destruct event,@First Player player) {
+        if (player.hasPermission (Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
+            final List<? extends Entity> soulboundItems = event.filterEntities (entity ->
+                    !(entity instanceof Item) || !isSoulbound (player,(Item) entity));
+            soulboundItems.stream ()
+                    .map (Item.class::cast)
+                    .map (Item::item)
+                    .map (BaseValue::get)
+                    .map (ItemStackSnapshot::createStack)
+                    .forEach (itemStack -> player.getInventory ().offer (itemStack));
+        }
+    }
 }
