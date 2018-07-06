@@ -23,28 +23,28 @@ public class Main {
     @Inject
     public Main (Logger logger,@DefaultConfig (sharedRoot = false) File defaultCfg,
                  @DefaultConfig (sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> cfgMgr) {
-        config = new SBConfig (logger,defaultCfg,cfgMgr);
+        config = new SBConfig(logger,defaultCfg,cfgMgr);
     }
 
     @Listener
     public void onPreInit (GamePreInitializationEvent event) {
-        config.configCheck ();
+        config.configCheck();
     }
 
     @Listener
     public void onReload (GameReloadEvent event) {
-        config.configCheck ();
+        config.configCheck();
     }
 
     @Listener
     public void onInit (GameInitializationEvent event) {
-        config.getLogger ().info ("Registering Events & Commands...");
-        Sponge.getEventManager ().registerListeners (this,new EventListener ());
-        Sponge.getCommandManager ().register (this,new CmdLoader ().sb,"sb");
+        config.getLogger().info("Registering Events & Commands...");
+        Sponge.getEventManager().registerListeners(this,new EventListener());
+        Sponge.getCommandManager().register(this,new CmdLoader().sb,"sb");
     }
 
     @Listener
     public void onServerStart (GameStartedServerEvent event) {
-        config.getLogger ().info ("Soulbinding has loaded");
+        config.getLogger().info("Soulbinding has loaded");
     }
 }

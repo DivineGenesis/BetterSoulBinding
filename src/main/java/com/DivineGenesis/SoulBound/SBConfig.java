@@ -39,20 +39,20 @@ public class SBConfig {
 
     static void saveToFile () {
         try {
-            cfg = getCfgMgr ().load ();
+            cfg = getCfgMgr().load();
 
-            cfg.getNode (use).setValue (Reference.sb_use);
-            cfg.getNode (pickup).setValue (Reference.sb_pickup);
-            cfg.getNode (craft).setValue (Reference.sb_craft);
+            cfg.getNode(use).setValue(Reference.sb_use);
+            cfg.getNode(pickup).setValue(Reference.sb_pickup);
+            cfg.getNode(craft).setValue(Reference.sb_craft);
 
-            getCfgMgr ().save (cfg);
+            getCfgMgr().save(cfg);
         } catch (IOException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
     }
 
     void configCheck () {
-        getLogger ().info ("Reloading...\nChecking config...");
+        getLogger().info("Reloading...\nChecking config...");
         try {
             String useEn = "Use-Enabled";
             String pickupEn = "Pickup-Enabled";
@@ -61,57 +61,57 @@ public class SBConfig {
             String permCheck = "Permission-Check";
             String craftEn = "Craft-Enabled";
 
-            String itemUse = ItemTypes.DIAMOND_SWORD.getId ();
-            String itemPickup = ItemTypes.COAL.getId ();
-            String itemCraft = ItemTypes.DIAMOND_HELMET.getId ();
+            String itemUse = ItemTypes.DIAMOND_SWORD.getId();
+            String itemPickup = ItemTypes.COAL.getId();
+            String itemCraft = ItemTypes.DIAMOND_HELMET.getId();
 
-            List<String> bindTypes = new ArrayList<> (Arrays.asList (use,pickup,craft));
-            List<String> itemType = new ArrayList<> (Arrays.asList (itemUse,itemPickup,itemCraft));
-            List<String> enableType = new ArrayList<> (Arrays.asList (useEn,pickupEn,craftEn,keepEn));
-            List<List<String>> sbType = new ArrayList<> (Arrays.asList (sb_use,sb_pickup,sb_craft));
-            List<Boolean> boolType = new ArrayList<> (Arrays.asList (use_perm,pickup_perm,craft_perm,keep_perm));
+            List<String> bindTypes = new ArrayList<>(Arrays.asList(use,pickup,craft));
+            List<String> itemType = new ArrayList<>(Arrays.asList(itemUse,itemPickup,itemCraft));
+            List<String> enableType = new ArrayList<>(Arrays.asList(useEn,pickupEn,craftEn,keepEn));
+            List<List<String>> sbType = new ArrayList<>(Arrays.asList(sb_use,sb_pickup,sb_craft));
+            List<Boolean> boolType = new ArrayList<>(Arrays.asList(use_perm,pickup_perm,craft_perm,keep_perm));
 
-            if (!defaultCfg.exists ()) {
-                getLogger ().info ("No configuration file yet? Don't worry, we got that covered!\nCreating config...");
+            if (!defaultCfg.exists()) {
+                getLogger().info("No configuration file yet? Don't worry, we got that covered!\nCreating config...");
                 //noinspection ResultOfMethodCallIgnored
-                defaultCfg.createNewFile ();
-                cfg = getCfgMgr ().load ();
+                defaultCfg.createNewFile();
+                cfg = getCfgMgr().load();
 
                 for (String i : bindTypes) {
-                    cfg.getNode (i).setValue (new ArrayList<String> () {{
-                        add (i);
+                    cfg.getNode(i).setValue(new ArrayList<String>() {{
+                        add(i);
                     }});
                 }
 
                 for (String i : enableType) {
-                    cfg.getNode (mod,permCheck,i).setValue (false);
+                    cfg.getNode(mod,permCheck,i).setValue(false);
                 }
 
-                getLogger ().info ("Config created.");
-                getCfgMgr ().save (cfg);
+                getLogger().info("Config created.");
+                getCfgMgr().save(cfg);
             }
-            getLogger ().info ("Saving config data into variables!");
+            getLogger().info("Saving config data into variables!");
 
-            for (int i = 0; i < sbType.size (); i++) {
-                List<String> sbTypeList = sbType.get (i);
-                Boolean boolTypeList = boolType.get (i);
-                if (cfg.getNode (bindTypes.get (i)).isVirtual ()) {
+            for (int i = 0; i < sbType.size(); i++) {
+                List<String> sbTypeList = sbType.get(i);
+                Boolean boolTypeList = boolType.get(i);
+                if (cfg.getNode(bindTypes.get(i)).isVirtual()) {
                     int finalI = i;
-                    cfg.getNode (bindTypes.get (i)).setValue (new ArrayList<String> () {{
-                        add (itemType.get (finalI));
+                    cfg.getNode(bindTypes.get(i)).setValue(new ArrayList<String>() {{
+                        add(itemType.get(finalI));
                     }});
                 }
-                sbTypeList = cfg.getNode (bindTypes.get (i)).getList (TypeToken.of (String.class));
+                sbTypeList = cfg.getNode(bindTypes.get(i)).getList(TypeToken.of(String.class));
 
-                if (cfg.getNode (mod,permCheck,enableType.get (i)).isVirtual ())
-                    cfg.getNode (mod,permCheck,enableType.get (i)).setValue (false);
-                boolTypeList = cfg.getNode (mod,permCheck,enableType.get (i)).getBoolean ();
+                if (cfg.getNode(mod,permCheck,enableType.get(i)).isVirtual())
+                    cfg.getNode(mod,permCheck,enableType.get(i)).setValue(false);
+                boolTypeList = cfg.getNode(mod,permCheck,enableType.get(i)).getBoolean();
             }
 
-            getCfgMgr ().save (cfg);
-            getLogger ().info ("Yay! Data was saved :D");
+            getCfgMgr().save(cfg);
+            getLogger().info("Yay! Data was saved :D");
         } catch (Exception e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
     }
 }

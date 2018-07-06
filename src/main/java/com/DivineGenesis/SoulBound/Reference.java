@@ -31,25 +31,25 @@ public class Reference {
 	static final String REMOVE_SB = "soulbound.admin.removesb";
 
 	//Plugin config data
-	public static List<String> sb_pickup = new ArrayList<> ();
-	public static List<String> sb_use = new ArrayList<> ();
-	public static List<String> sb_craft = new ArrayList<> ();
+	public static List<String> sb_pickup = new ArrayList<>();
+	public static List<String> sb_use = new ArrayList<>();
+	public static List<String> sb_craft = new ArrayList<>();
 	public static boolean pickup_perm;
 	public static boolean use_perm;
 	public static boolean craft_perm;
 	public static boolean keep_perm;
 
 	public static List<Text> getLore (ItemStack stack) {
-		return stack.get (Keys.ITEM_LORE).get ();
+		return stack.get(Keys.ITEM_LORE).get();
 	}
 
 	public static String getID (ItemStack stack) {
-		String ID = stack.getType ().getId ();
-		DataContainer container = stack.toContainer ();
-		DataQuery data = DataQuery.of ('/',"UnsafeDamage");
-		int meta = Integer.parseInt (container.get (data).get ().toString ());
-		if (meta != 0 && stack.getValue (Keys.UNBREAKABLE).isPresent ()) {
-			if (stack.getValue (Keys.UNBREAKABLE).get ().get ()) {
+		String ID = stack.getType().getId();
+		DataContainer container = stack.toContainer();
+		DataQuery data = DataQuery.of('/',"UnsafeDamage");
+		int meta = Integer.parseInt(container.get(data).get().toString());
+		if (meta != 0 && stack.getValue(Keys.UNBREAKABLE).isPresent()) {
+			if (stack.getValue(Keys.UNBREAKABLE).get().get()) {
 				ID += ":" + meta;
 			}
 		}
