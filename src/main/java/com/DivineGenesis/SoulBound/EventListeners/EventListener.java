@@ -14,14 +14,16 @@ import org.spongepowered.api.event.item.inventory.*;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
-import com.DivineGenesis.SoulBound.Reference;
-import static com.DivineGenesis.SoulBound.EventListeners.EventUtils.*;
-import static com.DivineGenesis.SoulBound.Reference.getID;
+
+import com.DivineGenesis.SoulBound.CmdLoader;
+import com.DivineGenesis.SoulBound.config.SBConfig;
+
+import static com.DivineGenesis.SoulBound.utils.SBUtil.*;
 
 public class EventListener {
     @Listener
     public void onPickup (ChangeInventoryEvent.Pickup.Pre event,@First Player player) {
-        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
+        if (player.hasPermission(CmdLoader.PICKUP) || !SBConfig.pickup_perm) {
             ItemStack stack = event.getTargetEntity().item().get().createStack();
             List<Text> itemLore = new ArrayList<>();
             if (!isSoulbound(player,stack)) {
@@ -36,7 +38,7 @@ public class EventListener {
 
     @Listener
     public void onHandUse (InteractItemEvent event,@Root Player player) {
-        if ((player.hasPermission(Reference.USE) || !Reference.use_perm)) {
+        if ((player.hasPermission(CmdLoader.USE) || !SBConfig.use_perm)) {
             char hand;
             if (event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
                 hand = 'm';
@@ -49,11 +51,11 @@ public class EventListener {
 
     @Listener
     public void onCraft (CraftItemEvent.Preview event,@Root Player player) {
-        if ((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)) {
+        if ((player.hasPermission(CmdLoader.CRAFT) || !SBConfig.craft_perm)) {
             if (!event.getPreview().getFinal().isEmpty()) {
                 ItemStack stack = event.getPreview().getFinal().createStack();
                 String id = getID(stack);
-                if (Reference.sb_craft.contains(id)) {
+                if (SBConfig.sb_craft.contains(id)) {
                     List<Text> itemLore = new ArrayList<>();
                     loreAdd(player,itemLore,stack);
                     event.getPreview().setCustom(stack);
@@ -64,7 +66,7 @@ public class EventListener {
 
     @Listener
     public void onDeath (final DropItemEvent.Destruct event,@First Player player) {
-        if (player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
+        if (player.hasPermission(CmdLoader.KEEP_ON_DEATH) || !SBConfig.keep_perm) {
             final List<? extends Entity> soulboundItems = event.filterEntities(entity ->
                     !(entity instanceof Item) || !isSoulbound(player,(Item) entity));
             soulboundItems.stream()

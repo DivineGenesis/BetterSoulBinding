@@ -3,6 +3,8 @@ package com.DivineGenesis.SoulBound;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.DivineGenesis.SoulBound.config.SBConfig;
 import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -18,9 +20,24 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import static com.DivineGenesis.SoulBound.Reference.*;
+import static com.DivineGenesis.SoulBound.utils.SBUtil.*;
 
 public class CmdLoader {
+	
+	//Permissions
+		//users
+		public static final String PICKUP = "soulbound.user.pickup";
+		public static final String USE = "soulbound.user.use";
+		public static final String KEEP_ON_DEATH = "soulbound.user.keep";
+		public static final String CRAFT = "soulbound.user.craft";
+
+		//admins
+		static final String HELP = "soulbound.admin.help";
+		static final String ADD_LIST = "soulbound.admin.addlist";
+		static final String REMOVE_LIST = "soulbound.admin.removelist";
+		static final String ADD_SB = "soulbound.admin.addsb";
+		static final String REMOVE_SB = "soulbound.admin.removesb";
+		
     private String craftType = "pickup|use|craft";
 
     private CommandSpec addConfig = CommandSpec.builder()
@@ -178,23 +195,23 @@ public class CmdLoader {
     private static boolean addToList (String id,int index) {
         switch (index) {
             case 0: //pick up
-                if (sb_pickup.contains(id))
+                if (SBConfig.sb_pickup.contains(id))
                     return false;
-                sb_pickup.add(id);
+                SBConfig.sb_pickup.add(id);
                 SBConfig.saveToFile();
                 return true;
 
             case 1: //use
-                if (sb_use.contains(id))
+                if (SBConfig.sb_use.contains(id))
                     return false;
-                sb_use.add(id);
+                SBConfig.sb_use.add(id);
                 SBConfig.saveToFile();
                 return true;
 
             case 2: //Craft
-                if (sb_craft.contains(id))
+                if (SBConfig.sb_craft.contains(id))
                     return false;
-                sb_craft.add(id);
+                SBConfig.sb_craft.add(id);
                 SBConfig.saveToFile();
                 return true;
         }
@@ -204,23 +221,23 @@ public class CmdLoader {
     private static boolean removeFromList (String id,int index) {
         switch (index) {
             case 0:
-                if (sb_pickup.contains(id)) {
-                    sb_pickup.remove(id);
+                if (SBConfig.sb_pickup.contains(id)) {
+                	SBConfig.sb_pickup.remove(id);
                     SBConfig.saveToFile();
                     return true;
                 }
                 return false;
             case 1:
-                if (sb_use.contains(id)) {
-                    sb_use.remove(id);
+                if (SBConfig.sb_use.contains(id)) {
+                	SBConfig.sb_use.remove(id);
                     SBConfig.saveToFile();
                     return true;
                 }
                 return false;
 
             case 2:
-                if (sb_craft.contains(id)) {
-                    sb_craft.remove(id);
+                if (SBConfig.sb_craft.contains(id)) {
+                	SBConfig.sb_craft.remove(id);
                     SBConfig.saveToFile();
                     return true;
                 }

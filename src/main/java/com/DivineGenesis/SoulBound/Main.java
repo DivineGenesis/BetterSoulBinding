@@ -13,11 +13,21 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import com.DivineGenesis.SoulBound.EventListeners.EventListener;
-import static com.DivineGenesis.SoulBound.Reference.*;
 
-@Plugin(name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS)
+import com.DivineGenesis.SoulBound.Messages.Console;
+import com.DivineGenesis.SoulBound.EventListeners.EventListener;
+import com.DivineGenesis.SoulBound.config.SBConfig;
+
+@Plugin(name = Main.NAME, id = Main.ID, version = Main.VERSION, description = Main.DESC, authors = Main.AUTHORS)
 public class Main {
+	
+	//@Plugin params
+	public static final String NAME = "Soulbound";
+	public static final String ID = "soulbound";
+	public static final String VERSION = "0.10.3";
+	public static final String DESC = "Binds items to the users soul!";
+	public static final String AUTHORS = "DrZoddiak & Burpingdog1";
+	
     private static SBConfig config;
 
     @Inject
@@ -28,23 +38,23 @@ public class Main {
 
     @Listener
     public void onPreInit (GamePreInitializationEvent event) {
-        config.configCheck();
+        config.configCheck(false);
     }
 
     @Listener
     public void onReload (GameReloadEvent event) {
-        config.configCheck();
+        config.configCheck(true);
     }
 
     @Listener
     public void onInit (GameInitializationEvent event) {
-        config.getLogger().info("Registering Events & Commands...");
+        config.getLogger().info(Console.REGISTERING);
         Sponge.getEventManager().registerListeners(this,new EventListener());
         Sponge.getCommandManager().register(this,new CmdLoader().sb,"sb");
     }
 
     @Listener
     public void onServerStart (GameStartedServerEvent event) {
-        config.getLogger().info("Soulbinding has loaded");
+        config.getLogger().info(Console.LOADED);
     }
 }
