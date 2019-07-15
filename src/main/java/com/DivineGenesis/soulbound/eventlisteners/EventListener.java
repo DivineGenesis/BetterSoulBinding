@@ -1,38 +1,37 @@
 package com.DivineGenesis.soulbound.eventlisteners;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.time.temporal.ValueRange;
-
 import com.DivineGenesis.soulbound.Main;
 import com.DivineGenesis.soulbound.Reference;
+import com.DivineGenesis.soulbound.data.identity.IdentityData;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.block.tileentity.ChangeSignEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.item.inventory.*;
+import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent;
+import org.spongepowered.api.event.item.inventory.CraftItemEvent;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
+import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.serializer.TextSerializer;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
-import static com.DivineGenesis.soulbound.eventlisteners.EventUtils.*;
-import static com.DivineGenesis.soulbound.Reference.getLore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static com.DivineGenesis.soulbound.Reference.getID;
+import static com.DivineGenesis.soulbound.data.identity.Keys.IDENTITY;
+import static com.DivineGenesis.soulbound.eventlisteners.EventUtils.*;
 
-public class EventListener
-{
-	@Listener
-    public void onPickup(ChangeInventoryEvent.Pickup.Pre event, @First Player player) {
+public class EventListener {
+
+    @Listener
+    public void onPickup (ChangeInventoryEvent.Pickup.Pre event,@First Player player) {
 
         if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
             ItemStack stack = event.getTargetEntity().item().get().createStack();
@@ -40,11 +39,21 @@ public class EventListener
 
             if (!stack.isEmpty()) {
                 String id = getID(stack);
-                //if ((stack.get(Main.IDENTITY).isPresent())) {
-                    String uuidAsString = Main.IDENTITY.toString();
-                    if(UUID.fromString(uuidAsString).equals(player.getUniqueId())) {
-                        player.sendMessage(Text.of("Uhhh"));
-                    }
+                if ((stack.get(IDENTITY).isPresent())) {
+                    player.sendMessage(Text.of("IsPresent"));
+                } else {
+                    player.sendMessage(Text.of("IsNOTPresent\n" ));
+                    player.sendMessage(Text.of(player.getUniqueId().toString()));
+                    itemLore.add(Text.of("\nTest\n"));
+                    stack.offer(Keys.ITEM_LORE,itemLore);
+                    stack.offer(IDENTITY,player.getUniqueId());
+                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM,stack.createSnapshot());
+                }
+                if ((stack.get(Keys.ITEM_LORE).isPresent())) {
+                    player.sendMessage(Text.of("Lore is present"));
+                }
+
+
 /*
                     for (Text t : getLore(stack)) {
                         if (t.toPlain().equals("Bound to: none")) {
@@ -75,70 +84,62 @@ public class EventListener
     }
 
 
+    /*
+    //Waiting implementation Not in API7
 
-/*
-//Waiting implementation Not in API7
-
-        @Listener
-        public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
-        {
-
-            player.sendMessage(Text.of("Equip event fired"));
-            if(player.hasPermission(Reference.EQUIP) || !Reference.equip_perm)
+            @Listener
+            public void onEquip(ChangeInventoryEvent.Equipment event, @First Player player)
             {
 
+                player.sendMessage(Text.of("Equip event fired"));
+                if(player.hasPermission(Reference.EQUIP) || !Reference.equip_perm)
+                {
+
+                }
             }
-        }
-*/
-@Listener
-public void onHandUse(InteractItemEvent event, @Root Player player)
-{
-    if((player.hasPermission(Reference.USE) || !Reference.use_perm))
-    {
-        char hand;
+    */
+    @Listener
+    public void onHandUse (InteractItemEvent event,@Root Player player) {
 
-        if(event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
-            hand = 'm';
-        else
-            hand = 'o';
+        if ((player.hasPermission(Reference.USE) || !Reference.use_perm)) {
+            char hand;
 
-        ItemStack stack = event.getItemStack().createStack();
-        event.setCancelled(handUse(player, stack, hand));
-    }
-}
+            if (event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
+                hand = 'm';
+            else
+                hand = 'o';
 
-@Listener
-public void onCraft(CraftItemEvent.Preview event, @Root Player player){
-    if((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)){
-        if(!event.getPreview().getFinal().isEmpty()) {
-            ItemStack stack = event.getPreview().getFinal().createStack();
-            String id = getID(stack);
-            if (Reference.sb_craft.contains(id)) {
-                List<Text> itemLore = new ArrayList<>();
-                loreAdd(itemLore, player, stack);
-                event.getPreview().setCustom(stack);
-            }
+            ItemStack stack = event.getItemStack().createStack();
+            event.setCancelled(handUse(player,stack,hand));
         }
     }
-}
 
-   @Listener
-   public void onDeath(final DropItemEvent.Destruct event, @First Player player) {
+    @Listener
+    public void onCraft (CraftItemEvent.Preview event,@Root Player player) {
 
-	    if(player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
-
-            final List<? extends Entity> soulboundItems = event.filterEntities(entity ->
-                    !(entity instanceof Item) || !isSoulbound((Item) entity, player));
-
-            soulboundItems.stream()
-                    .map(Item.class::cast)
-                    .map(Item::item)
-                    .map(BaseValue::get)
-                    .map(ItemStackSnapshot::createStack)
-                    .forEach(itemStack -> player.getInventory().offer(itemStack)
-                    );
+        if ((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)) {
+            if (!event.getPreview().getFinal().isEmpty()) {
+                ItemStack stack = event.getPreview().getFinal().createStack();
+                String id = getID(stack);
+                if (Reference.sb_craft.contains(id)) {
+                    List<Text> itemLore = new ArrayList<>();
+                    loreAdd(itemLore,player,stack);
+                    event.getPreview().setCustom(stack);
+                }
+            }
         }
-   }
+    }
+
+    @Listener
+    public void onDeath (final DropItemEvent.Destruct event,@First Player player) {
+
+        if (player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
+
+            final List<? extends Entity> soulboundItems = event.filterEntities(entity->!(entity instanceof Item) || !isSoulbound((Item) entity,player));
+
+            soulboundItems.stream().map(Item.class::cast).map(Item::item).map(BaseValue::get).map(ItemStackSnapshot::createStack).forEach(itemStack->player.getInventory().offer(itemStack));
+        }
+    }
 
 
 }

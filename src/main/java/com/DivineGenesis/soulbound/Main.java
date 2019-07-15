@@ -1,25 +1,26 @@
-
 package com.DivineGenesis.soulbound;
 
 import com.DivineGenesis.soulbound.data.identity.IdentityData;
 import com.DivineGenesis.soulbound.data.identity.ImmutableIdentityData;
+import com.DivineGenesis.soulbound.data.identity.Keys;
+import com.DivineGenesis.soulbound.data.identity.impl.IdentityDataBuilder;
 import com.DivineGenesis.soulbound.data.identity.impl.IdentityDataImpl;
 import com.DivineGenesis.soulbound.data.identity.impl.ImmutableIdentityDataImpl;
 import com.DivineGenesis.soulbound.eventlisteners.EventListener;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.DefaultConfig;
-
 import org.spongepowered.api.data.DataManager;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.value.mutable.ListValue;
+import org.spongepowered.api.data.manipulator.DataManipulator;
+import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameRegistryEvent;
@@ -28,8 +29,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
-
-import com.google.inject.Inject;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
@@ -39,15 +38,14 @@ import java.util.UUID;
 import static com.DivineGenesis.soulbound.Reference.*;
 
 
-@Plugin(name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS)
+@Plugin (name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS)
 public class Main {
 
     private static SBConfig config;
 
-    public static Key<Value<UUID>> IDENTITY = DummyObjectProvider.createExtendedFor(Key.class,"IDENTITY");
+
 
     private DataRegistration<IdentityData, ImmutableIdentityData> IDENTITY_DATA_REGISTRATION;
-
 
     @Inject
     public Main (Logger logger,Game game,@DefaultConfig (sharedRoot = false) File defaultCfg,@DefaultConfig (sharedRoot = false) ConfigurationLoader<CommentedConfigurationNode> cfgMgr) {
@@ -87,7 +85,8 @@ public class Main {
                 .immutableClass(ImmutableIdentityData.class)
                 .dataImplementation(IdentityDataImpl.class)
                 .immutableImplementation(ImmutableIdentityDataImpl.class)
-                .id("keytest:uuid")
+                .builder(new IdentityDataBuilder())
+                .id("identity")
                 .build();
 
     }
@@ -95,9 +94,8 @@ public class Main {
     @Listener
     public void onKeyRegister (GameRegistryEvent.Register<Key<?>> event) {
 
-        IDENTITY = Key.builder().type(new TypeToken<Value<UUID>>() {
+        new Keys();
 
-        }).id("keytest:uuid").name("Identity").query(DataQuery.of("Identity")).build();
     }
 
     @Listener
@@ -106,4 +104,5 @@ public class Main {
         config.getLogger().info("Hello world!");
 
     }
+
 }

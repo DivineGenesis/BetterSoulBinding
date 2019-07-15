@@ -5,8 +5,8 @@ import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
 import java.util.UUID;
 
-public interface ImmutableIdentityData extends ImmutableDataManipulator<ImmutableIdentityData,IdentityData> {
+public interface ImmutableIdentityData extends ImmutableDataManipulator<ImmutableIdentityData, IdentityData> {
 
-    ImmutableValue<UUID> identity();
+    ImmutableValue<UUID> identity ();
 
 }
