@@ -54,6 +54,7 @@ public class SBConfig {
     private static String use = "Bind Upon Use";
     private static String pickup = "Bind Upon Pickup";
     private static String craft = "Bind Upon Craft";
+    private static String message = "Binding message";
     private static String itemUse = ItemTypes.DIAMOND_SWORD.getId();
     private static String itemPickup = ItemTypes.COAL.getId();
     private static String itemCraft = ItemTypes.DIAMOND_HELMET.getId();
@@ -64,6 +65,7 @@ public class SBConfig {
         try {
             cfg = getCfgMgr().load();
 
+            cfg.getNode(message).setValue(Reference.sb_message);
             cfg.getNode(use).setValue(Reference.sb_use);
             cfg.getNode(pickup).setValue(Reference.sb_pickup);
             cfg.getNode(craft).setValue(Reference.sb_craft);
@@ -96,7 +98,7 @@ public class SBConfig {
                 defaultCfg.createNewFile();
                 cfg = getCfgMgr().load();
 
-
+                cfg.getNode(message).setValue("Bound to: ");
                 cfg.getNode(use).setValue(new ArrayList<String>() {{
                     add(itemUse);
                 }});
@@ -106,7 +108,6 @@ public class SBConfig {
                 cfg.getNode(craft).setValue(new ArrayList<String>() {{
                     add(itemCraft);
                 }});
-
 
                 cfg.getNode(mod,permCheck,useEn).setValue(false);
                 cfg.getNode(mod,permCheck,pickupEn).setValue(false);
@@ -120,6 +121,10 @@ public class SBConfig {
 
             getLogger().info("Saving config data into variables!");
 
+
+            if (cfg.getNode(message).isVirtual())
+                cfg.getNode(message).setValue("Bound to: ");
+            sb_message = cfg.getNode(message).getString();
 
             if (cfg.getNode(use).isVirtual())
                 cfg.getNode(use).setValue(new ArrayList<String>() {{
