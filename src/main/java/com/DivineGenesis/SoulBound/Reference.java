@@ -15,9 +15,9 @@ public class Reference {
 
     //@Plugin data parameters
     static final String NAME = "Soulbound";
-    static final String ID = "SoulBound";
+    static final String ID = "soulbound";
 
-    static final String VERSION = "0.10.3";
+    static final String VERSION = "1.0.0";
 
     static final String DESC = "Binds items to the users soul!";
     static final String AUTHORS = "DrZoddiak & Burpingdog1";
@@ -40,6 +40,7 @@ public class Reference {
     //Plugin config data
     public static List<String> sb_pickup = new ArrayList<>();
     public static List<String> sb_use = new ArrayList<>();
+    public static String sb_message = "";
     //public static List<String> sb_equip = new ArrayList<>();
 
     public static List<String> sb_craft = new ArrayList<>();
@@ -78,7 +79,7 @@ public class Reference {
 			sb_equip.add(id);
 			SBConfig.saveToFile();
 			return true;*/
-		}
+        }
         return false;
     }
 
@@ -115,7 +116,8 @@ public class Reference {
 				return true;
 			}
 			return false;
-        */}
+        */
+        }
         return false;
     }
 
