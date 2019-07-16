@@ -71,7 +71,7 @@ public class Main {
     @Listener
     public void onServerStart (GameStartedServerEvent event) {
 
-        config.getLogger().info("Hello world!");
+        config.getLogger().info(ID + " has loaded :)");
 
     }
 }
