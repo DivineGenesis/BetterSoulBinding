@@ -30,6 +30,7 @@ public class EventListener {
     public void onPickup (ChangeInventoryEvent.Pickup.Pre event,@First Player player) {
 
         if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
+
             ItemStack stack = event.getTargetEntity().item().get().createStack();
             String id = getID(stack);
             List<Text> itemLore = new ArrayList<>();
@@ -44,6 +45,7 @@ public class EventListener {
                 if (!identity.equals(player.getUniqueId().toString())) {
                     errorMessage(player);
                     event.setCancelled(true);
+
                 }
             }
         }
