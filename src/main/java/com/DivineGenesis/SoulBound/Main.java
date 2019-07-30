@@ -1,5 +1,6 @@
 package com.DivineGenesis.SoulBound;
 
+
 import com.DivineGenesis.SoulBound.eventlisteners.EventListener;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -43,7 +44,14 @@ public class Main {
 
         config.configCheck();
 
-        this.IDENTITY_DATA_REGISTRATION = DataRegistration.builder().dataClass(IdentityData.class).immutableClass(IdentityData.Immutable.class).dataImplementation(IdentityData.class).immutableImplementation(IdentityData.Immutable.class).id("identity").builder(new IdentityData.Builder()).build();
+        this.IDENTITY_DATA_REGISTRATION = DataRegistration.builder()
+                .dataClass(IdentityData.class)
+                .immutableClass(IdentityData.Immutable.class)
+                .dataImplementation(IdentityData.class)
+                .immutableImplementation(IdentityData.Immutable.class)
+                .id("identity")
+                .builder(new IdentityData.Builder())
+                .build();
     }
 
     @Listener
@@ -64,7 +72,7 @@ public class Main {
     @Listener
     public void onKeyRegister (GameRegistryEvent.Register<Key<?>> event) {
 
-        new IdentityKeys();
+        event.register(IdentityKeys.IDENTITY);
 
     }
 

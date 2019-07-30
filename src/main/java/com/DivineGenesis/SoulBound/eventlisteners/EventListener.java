@@ -1,5 +1,7 @@
 package com.DivineGenesis.SoulBound.eventlisteners;
 
+
+import com.DivineGenesis.SoulBound.Messages;
 import com.DivineGenesis.SoulBound.Reference;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.value.BaseValue;
@@ -16,13 +18,17 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY;
+import static com.DivineGenesis.SoulBound.Reference.Blank_UUID;
 import static com.DivineGenesis.SoulBound.Reference.getID;
 import static com.DivineGenesis.SoulBound.eventlisteners.EventUtils.*;
+
 
 public class EventListener {
 
@@ -39,18 +45,18 @@ public class EventListener {
                     bindItem(player,stack,itemLore);
                     event.getTargetEntity().offer(Keys.REPRESENTED_ITEM,stack.createSnapshot());
                 }
-            } else {
-                String identity = stack.get(IDENTITY).toString().substring(9,45);
-
-                if (!identity.equals(player.getUniqueId().toString())) {
-                    errorMessage(player);
+            } else if (!stack.get(IDENTITY).get().equals(player.getUniqueId())) {
+                if (stack.get(IDENTITY).get().equals(Blank_UUID)) {
+                    stack.remove(IDENTITY);
+                    bindItem(player,stack,itemLore);
+                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM,stack.createSnapshot());
+                } else {
+                    player.sendMessage(Text.of(TextColors.RED,Messages.ITEM_NOT_BOUND_TO_PLAYER));
                     event.setCancelled(true);
-
                 }
             }
         }
     }
-
 
    /* @Listener
     public void onEquip (ChangeInventoryEvent.Equipment event,@First Player player) {
@@ -100,7 +106,12 @@ public class EventListener {
 
             final List<? extends Entity> soulboundItems = event.filterEntities(entity->!(entity instanceof Item) || !isSoulbound((Item) entity));
 
-            soulboundItems.stream().map(Item.class::cast).map(Item::item).map(BaseValue::get).map(ItemStackSnapshot::createStack).forEach(itemStack->player.getInventory().offer(itemStack));
+            soulboundItems.stream()
+                    .map(Item.class::cast)
+                    .map(Item::item)
+                    .map(BaseValue::get)
+                    .map(ItemStackSnapshot::createStack)
+                    .forEach(itemStack->player.getInventory().offer(itemStack));
         }
     }
 

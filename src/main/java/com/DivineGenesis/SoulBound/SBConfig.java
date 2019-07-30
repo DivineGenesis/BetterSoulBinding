@@ -1,5 +1,6 @@
 package com.DivineGenesis.SoulBound;
 
+
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.DivineGenesis.SoulBound.Reference.*;
+
 
 public class SBConfig {
 

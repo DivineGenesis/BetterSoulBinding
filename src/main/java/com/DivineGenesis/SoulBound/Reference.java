@@ -9,33 +9,38 @@ import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class Reference {
 
-    //@Plugin data parameters
+    //@Plugin data
     static final String NAME = "Soulbound";
     static final String ID = "soulbound";
 
-    static final String VERSION = "1.0.0";
+    static final String VERSION = "2.0.0";
 
     static final String DESC = "Binds items to the users soul!";
     static final String AUTHORS = "DrZoddiak & Burpingdog1";
 
+    //UUID String
+    public static final UUID Blank_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
     //Permissions
+
     //users
-    public static final String PICKUP = "SoulBound.user.pickup";
-    public static final String USE = "SoulBound.user.use";
+    public static final String PICKUP = "soulbound.user.pickup";
+    public static final String USE = "soulbound.user.use";
     //public static final String EQUIP = "SoulBound.user.equip";
-    public static final String KEEP_ON_DEATH = "SoulBound.user.keep";
-    public static final String CRAFT = "SoulBound.user.craft";
+    public static final String KEEP_ON_DEATH = "soulbound.user.keep";
+    public static final String CRAFT = "soulbound.user.craft";
 
     //admins
-    static final String HELP = "SoulBound.admin.help";
-    static final String ADD_LIST = "SoulBound.admin.addlist";
-    static final String REMOVE_LIST = "SoulBound.admin.removelist";
-    static final String ADD_SB = "SoulBound.admin.addsb";
-    static final String REMOVE_SB = "SoulBound.admin.removesb";
+    static final String HELP = "soulbound.admin.help";
+    static final String ADD_LIST = "soulbound.admin.addlist";
+    static final String REMOVE_LIST = "soulbound.admin.removelist";
+    static final String ADD_SB = "soulbound.admin.addsb";
+    static final String REMOVE_SB = "soulbound.admin.removesb";
 
     //Plugin config data
     public static List<String> sb_pickup = new ArrayList<>();

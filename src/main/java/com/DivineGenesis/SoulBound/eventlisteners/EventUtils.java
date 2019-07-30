@@ -1,6 +1,8 @@
 package com.DivineGenesis.SoulBound.eventlisteners;
 
+
 import com.DivineGenesis.SoulBound.IdentityData;
+import com.DivineGenesis.SoulBound.Messages;
 import com.DivineGenesis.SoulBound.Reference;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
@@ -15,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY;
-import static com.DivineGenesis.SoulBound.Reference.getID;
-import static com.DivineGenesis.SoulBound.Reference.sb_message;
+import static com.DivineGenesis.SoulBound.Reference.*;
 
-class EventUtils {
+
+public class EventUtils {
 
     static boolean handUse (Player player,ItemStack stack,char hand) {
 
@@ -30,17 +32,16 @@ class EventUtils {
                 setHand(hand,player,stack);
             }
         } else {
-            String identity = stack.get(IDENTITY).toString().substring(9,45);
-
-            if (!identity.equals(player.getUniqueId().toString())) {
-                errorMessage(player);
+            if (!stack.get(IDENTITY).get().equals(player.getUniqueId())) {
+                if (stack.get(IDENTITY).get().equals(Blank_UUID))
+                    player.sendMessage(Text.of(TextColors.RED,Messages.ITEM_NOT_BOUND_TO_PLAYER));
                 return true;
             }
         }
         return false;
     }
 
-    private static void setHand (char hand,Player player,ItemStack stack) {
+    static void setHand (char hand,Player player,ItemStack stack) {
 
         switch (hand) {
             case 'm':
@@ -50,19 +51,26 @@ class EventUtils {
                 player.setItemInHand(HandTypes.OFF_HAND,stack);
                 break;
             default:
-                player.sendMessage(Text.of(TextColors.DARK_RED,"ERROR HAS OCCURRED"));
+                player.sendMessage(Text.of(TextColors.DARK_RED,Messages.PLUGIN_ERROR));
                 break;
         }
     }
 
-    static void bindItem (Player player,ItemStack stack,List<Text> itemLore) {
+    public static void applyData (Player player,ItemStack stack) {
 
-        itemLore.add(Text.of(sb_message + player.getName()));
         IdentityData data = stack.getOrCreate(IdentityData.class).get();
         DataTransactionResult result = stack.offer(data);
         if (!result.isSuccessful()) {
-            player.sendMessage(Text.of(TextColors.DARK_RED,"AN ERROR HAS OCCURRED. PLEASE REPORT TO AN ADMIN!"));
+            player.sendMessage(Text.of(TextColors.DARK_RED,Messages.PLUGIN_ERROR));
         }
+
+    }
+
+    static void bindItem (Player player,ItemStack stack,List<Text> itemLore) {
+
+        applyData(player,stack);
+        itemLore.add(Text.of(sb_message + player.getName()));
+
         stack.offer(IDENTITY,player.getUniqueId());
         stack.offer(Keys.ITEM_LORE,itemLore);
     }
@@ -71,11 +79,5 @@ class EventUtils {
 
         final ItemStack stack = e.item().get().createStack();
         return (stack.get(IDENTITY).isPresent());
-    }
-
-
-    static void errorMessage (Player player) {
-
-        player.sendMessage(Text.of(TextColors.DARK_RED,"This item is not SoulBound to you!"));
     }
 }
