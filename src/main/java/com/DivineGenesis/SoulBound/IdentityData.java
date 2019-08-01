@@ -43,9 +43,9 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
     @Override
     protected void registerGettersAndSetters () {
 
-        registerFieldGetter(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY,this::getIdentity);
-        registerFieldSetter(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY,this::setIdentity);
-        registerKeyValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY,this::identity);
+        registerFieldGetter(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY, this::getIdentity);
+        registerFieldSetter(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY, this::setIdentity);
+        registerKeyValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY, this::identity);
     }
 
     public UUID getIdentity () {
@@ -60,14 +60,14 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
 
     public Value<UUID> identity () {
 
-        return Sponge.getRegistry().getValueFactory().createValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY,identity);
+        return Sponge.getRegistry().getValueFactory().createValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY, identity);
     }
 
     @Override
-    public Optional<IdentityData> fill (DataHolder dataHolder,MergeFunction overlap) {
+    public Optional<IdentityData> fill (DataHolder dataHolder, MergeFunction overlap) {
 
         dataHolder.get(IdentityData.class).ifPresent(that->{
-            IdentityData data = overlap.merge(this,that);
+            IdentityData data = overlap.merge(this, that);
             this.identity = data.identity;
         });
         return Optional.of(this);
@@ -81,7 +81,7 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
 
     public Optional<IdentityData> from (DataView container) {
 
-        container.getObject(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY.getQuery(),UUID.class).ifPresent(v->identity = v);
+        container.getObject(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY.getQuery(), UUID.class).ifPresent(v->identity = v);
         return Optional.of(this);
     }
 
@@ -106,7 +106,7 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
     @Override
     public DataContainer toContainer () {
 
-        return super.toContainer().set(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY.getQuery(),identity);
+        return super.toContainer().set(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY.getQuery(), identity);
     }
 
     @Generated (value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-07-15T21:25:00.647Z")
@@ -131,8 +131,8 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
         @Override
         protected void registerGetters () {
 
-            registerFieldGetter(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY,this::getIdentity);
-            registerKeyValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY,this::identity);
+            registerFieldGetter(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY, this::getIdentity);
+            registerKeyValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY, this::identity);
         }
 
         public UUID getIdentity () {
@@ -142,7 +142,7 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
 
         public ImmutableValue<UUID> identity () {
 
-            return Sponge.getRegistry().getValueFactory().createValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY,identity).asImmutable();
+            return Sponge.getRegistry().getValueFactory().createValue(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY, identity).asImmutable();
         }
 
         @Override
@@ -160,7 +160,7 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
         @Override
         public DataContainer toContainer () {
 
-            return super.toContainer().set(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY.getQuery(),identity);
+            return super.toContainer().set(com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY.getQuery(), identity);
         }
 
     }
@@ -170,7 +170,7 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
 
         protected Builder () {
 
-            super(IdentityData.class,1);
+            super(IdentityData.class, 1);
         }
 
         @Override

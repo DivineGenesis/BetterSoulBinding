@@ -1,7 +1,7 @@
 package com.DivineGenesis.SoulBound.eventlisteners;
 
 
-import com.DivineGenesis.SoulBound.Messages;
+import com.DivineGenesis.SoulBound.Main;
 import com.DivineGenesis.SoulBound.Reference;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.value.BaseValue;
@@ -22,7 +22,6 @@ import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.Reference.Blank_UUID;
@@ -32,26 +31,28 @@ import static com.DivineGenesis.SoulBound.eventlisteners.EventUtils.*;
 
 public class EventListener {
 
-    @Listener
-    public void onPickup (ChangeInventoryEvent.Pickup.Pre event,@First Player player) {
+    private static final Main plugin = Main.getInstance();
 
-        if (player.hasPermission(Reference.PICKUP) || !Reference.pickup_perm) {
+    @Listener
+    public void onPickup (ChangeInventoryEvent.Pickup.Pre event, @First Player player) {
+
+        if (player.hasPermission(Reference.PICKUP) || !plugin.getSBConfig().modules.PickupPermissions) {
 
             ItemStack stack = event.getTargetEntity().item().get().createStack();
             String id = getID(stack);
             List<Text> itemLore = new ArrayList<>();
             if (!stack.get(IDENTITY).isPresent()) {
-                if (Reference.sb_pickup.contains(id)) {
-                    bindItem(player,stack,itemLore);
-                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM,stack.createSnapshot());
+                if (plugin.getSBConfig().BindOnPickup.contains(id)) {
+                    bindItem(player, stack, itemLore);
+                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                 }
             } else if (!stack.get(IDENTITY).get().equals(player.getUniqueId())) {
                 if (stack.get(IDENTITY).get().equals(Blank_UUID)) {
                     stack.remove(IDENTITY);
-                    bindItem(player,stack,itemLore);
-                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM,stack.createSnapshot());
+                    bindItem(player, stack, itemLore);
+                    event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                 } else {
-                    player.sendMessage(Text.of(TextColors.RED,Messages.ITEM_NOT_BOUND_TO_PLAYER));
+                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_NOT_BOUND_TO_PLAYER));
                     event.setCancelled(true);
                 }
             }
@@ -68,9 +69,9 @@ public class EventListener {
     }*/
 
     @Listener
-    public void onHandUse (InteractItemEvent event,@Root Player player) {
+    public void onHandUse (InteractItemEvent event, @Root Player player) {
 
-        if ((player.hasPermission(Reference.USE) || !Reference.use_perm)) {
+        if ((player.hasPermission(Reference.USE) || !plugin.getSBConfig().modules.UsePermissions)) {
             char hand;
 
             if (event instanceof InteractItemEvent.Primary.MainHand || event instanceof InteractItemEvent.Secondary.MainHand)
@@ -79,20 +80,20 @@ public class EventListener {
                 hand = 'o';
 
             ItemStack stack = event.getItemStack().createStack();
-            event.setCancelled(handUse(player,stack,hand));
+            event.setCancelled(handUse(player, stack, hand));
         }
     }
 
     @Listener
-    public void onCraft (CraftItemEvent.Preview event,@Root Player player) {
+    public void onCraft (CraftItemEvent.Preview event, @Root Player player) {
 
-        if ((player.hasPermission(Reference.CRAFT) || !Reference.craft_perm)) {
+        if ((player.hasPermission(Reference.CRAFT) || !plugin.getSBConfig().modules.CraftPermissions)) {
             if (!event.getPreview().getFinal().isEmpty()) {
                 ItemStack stack = event.getPreview().getFinal().createStack();
                 String id = getID(stack);
                 if (Reference.sb_craft.contains(id)) {
                     List<Text> itemLore = new ArrayList<>();
-                    bindItem(player,stack,itemLore);
+                    bindItem(player, stack, itemLore);
                     event.getPreview().setCustom(stack);
                 }
             }
@@ -100,9 +101,9 @@ public class EventListener {
     }
 
     @Listener
-    public void onDeath (final DropItemEvent.Destruct event,@First Player player) {
+    public void onDeath (final DropItemEvent.Destruct event, @First Player player) {
 
-        if (player.hasPermission(Reference.KEEP_ON_DEATH) || !Reference.keep_perm) {
+        if (player.hasPermission(Reference.KEEP_ON_DEATH) || !plugin.getSBConfig().modules.KeepItemsOnDeath) {
 
             final List<? extends Entity> soulboundItems = event.filterEntities(entity->!(entity instanceof Item) || !isSoulbound((Item) entity));
 

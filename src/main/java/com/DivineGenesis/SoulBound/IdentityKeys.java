@@ -11,7 +11,7 @@ import javax.annotation.Generated;
 import java.util.UUID;
 
 
-
+@SuppressWarnings ("deprecation")
 @Generated (value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-07-15T21:25:00.649Z")
 public class IdentityKeys {
 

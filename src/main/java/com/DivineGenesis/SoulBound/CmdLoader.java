@@ -20,7 +20,6 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.Reference.*;
@@ -28,19 +27,31 @@ import static com.DivineGenesis.SoulBound.Reference.*;
 
 public class CmdLoader {
 
-    String craftType = "pickup|use|craft";
+    public enum BindType {
+        PICKUP(0), USE(1), CRAFT(2);
+        public final int type;
+
+        BindType (int type) {
+
+            this.type = type;
+        }
+    }
+
+    private final String craftKey = "BindType";
+    private static final Main plugin = Main.getInstance();
+
 
     private CommandSpec addConfig = CommandSpec.builder()//Possibly allow for more than 1 choice or all in the future!
             .description(Text.of("Adds items to soulbind into config"))
             .executor(this::add_list)
-            .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of(craftType))))
+            .arguments(GenericArguments.onlyOne(GenericArguments.enumValue(Text.of(this.craftKey), BindType.class)))
             .permission(ADD_LIST)
             .build();
 
     private CommandSpec removeConfig = CommandSpec.builder()
             .description(Text.of("Removes items to soulbind from the config"))
             .executor(this::remove_list)
-            .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of(craftType))))
+            .arguments(GenericArguments.onlyOne(GenericArguments.enumValue(Text.of(this.craftKey), BindType.class)))
             .permission(REMOVE_LIST)
             .build();
 
@@ -62,123 +73,108 @@ public class CmdLoader {
             .description(Text.of("Shows this list"))
             .executor(this::help)
             .permission(HELP)
-            .child(addConfig,"addConfig")
-            .child(removeConfig,"removeConfig")
-            .child(addSB,"addSB")
-            .child(removeSB,"removeSB")
+            .child(addConfig, "addConfig", "ac")
+            .child(removeConfig, "removeConfig", "rc")
+            .child(addSB, "addSoulBound", "addSB", "as")
+            .child(removeSB, "removeSoulBound", "removeSB", "rs")
             .build();
 
-    private CommandResult help (CommandSource src,CommandContext args) throws CommandException {
+    private CommandResult help (CommandSource src, CommandContext args) throws CommandException {
 
         List<Text> commandHelp = Lists.newArrayList();
-        commandHelp.add(helpTextStructure("addConfig","Adds items to allow soulbinding into config!"));
-        commandHelp.add(helpTextStructure("removeConfig","Removes items from the config!"));
-        commandHelp.add(helpTextStructure("addSB","Bind the item to the player holding it!"));
-        commandHelp.add(helpTextStructure("removeSB","Removes the binding from the item!"));
+        commandHelp.add(helpTextStructure("addConfig", plugin.getMessagesConfig().HELP_MENU_ADD_CONFIG));
+        commandHelp.add(helpTextStructure("removeConfig", plugin.getMessagesConfig().HELP_MENU_REMOVE_CONFIG));
+        commandHelp.add(helpTextStructure("addSB", plugin.getMessagesConfig().HELP_MENU_ADD_SOULBOUND));
+        commandHelp.add(helpTextStructure("removeSB", plugin.getMessagesConfig().HELP_MENU_REMOVE_SOULBOUND));
 
         PaginationList.builder()
-                .title(Text.of(TextColors.GOLD,"BetterSoulbinding Help Menu"))
-                .padding(Text.of(TextColors.YELLOW,TextStyles.STRIKETHROUGH,'='))
+                .title(Text.of(TextColors.GOLD, "BetterSoulbinding Help Menu"))
+                .padding(Text.of(TextColors.YELLOW, TextStyles.STRIKETHROUGH, '='))
                 .contents(commandHelp)
                 .sendTo(src);
         return CommandResult.success();
     }
 
-    private Text helpTextStructure (String command,String reason) {
+    private Text helpTextStructure (String command, String reason) {
 
-        return Text.of(TextColors.GREEN,Text.builder(command)
-                .onClick(TextActions.suggestCommand("/sb " + command)),TextColors.GRAY,TextStyles.ITALIC," - ",reason);
+        return Text.of(TextColors.GREEN, Text.builder(command)
+                .onClick(TextActions.suggestCommand("/sb " + command)), TextColors.GRAY, TextStyles.ITALIC, " - ", reason);
     }
 
-    private CommandResult add_list (CommandSource src,CommandContext args) throws CommandException {
+    private CommandResult add_list (CommandSource src, CommandContext args) throws CommandException {
 
         if (src instanceof Player) {
             Player player = (Player) src;
 
-            String arg = args.getOne(craftType).get().toString();
+            String arg = args.getOne(this.craftKey).get().toString();
 
-            if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals("")) {
+            if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
                 String id = getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
-                listFunction(arg,'a',src,id,"added");
-            } else
+                listFunction(arg, 'a', src, id, "added");
+            }
 
-                src.sendMessage(Text.of(TextColors.DARK_RED,"INVALID ARGUMENTS: ",TextColors.GOLD,craftType));
-
+        } else {
+            src.sendMessage(Text.of(TextColors.DARK_RED, plugin.getMessagesConfig().COMMAND_MUST_BE_RUN_BY_PLAYER));
         }
         return CommandResult.success();
     }
 
-    private CommandResult remove_list (CommandSource src,CommandContext args) throws CommandException {
+    private CommandResult remove_list (CommandSource src, CommandContext args) throws CommandException {
 
         if (src instanceof Player) {
             Player player = (Player) src;
 
-            String arg = args.getOne(craftType).get().toString();
+            String arg = args.getOne(this.craftKey).get().toString();
             if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent() && !arg.equals("")) {
                 String id = getID(player.getItemInHand(HandTypes.MAIN_HAND).get());
-                listFunction(arg,'r',src,id,"removed");
-            } else
-                src.sendMessage(Text.of(TextColors.DARK_RED,"INVALID ARGUMENTS: ",TextColors.GOLD,craftType));
+                listFunction(arg, 'r', src, id, "removed");
+            }
+        } else {
+            src.sendMessage(Text.of(TextColors.DARK_RED, plugin.getMessagesConfig().COMMAND_MUST_BE_RUN_BY_PLAYER));
         }
         return CommandResult.success();
     }
 
-    private void listFunction (String arg,char type,CommandSource src,String id,String action) {
+    private void listFunction (String arg, char type, CommandSource src, String id, String action) {
 
-        if (arg.equalsIgnoreCase("pickup")) {
-            if (type == 'a') {
-                if (addToList(id,0))
-                    mailMan(src,action,id,"pickup");
-                else
-                    errorMessage(src,id,"already","use");
-            } else if (type == 'r') {
-                if (removeFromList(id,0))
-                    mailMan(src,action,id,"pickup");
-                else
-                    errorMessage(src,id,"doesn't","pickup");
-            }
-        }
-        if (arg.equalsIgnoreCase("use")) {
-            if (type == 'a') {
-                if (addToList(id,1))
-                    mailMan(src,action,id,"use");
-                else
-                    errorMessage(src,id,"already","use");
-            } else if (type == 'r') {
-                if (removeFromList(id,1))
-                    mailMan(src,action,id,"use");
-                else
-                    errorMessage(src,id,"doesn't","use");
-            }
-        }
-        if (arg.equalsIgnoreCase("craft")) {
-            if (type == 'a') {
-                if (addToList(id,2))
+        for (BindType b : BindType.values()) {
 
-                    mailMan(src,action,id,"craft");
-                else
-                    errorMessage(src,id,"already","craft");
-            } else if (type == 'r') {
-                if (removeFromList(id,2))
-
-                    mailMan(src,action,id,"craft");
-                else
-                    errorMessage(src,id,"doesn't","craft");
+            if (arg.equalsIgnoreCase(b.name())) {
+                if (type == 'a') {
+                    if (addToList(id, b.type)) {
+                        successMessage(src, action, id, b.name(), type);
+                        plugin.saveConfig();
+                    } else {
+                        errorMessage(src, id, "already", b.name());
+                    }
+                } else if (type == 'r') {
+                    if (removeFromList(id, b.type)) {
+                        successMessage(src, action, id, b.name(), type);
+                        plugin.saveConfig();
+                    } else {
+                        errorMessage(src, id, "doesn't", b.name());
+                    }
+                }
             }
         }
     }
 
-    private static void mailMan (CommandSource src,String action,String id,String type) {
 
-        src.sendMessage(Text.of(TextColors.GREEN,"Succesfully ",action,' ',TextColors.WHITE,id,TextColors.GREEN," to/from the ",type," list!"));
+    private static void successMessage (CommandSource src, String action, String id, String list, char type) {
+
+        String actionType = "from";
+        if (type == 'a') {
+            actionType = " to";
+        }
+        src.sendMessage(Text.of(TextColors.GREEN, "Succesfully ", action, ' ', TextColors.WHITE, id, TextColors.GREEN, ' ', actionType, " the ", list, ' ', "list!"));
     }
 
-    private static void errorMessage (CommandSource src,String id,String exist,String configType) {
+    private static void errorMessage (CommandSource src, String id, String exist, String configType) {
 
-        src.sendMessage(Text.of(Text.of(TextColors.RED,id,exist," exist(s) in the ",configType," list!")));
+        src.sendMessage(Text.of(Text.of(TextColors.RED, id, ' ', exist, " exist(s) in the ", configType, " list!")));
     }
 
-    private CommandResult add_sb (CommandSource src,CommandContext args) throws CommandException {//Allow user to select user to add to item in future?
+    private CommandResult add_sb (CommandSource src, CommandContext args) throws CommandException {//Allow user to select user to add to item in future?
         if (src instanceof Player) {
             Player player = (Player) src;
 
@@ -186,19 +182,19 @@ public class CmdLoader {
             if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
                 ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
                 if (stack.get(IDENTITY).isPresent()) {
-                    player.sendMessage(Text.of(TextColors.RED,"Item has already been bound!"));
+                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_ALREADY_BOUND));
                     return CommandResult.success();
                 }
-                EventUtils.applyData(player,stack);
-                stack.offer(IDENTITY,Blank_UUID);
-                player.setItemInHand(HandTypes.MAIN_HAND,stack);
-                player.sendMessage(Text.of(TextColors.GREEN,"Successfully bound item!"));
+                EventUtils.applyData(player, stack);
+                stack.offer(IDENTITY, Blank_UUID);
+                player.setItemInHand(HandTypes.MAIN_HAND, stack);
+                player.sendMessage(Text.of(TextColors.GREEN, plugin.getMessagesConfig().ITEM_SUCCESSFULLY_BOUND));
             }
         }
         return CommandResult.success();
     }
 
-    private CommandResult remove_sb (CommandSource src,CommandContext args) throws CommandException {
+    private CommandResult remove_sb (CommandSource src, CommandContext args) throws CommandException {
 
         if (src instanceof Player) {
             Player player = (Player) src;
@@ -212,15 +208,17 @@ public class CmdLoader {
                     if (stack.get(Keys.ITEM_LORE).isPresent()) {
                         stack.remove(Keys.ITEM_LORE);
                     }
-                    player.setItemInHand(HandTypes.MAIN_HAND,stack);
-                    player.sendMessage(Text.of(TextColors.GREEN,"Successfully removed binding!"));
+                    player.setItemInHand(HandTypes.MAIN_HAND, stack);
+                    player.sendMessage(Text.of(TextColors.GREEN, plugin.getMessagesConfig().ITEM_SUCCESSFULLY_REMOVED_BIND));
                 } else {
-                    player.sendMessage(Text.of(TextColors.RED,"Error, item was not bound!"));
+                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_NOT_BOUND));
                 }
             } else {
-                player.sendMessage(Text.of(TextColors.RED,Messages.ITEM_NOT_PRESENT));
+                player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_NOT_PRESENT));
             }
         }
         return CommandResult.success();
     }
+
+
 }

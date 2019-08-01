@@ -14,6 +14,8 @@ import java.util.UUID;
 
 public class Reference {
 
+    private static final Main plugin = Main.getInstance();
+
     //@Plugin data
     static final String NAME = "Soulbound";
     static final String ID = "soulbound";
@@ -43,9 +45,6 @@ public class Reference {
     static final String REMOVE_SB = "soulbound.admin.removesb";
 
     //Plugin config data
-    public static List<String> sb_pickup = new ArrayList<>();
-    public static List<String> sb_use = new ArrayList<>();
-    public static String sb_message = "";
     //public static List<String> sb_equip = new ArrayList<>();
 
     public static List<String> sb_craft = new ArrayList<>();
@@ -55,73 +54,65 @@ public class Reference {
     public static boolean craft_perm;
     public static boolean keep_perm;
 
-    static boolean addToList (String id,int index) {
+    static boolean addToList (String id, int index) {
+
+        SBConfig config = plugin.getSBConfig();
 
         switch (index) {
             case 0: //pick up
-                if (sb_pickup.contains(id))
+                if (config.BindOnPickup.contains(id)) {
                     return false;
-                sb_pickup.add(id);
-                SBConfig.saveToFile();
+                }
+                config.BindOnPickup.add(id);
                 return true;
 
             case 1: //use
-                if (sb_use.contains(id))
+                if (config.BindOnUse.contains(id)) {
                     return false;
-                sb_use.add(id);
-                SBConfig.saveToFile();
+                }
+                config.BindOnUse.add(id);
                 return true;
 
             case 2: //Craft
-                if (sb_craft.contains(id))
+                if (config.BindOnCraft.contains(id)) {
                     return false;
-                sb_craft.add(id);
-                SBConfig.saveToFile();
+                }
+                config.BindOnCraft.add(id);
                 return true;
 		/*case 3: //equip
 			if(sb_equip.contains(id))
 				return false;
 			sb_equip.add(id);
-			SBConfig.saveToFile();
+			config.saveToFile();
 			return true;*/
         }
         return false;
     }
 
-    static boolean removeFromList (String id,int index) {
+    static boolean removeFromList (String id, int index) {
+
+        SBConfig config = plugin.getSBConfig();
 
         switch (index) {
             case 0: //pickup
-                if (sb_pickup.contains(id)) {
-                    sb_pickup.remove(id);
-                    SBConfig.saveToFile();
+                if (config.BindOnPickup.contains(id)) {
+                    config.BindOnPickup.remove(id);
                     return true;
                 }
                 return false;
             case 1://use
-                if (sb_use.contains(id)) {
-                    sb_use.remove(id);
-                    SBConfig.saveToFile();
+                if (config.BindOnUse.contains(id)) {
+                    config.BindOnUse.remove(id);
                     return true;
                 }
                 return false;
 
             case 2: //Craft
-                if (sb_craft.contains(id)) {
-                    sb_craft.remove(id);
-                    SBConfig.saveToFile();
+                if (config.BindOnCraft.contains(id)) {
+                    config.BindOnCraft.remove(id);
                     return true;
                 }
-		/*case 3: //equip
 
-			if(sb_equip.contains(id))
-			{
-				sb_equip.remove(id);
-				SBConfig.saveToFile();
-				return true;
-			}
-			return false;
-        */
         }
         return false;
     }
@@ -135,7 +126,7 @@ public class Reference {
 
         String ID = stack.getType().getId();
         DataContainer container = stack.toContainer();
-        DataQuery data = DataQuery.of('/',"UnsafeDamage");
+        DataQuery data = DataQuery.of('/', "UnsafeDamage");
         int meta = Integer.parseInt(container.get(data).get().toString());
         if (meta != 0 && stack.getValue(Keys.UNBREAKABLE).isPresent()) {
             if (stack.getValue(Keys.UNBREAKABLE).get().get()) {
