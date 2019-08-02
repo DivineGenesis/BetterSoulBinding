@@ -1,7 +1,7 @@
 package com.DivineGenesis.SoulBound.eventlisteners;
 
 
-import com.DivineGenesis.SoulBound.IdentityData;
+import com.DivineGenesis.SoulBound.data.IdentityData;
 import com.DivineGenesis.SoulBound.Main;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
@@ -15,7 +15,7 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY;
+import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.Reference.Blank_UUID;
 import static com.DivineGenesis.SoulBound.Reference.getID;
 
@@ -36,7 +36,7 @@ public class EventUtils {
         } else {
             if (!stack.get(IDENTITY).get().equals(player.getUniqueId())) {
                 if (stack.get(IDENTITY).get().equals(Blank_UUID))
-                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_NOT_BOUND_TO_PLAYER));
+                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().items.ITEM_NOT_BOUND_TO_PLAYER));
                 return true;
             }
         }

@@ -1,6 +1,8 @@
 package com.DivineGenesis.SoulBound;
 
 
+import com.DivineGenesis.SoulBound.config.SBConfig;
+import com.DivineGenesis.SoulBound.data.IdentityData;
 import com.DivineGenesis.SoulBound.eventlisteners.EventUtils;
 import com.google.common.collect.Lists;
 import org.spongepowered.api.command.CommandException;
@@ -21,8 +23,8 @@ import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.List;
 
-import static com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.Reference.*;
+import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 
 
 public class CmdLoader {
@@ -37,11 +39,12 @@ public class CmdLoader {
         }
     }
 
-    private final String craftKey = "BindType";
+    private final Text craftKey = Text.of("BindType");
+    private final Text playerKey = Text.of("Player");
     private static final Main plugin = Main.getInstance();
 
 
-    private CommandSpec addConfig = CommandSpec.builder()//Possibly allow for more than 1 choice or all in the future!
+    private CommandSpec addConfig = CommandSpec.builder()
             .description(Text.of("Adds items to soulbind into config"))
             .executor(this::add_list)
             .arguments(GenericArguments.onlyOne(GenericArguments.enumValue(Text.of(this.craftKey), BindType.class)))
@@ -82,10 +85,10 @@ public class CmdLoader {
     private CommandResult help (CommandSource src, CommandContext args) throws CommandException {
 
         List<Text> commandHelp = Lists.newArrayList();
-        commandHelp.add(helpTextStructure("addConfig", plugin.getMessagesConfig().HELP_MENU_ADD_CONFIG));
-        commandHelp.add(helpTextStructure("removeConfig", plugin.getMessagesConfig().HELP_MENU_REMOVE_CONFIG));
-        commandHelp.add(helpTextStructure("addSB", plugin.getMessagesConfig().HELP_MENU_ADD_SOULBOUND));
-        commandHelp.add(helpTextStructure("removeSB", plugin.getMessagesConfig().HELP_MENU_REMOVE_SOULBOUND));
+        commandHelp.add(helpTextStructure("addConfig", plugin.getMessagesConfig().help_menu.HELP_MENU_ADD_CONFIG));
+        commandHelp.add(helpTextStructure("removeConfig", plugin.getMessagesConfig().help_menu.HELP_MENU_REMOVE_CONFIG));
+        commandHelp.add(helpTextStructure("addSB", plugin.getMessagesConfig().help_menu.HELP_MENU_ADD_SOULBOUND));
+        commandHelp.add(helpTextStructure("removeSB", plugin.getMessagesConfig().help_menu.HELP_MENU_REMOVE_SOULBOUND));
 
         PaginationList.builder()
                 .title(Text.of(TextColors.GOLD, "BetterSoulbinding Help Menu"))
@@ -138,27 +141,16 @@ public class CmdLoader {
     private void listFunction (String arg, char type, CommandSource src, String id, String action) {
 
         for (BindType b : BindType.values()) {
-
             if (arg.equalsIgnoreCase(b.name())) {
-                if (type == 'a') {
-                    if (addToList(id, b.type)) {
-                        successMessage(src, action, id, b.name(), type);
-                        plugin.saveConfig();
-                    } else {
-                        errorMessage(src, id, "already", b.name());
-                    }
-                } else if (type == 'r') {
-                    if (removeFromList(id, b.type)) {
-                        successMessage(src, action, id, b.name(), type);
-                        plugin.saveConfig();
-                    } else {
-                        errorMessage(src, id, "doesn't", b.name());
-                    }
+                if (modifyList(id, b.type, type)) {
+                    successMessage(src, action, id, b.name(), type);
+                    plugin.saveConfig();
+                } else {
+                    errorMessage(src, id, b.name(), type);
                 }
             }
         }
     }
-
 
     private static void successMessage (CommandSource src, String action, String id, String list, char type) {
 
@@ -169,12 +161,18 @@ public class CmdLoader {
         src.sendMessage(Text.of(TextColors.GREEN, "Succesfully ", action, ' ', TextColors.WHITE, id, TextColors.GREEN, ' ', actionType, " the ", list, ' ', "list!"));
     }
 
-    private static void errorMessage (CommandSource src, String id, String exist, String configType) {
+    private static void errorMessage (CommandSource src, String id, String configType, char type) {
+
+        String exist = "doesn't";
+        if (type == 'a') {
+            exist = "already";
+        }
 
         src.sendMessage(Text.of(Text.of(TextColors.RED, id, ' ', exist, " exist(s) in the ", configType, " list!")));
     }
 
-    private CommandResult add_sb (CommandSource src, CommandContext args) throws CommandException {//Allow user to select user to add to item in future?
+    private CommandResult add_sb (CommandSource src, CommandContext args) throws CommandException {
+
         if (src instanceof Player) {
             Player player = (Player) src;
 
@@ -182,13 +180,13 @@ public class CmdLoader {
             if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
                 ItemStack stack = player.getItemInHand(HandTypes.MAIN_HAND).get();
                 if (stack.get(IDENTITY).isPresent()) {
-                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_ALREADY_BOUND));
+                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().items.ITEM_ALREADY_BOUND));
                     return CommandResult.success();
                 }
                 EventUtils.applyData(player, stack);
                 stack.offer(IDENTITY, Blank_UUID);
                 player.setItemInHand(HandTypes.MAIN_HAND, stack);
-                player.sendMessage(Text.of(TextColors.GREEN, plugin.getMessagesConfig().ITEM_SUCCESSFULLY_BOUND));
+                player.sendMessage(Text.of(TextColors.GREEN, plugin.getMessagesConfig().items.ITEM_SUCCESSFULLY_BOUND));
             }
         }
         return CommandResult.success();
@@ -209,15 +207,69 @@ public class CmdLoader {
                         stack.remove(Keys.ITEM_LORE);
                     }
                     player.setItemInHand(HandTypes.MAIN_HAND, stack);
-                    player.sendMessage(Text.of(TextColors.GREEN, plugin.getMessagesConfig().ITEM_SUCCESSFULLY_REMOVED_BIND));
+                    player.sendMessage(Text.of(TextColors.GREEN, plugin.getMessagesConfig().items.ITEM_SUCCESSFULLY_REMOVED_BIND));
                 } else {
-                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_NOT_BOUND));
+                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().items.ITEM_NOT_BOUND));
                 }
             } else {
-                player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_NOT_PRESENT));
+                player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().items.ITEM_NOT_PRESENT));
             }
         }
         return CommandResult.success();
+    }
+
+
+    private static boolean modifyList (String id, int index, char addType) {
+
+        SBConfig config = plugin.getSBConfig();
+
+        switch (index) {
+            case 0: //pick up
+                if (addType == 'a') { //If adding item
+                    if (config.BindOnPickup.contains(id)) {
+                        return false;
+                    }
+                    config.BindOnPickup.add(id);
+                    return true;
+                } else { //else we're removing the item
+                    if (config.BindOnPickup.contains(id)) {
+                        config.BindOnPickup.remove(id);
+                        return true;
+                    }
+                    return false;
+                }
+
+            case 1: //use
+                if (addType == 'a') {
+                    if (config.BindOnUse.contains(id)) {
+                        return false;
+                    }
+                    config.BindOnUse.add(id);
+                    return true;
+                } else {
+                    if (config.BindOnUse.contains(id)) {
+                        config.BindOnUse.remove(id);
+                        return true;
+                    }
+                    return false;
+                }
+
+            case 2: //Craft
+                if (addType == 'a') {
+                    if (config.BindOnCraft.contains(id)) {
+                        return false;
+                    }
+                    config.BindOnCraft.add(id);
+                    return true;
+                } else {
+                    if (config.BindOnCraft.contains(id)) {
+                        config.BindOnCraft.remove(id);
+                        return true;
+                    }
+                    return false;
+                }
+        }
+        return false;
     }
 
 

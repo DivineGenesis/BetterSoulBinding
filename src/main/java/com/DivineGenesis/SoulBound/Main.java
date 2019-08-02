@@ -1,6 +1,11 @@
 package com.DivineGenesis.SoulBound;
 
 
+import com.DivineGenesis.SoulBound.config.ConfigLoader;
+import com.DivineGenesis.SoulBound.config.MessagesConfig;
+import com.DivineGenesis.SoulBound.config.SBConfig;
+import com.DivineGenesis.SoulBound.data.IdentityData;
+import com.DivineGenesis.SoulBound.data.IdentityKeys;
 import com.DivineGenesis.SoulBound.eventlisteners.EventListener;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
@@ -28,8 +33,8 @@ public class Main {
 
     private static Main instance;
 
-    private SBConfig SBConfig;
-    private MessagesConfig MessagesConfig;
+    private com.DivineGenesis.SoulBound.config.SBConfig SBConfig;
+    private com.DivineGenesis.SoulBound.config.MessagesConfig MessagesConfig;
     private final GuiceObjectMapperFactory factory;
     private final Logger logger;
     private final File configDir;
@@ -100,14 +105,6 @@ public class Main {
         getLogger().info("Registering Commands...");
         Sponge.getCommandManager().register(this, new CmdLoader().sb, "sb");
     }
-
-    /*
-    @Listener
-    public void onServerStart (GameStartedServerEvent event) {
-
-        getLogger().info(ID + " has loaded :)");
-
-    }*/
 
     @Listener
     public void onReload (GameReloadEvent event) {

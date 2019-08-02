@@ -23,7 +23,7 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.DivineGenesis.SoulBound.IdentityKeys.IDENTITY;
+import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.Reference.Blank_UUID;
 import static com.DivineGenesis.SoulBound.Reference.getID;
 import static com.DivineGenesis.SoulBound.eventlisteners.EventUtils.*;
@@ -52,7 +52,7 @@ public class EventListener {
                     bindItem(player, stack, itemLore);
                     event.getTargetEntity().offer(Keys.REPRESENTED_ITEM, stack.createSnapshot());
                 } else {
-                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().ITEM_NOT_BOUND_TO_PLAYER));
+                    player.sendMessage(Text.of(TextColors.RED, plugin.getMessagesConfig().items.ITEM_NOT_BOUND_TO_PLAYER));
                     event.setCancelled(true);
                 }
             }
@@ -91,7 +91,7 @@ public class EventListener {
             if (!event.getPreview().getFinal().isEmpty()) {
                 ItemStack stack = event.getPreview().getFinal().createStack();
                 String id = getID(stack);
-                if (Reference.sb_craft.contains(id)) {
+                if (plugin.getSBConfig().BindOnCraft.contains(id)) {
                     List<Text> itemLore = new ArrayList<>();
                     bindItem(player, stack, itemLore);
                     event.getPreview().setCustom(stack);
