@@ -7,6 +7,7 @@ import com.DivineGenesis.SoulBound.config.SBConfig;
 import com.DivineGenesis.SoulBound.data.IdentityData;
 import com.DivineGenesis.SoulBound.data.IdentityKeys;
 import com.DivineGenesis.SoulBound.eventlisteners.EventListener;
+import com.DivineGenesis.SoulBound.eventlisteners.NucleusEventListener;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.io.File;
@@ -28,7 +30,7 @@ import java.io.File;
 import static com.DivineGenesis.SoulBound.Reference.*;
 
 
-@Plugin (name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS)
+@Plugin (name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS, dependencies = {@Dependency (id = "nucleus", version = "1.14.0", optional = true)})
 public class Main {
 
     private static Main instance;
@@ -64,8 +66,8 @@ public class Main {
     @Listener
     public void onKeyRegister (GameRegistryEvent.Register<Key<?>> event) {
 
+        logger.info("Registering Data Key...");
         event.register(IdentityKeys.IDENTITY);
-
     }
 
     @Listener
@@ -81,6 +83,7 @@ public class Main {
             MessagesConfig = cfgLoader.getMessagesConfig();
         }
 
+        logger.info("Registering custom data...");
         this.IDENTITY_DATA_REGISTRATION = DataRegistration.builder()
                 .dataClass(IdentityData.class)
                 .immutableClass(IdentityData.Immutable.class)
@@ -94,15 +97,20 @@ public class Main {
     @Listener
     public void onInit (GameInitializationEvent event) {
 
-        getLogger().info("Registering Events...");
+        logger.info("Registering events...");
         Sponge.getEventManager().registerListeners(this, new EventListener());
 
+        logger.info("Checking if Nucleus is installed for kit redemption support");
+        if (Sponge.getPluginManager().isLoaded("nucleus")) {
+            logger.info("Nucleus found, registering Nucleus events...");
+            Sponge.getEventManager().registerListeners(this, new NucleusEventListener());
+        }
     }
 
     @Listener
     public void OnServerStarting (GameStartingServerEvent event) {
 
-        getLogger().info("Registering Commands...");
+        logger.info("Registering Commands...");
         Sponge.getCommandManager().register(this, new CmdLoader().sb, "sb");
     }
 

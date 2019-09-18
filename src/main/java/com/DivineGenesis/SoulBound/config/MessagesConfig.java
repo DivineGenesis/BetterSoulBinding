@@ -7,6 +7,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @ConfigSerializable
 public class MessagesConfig {
+
     public Items items = new Items();
 
     public Help_Menu help_menu = new Help_Menu();
@@ -20,7 +21,6 @@ public class MessagesConfig {
 
     @Setting
     public String COMMAND_MUST_BE_RUN_BY_PLAYER = "This command must be run by a player";
-
 
 
     @ConfigSerializable

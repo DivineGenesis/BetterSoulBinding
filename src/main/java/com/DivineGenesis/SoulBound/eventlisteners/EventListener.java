@@ -23,15 +23,16 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.Reference.Blank_UUID;
 import static com.DivineGenesis.SoulBound.Reference.getID;
+import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.eventlisteners.EventUtils.*;
 
 
 public class EventListener {
 
     private static final Main plugin = Main.getInstance();
+
 
     @Listener
     public void onPickup (ChangeInventoryEvent.Pickup.Pre event, @First Player player) {
@@ -95,6 +96,7 @@ public class EventListener {
                     List<Text> itemLore = new ArrayList<>();
                     bindItem(player, stack, itemLore);
                     event.getPreview().setCustom(stack);
+
                 }
             }
         }

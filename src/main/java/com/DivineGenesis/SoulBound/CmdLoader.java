@@ -30,7 +30,7 @@ import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 public class CmdLoader {
 
     public enum BindType {
-        PICKUP(0), USE(1), CRAFT(2);
+        PICKUP(0), USE(1), CRAFT(2), REDEEM(3);
         public final int type;
 
         BindType (int type) {
@@ -40,7 +40,6 @@ public class CmdLoader {
     }
 
     private final Text craftKey = Text.of("BindType");
-    private final Text playerKey = Text.of("Player");
     private static final Main plugin = Main.getInstance();
 
 
@@ -156,7 +155,7 @@ public class CmdLoader {
 
         String actionType = "from";
         if (type == 'a') {
-            actionType = " to";
+            actionType = "to";
         }
         src.sendMessage(Text.of(TextColors.GREEN, "Succesfully ", action, ' ', TextColors.WHITE, id, TextColors.GREEN, ' ', actionType, " the ", list, ' ', "list!"));
     }
@@ -264,6 +263,21 @@ public class CmdLoader {
                 } else {
                     if (config.BindOnCraft.contains(id)) {
                         config.BindOnCraft.remove(id);
+                        return true;
+                    }
+                    return false;
+                }
+
+            case 3: //REDEEM
+                if (addType == 'a') {
+                    if (config.nucleus.BindOnRedeem.contains(id)) {
+                        return false;
+                    }
+                    config.nucleus.BindOnRedeem.add(id);
+                    return true;
+                } else {
+                    if (config.nucleus.BindOnRedeem.contains(id)) {
+                        config.nucleus.BindOnRedeem.remove(id);
                         return true;
                     }
                     return false;
