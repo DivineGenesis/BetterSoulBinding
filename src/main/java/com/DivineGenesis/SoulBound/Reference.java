@@ -10,10 +10,11 @@ import java.util.UUID;
 
 
 public class Reference {
+
     //@Plugin data
     static final String NAME = "Soulbound";
     static final String ID = "soulbound";
-    static final String VERSION = "2.0.0";
+    static final String VERSION = "1.0.0-DEV";
     static final String DESC = "Binds items to the users soul!";
     static final String AUTHORS = "DrZoddiak & Burpingdog1";
 

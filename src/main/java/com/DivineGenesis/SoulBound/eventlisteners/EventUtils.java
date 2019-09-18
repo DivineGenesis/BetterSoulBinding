@@ -1,8 +1,8 @@
 package com.DivineGenesis.SoulBound.eventlisteners;
 
 
-import com.DivineGenesis.SoulBound.data.IdentityData;
 import com.DivineGenesis.SoulBound.Main;
+import com.DivineGenesis.SoulBound.data.IdentityData;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
@@ -15,9 +15,9 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 import static com.DivineGenesis.SoulBound.Reference.Blank_UUID;
 import static com.DivineGenesis.SoulBound.Reference.getID;
+import static com.DivineGenesis.SoulBound.data.IdentityKeys.IDENTITY;
 
 
 public class EventUtils {
