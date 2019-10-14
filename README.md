@@ -1,3 +1,4 @@
+![Discord](https://img.shields.io/discord/360327589287559178?label=Discord&style=flat-square)
 # SoulBound
 Soulbinding brought to you with Sponge's API!
 
