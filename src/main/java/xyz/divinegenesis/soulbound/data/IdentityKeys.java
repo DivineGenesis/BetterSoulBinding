@@ -1,4 +1,4 @@
-package com.DivineGenesis.SoulBound.data;
+package xyz.divinegenesis.soulbound.data;
 
 
 import com.google.common.reflect.TypeToken;

@@ -1,7 +1,7 @@
-package com.DivineGenesis.SoulBound.config;
+package xyz.divinegenesis.soulbound.config;
 
 
-import com.DivineGenesis.SoulBound.Main;
+import xyz.divinegenesis.soulbound.Main;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.ConfigurationOptions;
@@ -16,8 +16,7 @@ import java.io.IOException;
 public class ConfigLoader {
 
     private final Main plugin;
-
-    private com.DivineGenesis.SoulBound.config.SBConfig SBConfig;
+    private SBConfig SBConfig;
     private MessagesConfig messagesConfig;
 
     public ConfigLoader (Main main) {
@@ -45,7 +44,7 @@ public class ConfigLoader {
             loader.save(config);
             return true;
         } catch (Exception e) {
-            Main.getInstance().getLogger().error("Could not load config.", e);
+            plugin.getLogger().error("Could not load config.", e);
             return false;
         }
     }
@@ -66,7 +65,7 @@ public class ConfigLoader {
             loader.save(config);
             return true;
         } catch (Exception e) {
-            Main.getInstance().getLogger().error("Could not load config.", e);
+            plugin.getLogger().error("Could not load config.", e);
             return false;
         }
     }
@@ -76,6 +75,7 @@ public class ConfigLoader {
         try {
             File file = new File(plugin.getConfigDir(), "Soulbound.conf");
             if (!file.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 file.createNewFile();
             }
             ConfigurationLoader loader = HoconConfigurationLoader.builder().setFile(file).build();
@@ -98,4 +98,5 @@ public class ConfigLoader {
 
         return messagesConfig;
     }
+
 }

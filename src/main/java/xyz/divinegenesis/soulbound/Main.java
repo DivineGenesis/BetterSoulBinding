@@ -1,13 +1,6 @@
-package com.DivineGenesis.SoulBound;
+package xyz.divinegenesis.soulbound;
 
 
-import com.DivineGenesis.SoulBound.config.ConfigLoader;
-import com.DivineGenesis.SoulBound.config.MessagesConfig;
-import com.DivineGenesis.SoulBound.config.SBConfig;
-import com.DivineGenesis.SoulBound.data.IdentityData;
-import com.DivineGenesis.SoulBound.data.IdentityKeys;
-import com.DivineGenesis.SoulBound.eventlisteners.EventListener;
-import com.DivineGenesis.SoulBound.eventlisteners.NucleusEventListener;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.GuiceObjectMapperFactory;
 import org.slf4j.Logger;
@@ -24,24 +17,27 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import xyz.divinegenesis.soulbound.config.ConfigLoader;
+import xyz.divinegenesis.soulbound.config.MessagesConfig;
+import xyz.divinegenesis.soulbound.config.SBConfig;
+import xyz.divinegenesis.soulbound.data.IdentityData;
+import xyz.divinegenesis.soulbound.data.IdentityKeys;
+import xyz.divinegenesis.soulbound.eventlisteners.EventListener;
+import xyz.divinegenesis.soulbound.eventlisteners.NucleusEventListener;
 
 import java.io.File;
 
-import static com.DivineGenesis.SoulBound.Reference.*;
 
-
-@Plugin (name = NAME, id = ID, version = VERSION, description = DESC, authors = AUTHORS, dependencies = {@Dependency (id = "nucleus", version = "1.14.0", optional = true)})
+@Plugin (name = Reference.NAME, id = Reference.ID, version = Reference.VERSION, description = Reference.DESCRIPTION, authors = {"Jesse McKee", "Burpingdog1"}, dependencies = {@Dependency (id = "nucleus", version = Reference.NUCLEUS_VERSION, optional = true)})
 public class Main {
 
     private static Main instance;
-
-    private com.DivineGenesis.SoulBound.config.SBConfig SBConfig;
-    private com.DivineGenesis.SoulBound.config.MessagesConfig MessagesConfig;
+    private static xyz.divinegenesis.soulbound.config.SBConfig SBConfig;
     private final GuiceObjectMapperFactory factory;
     private final Logger logger;
     private final File configDir;
+    private MessagesConfig messagesConfig;
     private ConfigLoader cfgLoader;
-
     private DataRegistration<IdentityData, IdentityData.Immutable> IDENTITY_DATA_REGISTRATION;
 
     @Inject
@@ -51,16 +47,6 @@ public class Main {
         this.configDir = configDir;
         this.factory = factory;
         instance = this;
-    }
-
-    public MessagesConfig getMessagesConfig () {
-
-        return MessagesConfig;
-    }
-
-    public SBConfig getSBConfig () {
-
-        return SBConfig;
     }
 
     @Listener
@@ -80,7 +66,7 @@ public class Main {
             SBConfig = cfgLoader.getSBConfig();
         }
         if (cfgLoader.loadMessages()) {
-            MessagesConfig = cfgLoader.getMessagesConfig();
+            messagesConfig = cfgLoader.getMessagesConfig();
         }
 
         logger.info("Registering custom data...");
@@ -104,7 +90,10 @@ public class Main {
         if (Sponge.getPluginManager().isLoaded("nucleus")) {
             logger.info("Nucleus found, registering Nucleus events...");
             Sponge.getEventManager().registerListeners(this, new NucleusEventListener());
+        } else {
+            logger.info("Nucleus not found, Kit redemption support will be disabled!");
         }
+
     }
 
     @Listener
@@ -112,6 +101,8 @@ public class Main {
 
         logger.info("Registering Commands...");
         Sponge.getCommandManager().register(this, new CmdLoader().sb, "sb");
+
+
     }
 
     @Listener
@@ -123,7 +114,7 @@ public class Main {
             SBConfig = cfgLoader.getSBConfig();
         }
         if (cfgLoader.loadMessages()) {
-            MessagesConfig = cfgLoader.getMessagesConfig();
+            messagesConfig = cfgLoader.getMessagesConfig();
         }
     }
 
@@ -131,6 +122,16 @@ public class Main {
     public void onShutdown (GameStoppingServerEvent event) {
 
         saveConfig();
+    }
+
+    public MessagesConfig getMessagesConfig () {
+
+        return messagesConfig;
+    }
+
+    public SBConfig getSBConfig () {
+
+        return SBConfig;
     }
 
     public void saveConfig () {

@@ -1,6 +1,7 @@
-package com.DivineGenesis.SoulBound.data;
+package xyz.divinegenesis.soulbound.data;
 
 
+import xyz.divinegenesis.soulbound.Reference;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -18,11 +19,10 @@ import javax.annotation.Generated;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.DivineGenesis.SoulBound.Reference.Blank_UUID;
-
 
 @Generated (value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-07-15T21:25:00.635Z")
 public class IdentityData extends AbstractData<IdentityData, IdentityData.Immutable> {
+
 
     private UUID identity;
 
@@ -32,7 +32,7 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
 
     IdentityData () {
 
-        identity = Blank_UUID;
+        identity = new Reference().Blank_UUID;
     }
 
     IdentityData (UUID identity) {
@@ -120,7 +120,7 @@ public class IdentityData extends AbstractData<IdentityData, IdentityData.Immuta
 
         Immutable () {
 
-            identity = Blank_UUID;
+            identity = new Reference().Blank_UUID;
         }
 
         Immutable (UUID identity) {
