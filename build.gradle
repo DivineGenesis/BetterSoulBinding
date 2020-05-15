@@ -1,4 +1,6 @@
 plugins {
+    id 'java'
+    id 'net.kyori.blossom' version '1.1.0'
     id 'org.spongepowered.plugin' version '0.9.0'
 }
 
@@ -13,10 +15,24 @@ repositories {
 group = pluginGroup
 version = pluginVersion
 sponge.plugin.id = pluginId
+description = "Binds items to the users soul!"
 
-dependencies {
-    compile 'org.spongepowered:spongeapi:' + spongeAPIVersion
-    compile "io.github.nucleuspowered:nucleus-api:" + nucleusVersion
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
 }
 
+blossom {
+    def reference = 'src/main/java/xyz/divinegenesis/soulbound/Reference.java'
+
+    replaceToken '@NAME@', project.name, reference
+    replaceToken '@VERSION@', project.version, reference
+    replaceToken '@ID@', project.sponge.plugin.id, reference
+    replaceToken '@NUCLEUS@', nucleusVersion, reference
+    replaceToken '@DESCRIPTION@', project.description, reference
+}
+
+dependencies {
+    compileOnly 'org.spongepowered:spongeapi:' + spongeAPIVersion
+    compileOnly "io.github.nucleuspowered:nucleus-api:" + nucleusVersion
+}
 
