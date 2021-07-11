@@ -6,24 +6,15 @@ import com.google.inject.Inject
 import org.spongepowered.api.Server
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.lifecycle.StartedEngineEvent
+import org.spongepowered.plugin.PluginContainer
 
 
 @Plugin("soulbound")
-class Main @Inject constructor(
-    private val logger: Logger
-) {
+class Soulbound @Inject internal constructor(private val container: PluginContainer, private val logger: Logger) {
 
     @Listener
     fun onStart (event: StartedEngineEvent<Server>) {
-        logger.info("Server has started")
+        logger.info("Server has started with a new thing")
     }
 
-    companion object {
-        lateinit var instance: Main
-            private set
-    }
-
-    init {
-        instance = this
-    }
 }
