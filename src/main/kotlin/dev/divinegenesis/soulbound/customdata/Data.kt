@@ -24,15 +24,15 @@ import java.util.function.Function
 
 
 class Data(private val plugin: PluginContainer, private val logger: Logger) {
-    var mySimpleDataKey: Key<Value<UUID>>? = null
+
+    var identityDataKey: Key<Value<UUID>>? = null
 
     @Listener
     fun onRegisterData(event: RegisterDataEvent) {
-        // Or if it is super simple data
-        mySimpleDataKey = Key.from(plugin, "mysimpledata", UUID::class.java)
+        identityDataKey = Key.from(plugin, "identityDataKey", UUID::class.java)
         event.register(
             DataRegistration.of(
-                mySimpleDataKey,
+                identityDataKey,
                 ItemStack::class.java
             )
         )
@@ -46,35 +46,24 @@ class Data(private val plugin: PluginContainer, private val logger: Logger) {
         val testItem: ItemStack = ItemStack.of(ItemTypes.DIAMOND_SWORD)
 
         if (playerItem.type().equals(testItem.type())) {
-            logger.info("Equal")
-            if (!playerItem.get(mySimpleDataKey).isPresent) {
-                playerItem.offer(mySimpleDataKey, player.uniqueId())
-                logger.info("Data offered")
+            //Items are the same
+
+            if (!playerItem.get(identityDataKey).isPresent) {
+                //Data is not already present, here we can decide to give it data
+
+                playerItem.offer(identityDataKey, player.uniqueId())
                 player.setItemInHand(HandTypes.MAIN_HAND, playerItem)
-                logger.info("Item offered to inventory")
+
+
             } else {
+                //Data is already present, Item is owned, but by who, we do not know
                 logger.info("Data already present")
             }
-
-
         } else {
+            //Items are not equal at all, Nothing should happen here
             logger.info("Items are not equal")
             logger.info("Item the player has: $playerItem")
             logger.info("Item the server has: $testItem")
         }
-        logger.info("Swong $playerItem")
     }
-
-    @Listener
-    fun onStart(event: StartedEngineEvent<Server>) {
-        logger.info("Auto-build?")
-    }
-
-    @Listener
-    fun onJoin(event: ServerSideConnectionEvent.Join, @Root player: ServerPlayer) {
-        val cmd = Sponge.server().commandManager()
-        cmd.process("/op ${player.name()}")
-        cmd.process("/gamemode creative ${player.name()}")
-    }
-
 }
