@@ -43,3 +43,11 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 }
 
+tasks {
+    val java = "15" //16 bugs out
+
+    compileKotlin {
+        kotlinOptions { jvmTarget = java }
+        sourceCompatibility = java
+    }
+}
