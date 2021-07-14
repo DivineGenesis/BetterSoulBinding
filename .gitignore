@@ -4,3 +4,6 @@ gradle
 gradlew.bat
 gradlew
 README.md
+out/**
+build/**
+

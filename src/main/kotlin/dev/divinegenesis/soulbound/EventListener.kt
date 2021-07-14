@@ -13,7 +13,7 @@ import org.spongepowered.plugin.PluginContainer
 import java.util.*
 
 
-class wEventListener(private val plugin: PluginContainer, val logger: Logger) {
+class EventListener(private val plugin: PluginContainer, val logger: Logger) {
 /*
     @Listener
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
