@@ -1,8 +1,7 @@
 package dev.divinegenesis.soulbound.customdata
 
+import dev.divinegenesis.soulbound.api.Item
 import org.apache.logging.log4j.Logger
-import org.spongepowered.api.Server
-import org.spongepowered.api.Sponge
 import org.spongepowered.api.data.DataRegistration
 import org.spongepowered.api.data.Key
 import org.spongepowered.api.data.type.HandTypes
@@ -12,8 +11,6 @@ import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.filter.cause.Root
 import org.spongepowered.api.event.item.inventory.InteractItemEvent
 import org.spongepowered.api.event.lifecycle.RegisterDataEvent
-import org.spongepowered.api.event.lifecycle.StartedEngineEvent
-import org.spongepowered.api.event.network.ServerSideConnectionEvent
 import org.spongepowered.api.item.ItemTypes
 import org.spongepowered.api.item.inventory.ItemStack
 import org.spongepowered.api.network.ClientSideConnection
@@ -25,7 +22,9 @@ import java.util.function.Function
 
 class Data(private val plugin: PluginContainer, private val logger: Logger) {
 
-    var identityDataKey: Key<Value<UUID>>? = null
+    companion object {
+        var identityDataKey: Key<Value<UUID>>? = null
+    }
 
     @Listener
     fun onRegisterData(event: RegisterDataEvent) {
@@ -40,25 +39,14 @@ class Data(private val plugin: PluginContainer, private val logger: Logger) {
 
     @Listener
     fun onSwing(event: InteractItemEvent.Primary, @Root player: ServerPlayer) {
-        logger.info("Swing!")
-
         val playerItem: ItemStack = event.itemStack().createStack()
         val testItem: ItemStack = ItemStack.of(ItemTypes.DIAMOND_SWORD)
 
         if (playerItem.type().equals(testItem.type())) {
             //Items are the same
+            Item.applyData(playerItem, player.uniqueId())
+            player.setItemInHand(HandTypes.MAIN_HAND, playerItem)
 
-            if (!playerItem.get(identityDataKey).isPresent) {
-                //Data is not already present, here we can decide to give it data
-
-                playerItem.offer(identityDataKey, player.uniqueId())
-                player.setItemInHand(HandTypes.MAIN_HAND, playerItem)
-
-
-            } else {
-                //Data is already present, Item is owned, but by who, we do not know
-                logger.info("Data already present")
-            }
         } else {
             //Items are not equal at all, Nothing should happen here
             logger.info("Items are not equal")
