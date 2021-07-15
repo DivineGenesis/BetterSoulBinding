@@ -1,12 +1,15 @@
 package dev.divinegenesis.soulbound
 
 import dev.divinegenesis.soulbound.customdata.Data
+import net.kyori.adventure.text.Component
 import org.apache.logging.log4j.Logger
+import org.spongepowered.api.data.Keys
 import org.spongepowered.api.entity.Item
 import org.spongepowered.api.entity.living.player.Player
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.filter.cause.First
+import org.spongepowered.api.event.filter.cause.Root
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent
 import org.spongepowered.api.item.inventory.ItemStack
 import org.spongepowered.plugin.PluginContainer
@@ -14,38 +17,30 @@ import java.util.*
 
 
 class EventListener(private val plugin: PluginContainer, val logger: Logger) {
-/*
+
     @Listener
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
 
-         if (player.hasPermission("pickup permission")){ //|| !plugin.getSBConfig().pickup.PickupPermissions) { //TODO: Fix permissions
+        if (player.hasPermission("sb.PLACEHOLDER")) { //check config //TODO: Placeholder, add config check
 
+            val stack = event.originalStack().createStack()
+            val identityItem = stack.get(Data.identityDataKey)
 
-            val item: Item = event.item()
-            val itemStack: ItemStack = item.item().get().createStack()
-            val identityItem: Optional<UUID>? = itemStack[Data(plugin).mySimpleDataKey]
-            val id: String = eventUtils.getID(itemStack)
-            if (!identity.isPresent()) {
-                if (plugin.getSBConfig().pickup.BindOnPickup.contains(id)) {
-                    eventUtils.bindItem(player, stack, eventUtils.getItemLore())
-                    item.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot())
-                }
-            } else if (!identity.get().equals(player.getUniqueId())) {
-                if (identity.get().equals(reference.Blank_UUID)) {
-                    stack.remove(IdentityKeys.IDENTITY)
-                    eventUtils.bindItem(player, stack, eventUtils.getItemLore())
-                    item.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot())
+            if (!identityItem.isPresent) {
+                //TODO: bind item to player and offer it back
+                //No identity
+                //bind item
+            } else if (identityItem.get() != player.uniqueId()) {
+                //Doesn't belong to player
+                if (identityItem.equals(UUID.fromString("PLACEHOLDER"))) { //TODO: Placeholder
+                    stack.remove(Data.identityDataKey)
+                    stack.offer(Data.identityDataKey, player.uniqueId())
                 } else {
-                    if (!player.hasPermission(reference.BYPASS)) {
-                        player.sendMessage(
-                            Text.of(
-                                TextColors.DARK_RED,
-                                plugin.getMessagesConfig().items.ITEM_NOT_BOUND_TO_PLAYER
-                            )
-                        )
-                        event.setCancelled(true)
+                    if (!player.hasPermission("sb.PLACEHOLDER")) {//TODO: Placeholder
+                        player.sendMessage(Component.text("Not bound to you"))
+                        event.isCancelled = true
                     } else {
-                        player.sendMessage(Text.of(TextColors.YELLOW, plugin.getMessagesConfig().items.ADMIN_BYPASS))
+                        player.sendMessage(Component.text("Yes you can!"))
                     }
                 }
             }
@@ -240,5 +235,5 @@ class EventListener(private val plugin: PluginContainer, val logger: Logger) {
         }
     }
 
-*/
+
 }
