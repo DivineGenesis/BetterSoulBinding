@@ -10,23 +10,16 @@ interface Item {
 
     companion object {
         fun applyData(itemStack: ItemStack, uuid: UUID): DataTransactionResult? {
-            return if (!hasData(itemStack)) {
-                itemStack.offer(Data.identityDataKey,uuid)
-            } else { //Already has data
-                DataTransactionResult.failNoData()
-            }
+            return itemStack.offer(Data.identityDataKey, uuid)
         }
 
         private fun hasData(itemStack: ItemStack): Boolean {
+
             return itemStack.get(Data.identityDataKey).isPresent
         }
 
         fun removeData(itemStack: ItemStack): DataTransactionResult? {
-            return if(hasData(itemStack)) {
-                itemStack.remove(Data.identityDataKey)
-            } else {
-                DataTransactionResult.failNoData()  //Return fail if item doesn't have data
-            }
+            return itemStack.remove(Data.identityDataKey)
         }
     }
 
