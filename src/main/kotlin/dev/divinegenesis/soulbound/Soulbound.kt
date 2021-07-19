@@ -4,28 +4,43 @@ import org.apache.logging.log4j.Logger
 import org.spongepowered.plugin.jvm.Plugin
 import com.google.inject.Inject
 import dev.divinegenesis.soulbound.customdata.Data
+import org.apache.logging.log4j.LogManager
 import org.spongepowered.api.Engine
-import org.spongepowered.api.Server
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.lifecycle.*
+import org.spongepowered.api.scheduler.Task
 import org.spongepowered.plugin.PluginContainer
 
 
 @Plugin("soulbound")
-data class Soulbound @Inject internal constructor(private val container: PluginContainer, private val logger: Logger) {
+class Soulbound @Inject internal constructor(private val container: PluginContainer) {
+
+    companion object {
+        val logger = logger<Soulbound>()
+        lateinit var plugin: PluginContainer
+    }
 
     @Listener
     fun onPluginConstruction(event: ConstructPluginEvent) {
         logger.info("Soulbound constructing..")
         //Config
+        plugin = container
+        Sponge.eventManager().registerListeners(container, EventListener())
+        Sponge.eventManager().registerListeners(container,Data(container))
 
-        Sponge.eventManager().registerListeners(container, Data(container,logger))
+
+
+
     }
 
     //@Listener
     //fun onRegisterCommand(event: RegisterCommandEvent<>)
 
+    @Listener
+    fun onServerStart(event:StartedEngineEvent<Engine>) {
+
+    }
 
     @Listener
     fun onReload(event: RefreshGameEvent) {
@@ -38,3 +53,5 @@ data class Soulbound @Inject internal constructor(private val container: PluginC
     }
 
 }
+
+inline fun <reified T> logger(): Logger = LogManager.getLogger(T::class.java)
