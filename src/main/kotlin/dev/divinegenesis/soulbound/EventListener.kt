@@ -2,68 +2,93 @@ package dev.divinegenesis.soulbound
 
 import dev.divinegenesis.soulbound.customdata.Data
 import org.apache.logging.log4j.Logger
+import org.spongepowered.api.data.type.HandTypes
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
+import org.spongepowered.api.event.EventContextKeys
 import org.spongepowered.api.event.Listener
+import org.spongepowered.api.event.Order
+import org.spongepowered.api.event.block.InteractBlockEvent
+import org.spongepowered.api.event.entity.InteractEntityEvent
 import org.spongepowered.api.event.filter.cause.First
 import org.spongepowered.api.event.filter.cause.Root
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent
+import org.spongepowered.api.event.item.inventory.CraftItemEvent
 import org.spongepowered.api.event.item.inventory.InteractItemEvent
-import org.spongepowered.api.item.ItemTypes
 import org.spongepowered.api.item.inventory.ItemStack
-import org.spongepowered.api.scheduler.Task
-import org.spongepowered.api.util.Ticks
 import java.lang.NullPointerException
-import java.time.Duration
 import java.util.*
 
 
 class EventListener {
-    @Listener
-    fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
-        val stack = event.originalStack().createStack()
-        val dataStack = Utils().sortData(stack, player.uniqueId()).createSnapshot()
 
-        event.setCustom(mutableListOf(dataStack))
+    @Listener(order = Order.FIRST)
+    fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
+        val originalStack = event.originalStack().createStack()
+
+        val dataPair = Utils().sortData(originalStack, player.uniqueId())
+        val finalStack = dataPair.first.createSnapshot()
+        val denyEvent = dataPair.second
+
+        event.isCancelled = denyEvent
+        event.setCustom(mutableListOf(finalStack))
+
         //Bug with dropping items, asked in discord
         //https://github.com/SpongePowered/Sponge/issues/3479
+        //Fixed in faith's branch, yet to be released
     }
 
     @Listener
-    fun onInteractItemEvent(event: InteractItemEvent.Primary, @Root player: ServerPlayer) {
-        val item = event.itemStack().createStack()
+    fun onInteractBlock(event: InteractBlockEvent.Primary.Start, @Root player: ServerPlayer) {
+        //May need to check for null
+        val itemStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
 
-        if (Utils().containsData(item)) {
-            logger<EventListener>().info("Data retained!")
-        } else {
-            logger<EventListener>().info("No Data here")
-        }
+        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val finalStack = dataPair.first
+        val denyEvent = dataPair.second
+
+        event.isCancelled = denyEvent
+        player.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+    }
+
+    @Listener
+    fun onInteractEntity(event: InteractEntityEvent.Primary, @Root player: ServerPlayer) {
+        //May need to check for null
+        val itemStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
+
+        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val finalStack = dataPair.first
+        val denyEvent = dataPair.second
+
+        event.isCancelled = denyEvent
+        player.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+    }
+
+    @Listener
+    fun onInteractItemSecondary(event: InteractItemEvent.Secondary, @Root player: ServerPlayer) {
+
+        val itemStack = event.itemStack().createStack()
+
+        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val finalStack = dataPair.first
+        val denyEvent = dataPair.second
+
+        event.isCancelled = denyEvent
+        player.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+    }
+
+    @Listener
+    fun onCraft(event: CraftItemEvent.Preview, @Root player: ServerPlayer) {
+        val itemStack = event.preview().finalReplacement().createStack()
+
+        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val finalStack = dataPair.first
+
+        //Should never need to deny this event.
+
+        event.preview().setCustom(finalStack)
     }
 }
 /*
-        @Listener
-        fun onEquip(event: ChangeInventoryEvent.Equipment?, @Root player: Player?) {
-            if (plugin.getSBConfig().modules.DebugInfo) {
-                eventUtils.debugInfo(event)
-            }
-        }
-
-        @Listener
-        fun onHandUse(event: InteractItemEvent, @Root player: Player) {
-            if (plugin.getSBConfig().modules.DebugInfo) {
-                eventUtils.debugInfo(event)
-            }
-            if (player.hasPermission(reference.USE) || !plugin.getSBConfig().use.UsePermissions) {
-                val hand: HandType
-                hand =
-                    if (event is InteractItemEvent.Primary.MainHand || event is InteractItemEvent.Secondary.MainHand) {
-                        HandTypes.MAIN_HAND
-                    } else {
-                        HandTypes.OFF_HAND
-                    }
-                val stack: ItemStack = event.getItemStack().createStack()
-                event.setCancelled(eventUtils.handUse(player, stack, hand))
-            }
-        }
 
         @Listener
         fun onCraft(event: CraftItemEvent.Preview, @Root player: Player) {
@@ -242,7 +267,16 @@ class Utils {
     private val logger: Logger = logger<Utils>()
 
     fun containsData(stack: ItemStack): Boolean {
-        logger.info(stack.keys.contains(identityDataKey))
+        logger.info(
+            """
+            =
+            ===================================================
+            Stack   :   $stack
+            Key     :   $identityDataKey
+            Data    :   ${stack.keys.contains(identityDataKey)}
+            ===================================================
+        """.trimIndent()
+        )
         return stack.keys.contains(identityDataKey)
     }
 
@@ -256,7 +290,6 @@ class Utils {
 
     private fun applyData(stack: ItemStack, userUUID: UUID) {
         try {
-
             stack.offer(identityDataKey, userUUID)
 
         } catch (e: NullPointerException) {
@@ -272,24 +305,24 @@ class Utils {
         }
     }
 
-    fun sortData(stack: ItemStack, userUUID: UUID): ItemStack {
+    fun sortData(stack: ItemStack, userUUID: UUID): Pair<ItemStack, Boolean> {
         if (containsData(stack)) {
             return when (stack.get(identityDataKey).get()) {
                 blankUUID -> {
                     removeData(stack)
                     applyData(stack, userUUID)
-                    stack
+                    Pair(stack, true)
                 }
-                userUUID -> {
-                    stack
+                userUUID -> {//stack false
+                    Pair(stack, false)
                 }
                 else -> {
-                    stack
+                    Pair(stack, true)
                 }
             }
         } else {
             applyData(stack, userUUID)
-            return stack
+            return Pair(stack, false)
         }
     }
 }
