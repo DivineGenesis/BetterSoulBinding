@@ -3,17 +3,11 @@ package dev.divinegenesis.soulbound
 import dev.divinegenesis.soulbound.customdata.Data
 import org.apache.logging.log4j.Logger
 import org.spongepowered.api.data.type.HandTypes
-import org.spongepowered.api.entity.Entity
-import org.spongepowered.api.entity.EntityType
-import org.spongepowered.api.entity.EntityTypes
-import org.spongepowered.api.entity.Item
-import org.spongepowered.api.entity.living.player.User
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.event.EventContextKeys
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.Order
 import org.spongepowered.api.event.block.InteractBlockEvent
-import org.spongepowered.api.event.entity.ExpireEntityEvent
 import org.spongepowered.api.event.entity.InteractEntityEvent
 import org.spongepowered.api.event.filter.cause.First
 import org.spongepowered.api.event.filter.cause.Root
@@ -21,8 +15,6 @@ import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent
 import org.spongepowered.api.event.item.inventory.CraftItemEvent
 import org.spongepowered.api.event.item.inventory.InteractItemEvent
 import org.spongepowered.api.item.inventory.ItemStack
-import org.spongepowered.api.world.Location
-import org.spongepowered.api.world.World
 import java.lang.NullPointerException
 import java.util.*
 
@@ -266,9 +258,7 @@ class EventListener {
 class Utils {
 
     private val identityDataKey = Data.identityDataKey
-
     private val blankUUID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
-
     private val logger: Logger = logger<Utils>()
 
     private fun containsData(stack: ItemStack): Boolean {
