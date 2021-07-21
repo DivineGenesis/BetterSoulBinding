@@ -3,11 +3,17 @@ package dev.divinegenesis.soulbound
 import dev.divinegenesis.soulbound.customdata.Data
 import org.apache.logging.log4j.Logger
 import org.spongepowered.api.data.type.HandTypes
+import org.spongepowered.api.entity.Entity
+import org.spongepowered.api.entity.EntityType
+import org.spongepowered.api.entity.EntityTypes
+import org.spongepowered.api.entity.Item
+import org.spongepowered.api.entity.living.player.User
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.event.EventContextKeys
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.Order
 import org.spongepowered.api.event.block.InteractBlockEvent
+import org.spongepowered.api.event.entity.ExpireEntityEvent
 import org.spongepowered.api.event.entity.InteractEntityEvent
 import org.spongepowered.api.event.filter.cause.First
 import org.spongepowered.api.event.filter.cause.Root
@@ -15,6 +21,8 @@ import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent
 import org.spongepowered.api.event.item.inventory.CraftItemEvent
 import org.spongepowered.api.event.item.inventory.InteractItemEvent
 import org.spongepowered.api.item.inventory.ItemStack
+import org.spongepowered.api.world.Location
+import org.spongepowered.api.world.World
 import java.lang.NullPointerException
 import java.util.*
 
@@ -23,6 +31,7 @@ class EventListener {
 
     @Listener(order = Order.FIRST)
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
+
         val originalStack = event.originalStack().createStack()
 
         val dataPair = Utils().sortData(originalStack, player.uniqueId())
@@ -31,18 +40,14 @@ class EventListener {
 
         event.isCancelled = denyEvent
         event.setCustom(mutableListOf(finalStack))
-
-        //Bug with dropping items, asked in discord
-        //https://github.com/SpongePowered/Sponge/issues/3479
-        //Fixed in faith's branch, yet to be released
     }
 
     @Listener
     fun onInteractBlock(event: InteractBlockEvent.Primary.Start, @Root player: ServerPlayer) {
-        //May need to check for null
-        val itemStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
 
-        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
+
+        val dataPair = Utils().sortData(originalStack, player.uniqueId())
         val finalStack = dataPair.first
         val denyEvent = dataPair.second
 
@@ -52,10 +57,10 @@ class EventListener {
 
     @Listener
     fun onInteractEntity(event: InteractEntityEvent.Primary, @Root player: ServerPlayer) {
-        //May need to check for null
-        val itemStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
 
-        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
+
+        val dataPair = Utils().sortData(originalStack, player.uniqueId())
         val finalStack = dataPair.first
         val denyEvent = dataPair.second
 
@@ -66,9 +71,9 @@ class EventListener {
     @Listener
     fun onInteractItemSecondary(event: InteractItemEvent.Secondary, @Root player: ServerPlayer) {
 
-        val itemStack = event.itemStack().createStack()
+        val originalStack = event.itemStack().createStack()
 
-        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val dataPair = Utils().sortData(originalStack, player.uniqueId())
         val finalStack = dataPair.first
         val denyEvent = dataPair.second
 
@@ -78,9 +83,9 @@ class EventListener {
 
     @Listener
     fun onCraft(event: CraftItemEvent.Preview, @Root player: ServerPlayer) {
-        val itemStack = event.preview().finalReplacement().createStack()
+        val originalStack = event.preview().finalReplacement().createStack()
 
-        val dataPair = Utils().sortData(itemStack, player.uniqueId())
+        val dataPair = Utils().sortData(originalStack, player.uniqueId())
         val finalStack = dataPair.first
 
         //Should never need to deny this event.
@@ -266,7 +271,7 @@ class Utils {
 
     private val logger: Logger = logger<Utils>()
 
-    fun containsData(stack: ItemStack): Boolean {
+    private fun containsData(stack: ItemStack): Boolean {
         logger.info(
             """
             =
