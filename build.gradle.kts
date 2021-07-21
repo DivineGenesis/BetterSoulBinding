@@ -41,11 +41,11 @@ sponge {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.spongepowered:configurate-extra-kotlin:4.1.1")
 }
 
 tasks {
     val java = "15" //16 bugs out
-
     compileKotlin {
         kotlinOptions { jvmTarget = java }
         sourceCompatibility = java

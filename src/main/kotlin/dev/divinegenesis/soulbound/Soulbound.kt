@@ -4,35 +4,57 @@ import org.apache.logging.log4j.Logger
 import org.spongepowered.plugin.jvm.Plugin
 import com.google.inject.Inject
 import dev.divinegenesis.soulbound.commands.BaseCommand
+import dev.divinegenesis.soulbound.config.Config
 import dev.divinegenesis.soulbound.customdata.Data
+import dev.divinegenesis.soulbound.storage.DataStack
+import dev.divinegenesis.soulbound.storage.Database
+import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import org.apache.logging.log4j.LogManager
 import org.spongepowered.api.Engine
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.Command
+import org.spongepowered.api.config.ConfigDir
+import org.spongepowered.api.config.DefaultConfig
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.lifecycle.*
+import org.spongepowered.configurate.CommentedConfigurationNode
+import org.spongepowered.configurate.ConfigurateException
+import org.spongepowered.configurate.reference.ConfigurationReference
+import org.spongepowered.configurate.reference.ValueReference
 import org.spongepowered.plugin.PluginContainer
+import java.nio.file.Path
 
 
 @Plugin("soulbound")
-class Soulbound @Inject internal constructor(private val container: PluginContainer) {
+class Soulbound @Inject internal constructor(
+    private val container: PluginContainer,
+    @DefaultConfig(sharedRoot = false) val reference: ConfigurationReference<CommentedConfigurationNode>,
+    @ConfigDir(sharedRoot = false) val configDir: Path
+) {
 
     companion object {
         val logger = logger<Soulbound>()
         lateinit var plugin: PluginContainer
+        lateinit var config: ValueReference<Config, CommentedConfigurationNode>
+        lateinit var configDir: Path
+    }
+
+    init {
+        plugin = container
+        config = reference.referenceTo(Config::class.java)
+        Soulbound.configDir = configDir
     }
 
     @Listener
     fun onPluginConstruction(event: ConstructPluginEvent) {
         logger.info("Soulbound constructing..")
-        //Config
-        plugin = container
+        try {
+            this.reference.save()
+        } catch (e: ConfigurateException) {
+            logger.error("Unable to load configuration", e)
+        }
         Sponge.eventManager().registerListeners(container, EventListener())
-        Sponge.eventManager().registerListeners(container,Data(container))
-
-
-
-
+        Sponge.eventManager().registerListeners(container, Data(container))
     }
 
     @Listener
@@ -41,15 +63,16 @@ class Soulbound @Inject internal constructor(private val container: PluginContai
 
         event.register(
             this.container,
-            BaseCommand().helpCommand,"sb"
+            BaseCommand().helpCommand, "sb"
         )
-
-
     }
 
     @Listener
-    fun onServerStart(event:StartedEngineEvent<Engine>) {
+    fun onServerStart(event: StartedEngineEvent<Engine>) {
+        val database = SqliteDatabase()
 
+        val loadedData = database.loadData()
+        logger.info("Data loaded: ${loadedData.size} entries")
     }
 
     @Listener
@@ -61,7 +84,6 @@ class Soulbound @Inject internal constructor(private val container: PluginContai
     fun onShutdown(event: StoppingEngineEvent<Engine>) {
         logger.info("Server shutting down")
     }
-
 }
 
 inline fun <reified T> logger(): Logger = LogManager.getLogger(T::class.java)
