@@ -3,13 +3,15 @@ package dev.divinegenesis.soulbound
 import org.apache.logging.log4j.Logger
 import org.spongepowered.plugin.jvm.Plugin
 import com.google.inject.Inject
+import dev.divinegenesis.soulbound.commands.BaseCommand
 import dev.divinegenesis.soulbound.customdata.Data
+import net.kyori.adventure.text.Component
 import org.apache.logging.log4j.LogManager
 import org.spongepowered.api.Engine
 import org.spongepowered.api.Sponge
+import org.spongepowered.api.command.Command
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.lifecycle.*
-import org.spongepowered.api.scheduler.Task
 import org.spongepowered.plugin.PluginContainer
 
 
@@ -34,8 +36,23 @@ class Soulbound @Inject internal constructor(private val container: PluginContai
 
     }
 
-    //@Listener
-    //fun onRegisterCommand(event: RegisterCommandEvent<>)
+    @Listener
+    fun onRegisterCommand(event: RegisterCommandEvent<Command.Parameterized>) {
+        logger.info("Registering commands..")
+
+        val helpCommand = Command.builder()
+            .shortDescription(Component.text("Helps me"))
+            .permission("")
+            .executor(BaseCommand())
+            .build()
+
+        event.register(
+            this.container,
+            helpCommand,"sb"
+        )
+
+
+    }
 
     @Listener
     fun onServerStart(event:StartedEngineEvent<Engine>) {
