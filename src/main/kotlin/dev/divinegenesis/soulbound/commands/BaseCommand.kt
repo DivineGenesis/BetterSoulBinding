@@ -1,20 +1,62 @@
 package dev.divinegenesis.soulbound.commands
 
+import dev.divinegenesis.soulbound.Utils
 import net.kyori.adventure.text.Component
-import org.spongepowered.api.command.CommandExecutor
+import org.spongepowered.api.command.Command.*
 import org.spongepowered.api.command.CommandResult
 import org.spongepowered.api.command.parameter.CommandContext
 import org.spongepowered.api.command.exception.CommandException
+import org.spongepowered.api.data.type.HandTypes
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 
 
-class BaseCommand : CommandExecutor {
+class BaseCommand {
+    private val bindCommand = builder()
+        .shortDescription(Component.text("Binds the item to the player holding it"))
+        .executor(this::bindCommandResult)
+        .permission("")
+        .build()
+
+    //Base Command for above commands, as commands are added, create additional children
+    var helpCommand = builder()
+        .shortDescription(Component.text("Shows help"))
+        .executor(this::helpCommandResult)
+        .permission("")
+        .addChild(bindCommand, "bind")
+        .build()
+
     @Throws(CommandException::class)
-    override fun execute(context: CommandContext): CommandResult {
+    private fun helpCommandResult(context: CommandContext): CommandResult {
 
-        val sender = context.cause().root() as ServerPlayer
+        val sender = context.cause().root()
 
-        sender.sendMessage(Component.text("We did it!"))
+        if (sender is ServerPlayer) {
+            sender.sendMessage(
+                Component.text(
+                    """
+                Welcome to Soulbound
+                /sb is the root command
+                /sb bind will let you bind an item
+            """.trimIndent()
+                )
+            )
+        }
+
+        return CommandResult.success()
+    }
+
+
+    @Throws(CommandException::class)
+    private fun bindCommandResult(context: CommandContext): CommandResult {
+
+        val sender = context.cause().root()
+
+        if (sender is ServerPlayer) {
+            val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
+            val finalStack = Utils().sortData(itemStack, sender.uniqueId()).first
+
+            sender.setItemInHand(HandTypes.MAIN_HAND,finalStack)
+        }
 
         return CommandResult.success()
     }
