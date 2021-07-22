@@ -81,4 +81,4 @@ abstract class Database {
     }
 }
 
-data class DataStack(val itemID: String, val interact: Short, val pickup: Short, val craft: Short)
+data class DataStack(val itemID: String, val interact: Short = 0, val pickup: Short = 0, val craft: Short = 0)
