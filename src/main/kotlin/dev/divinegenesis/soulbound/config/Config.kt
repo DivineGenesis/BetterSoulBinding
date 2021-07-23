@@ -1,7 +1,6 @@
 package dev.divinegenesis.soulbound.config
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
 import org.spongepowered.configurate.objectmapping.meta.Setting
 
 

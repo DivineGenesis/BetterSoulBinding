@@ -21,7 +21,6 @@ abstract class Database {
                         "craft			INT" +
                         ")"
 
-                // Create the islands table (execute statement)
                 statement?.executeUpdate(table)
             }
         } catch (e: SQLException) {
@@ -65,18 +64,6 @@ abstract class Database {
             }
         } catch (e: SQLException) {
             logger<Database>().error("Error inserting data into the database:", e)
-        }
-    }
-
-    fun removeData(data: DataStack) {
-        val sql = "DELETE FROM soulbound WHERE itemID = ?"
-        try {
-            connection?.prepareStatement(sql).use { statement ->
-                statement?.setString(1, data.itemID)
-                statement?.execute()
-            }
-        } catch (e: SQLException) {
-            logger<Database>().error("Error removing Island from the database:", e)
         }
     }
 }

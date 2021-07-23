@@ -1,16 +1,11 @@
 package dev.divinegenesis.soulbound.storage
 
-import com.google.common.collect.Maps
-import com.google.common.io.Files
 import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.logger
 import java.io.File
-import java.io.IOException
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
-import java.util.*
-import kotlin.collections.HashMap
 
 
 class SqliteDatabase : Database() {

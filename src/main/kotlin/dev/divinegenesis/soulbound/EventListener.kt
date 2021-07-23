@@ -308,7 +308,7 @@ class Utils {
                     applyData(stack, userUUID)
                     Pair(stack, true)
                 }
-                userUUID -> {//stack false
+                userUUID -> {
                     Pair(stack, false)
                 }
                 else -> {

@@ -1,7 +1,6 @@
 package dev.divinegenesis.soulbound.commands
 
 import dev.divinegenesis.soulbound.Utils
-import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.DataStack
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import net.kyori.adventure.text.Component
@@ -20,7 +19,6 @@ import org.spongepowered.api.registry.RegistryTypes
 
 class BaseCommand {
 
-
     enum class Choices {
         INTERACT,
         CRAFT,
@@ -34,6 +32,7 @@ class BaseCommand {
         .executor(this::bindCommandResult)
         .permission("")
         .build()
+
     private val setStorage = builder()
         .shortDescription(Component.text("Adds the item to the database!"))
         .executor(this::storageCommandResult)
@@ -47,7 +46,7 @@ class BaseCommand {
         .executor(this::helpCommandResult)
         .permission("")
         .addChild(bindCommand, "bind")
-        .addChild(setStorage, "set","add")
+        .addChild(setStorage, "set", "add")
         .build()
 
     @Throws(CommandException::class)
