@@ -118,5 +118,5 @@ class BaseCommand {
     }
 }
 
-fun Boolean.toInt() = if (this) 1 else 0
+fun Boolean.toInt() = compareTo(false)
 
