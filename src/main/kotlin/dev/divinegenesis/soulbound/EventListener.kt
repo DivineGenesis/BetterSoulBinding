@@ -261,7 +261,7 @@ class Utils {
     private val blankUUID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
     private val logger: Logger = logger<Utils>()
 
-    private fun containsData(stack: ItemStack): Boolean {
+    fun containsData(stack: ItemStack): Boolean {
         logger.info(
             """
             =
@@ -275,7 +275,7 @@ class Utils {
         return stack.keys.contains(identityDataKey)
     }
 
-    private fun removeData(stack: ItemStack): Boolean { //return true if operation didn't fail
+    fun removeData(stack: ItemStack): Boolean { //return true if operation didn't fail
         return if (containsData(stack)) {
             stack.remove(identityDataKey).isSuccessful
         } else {
