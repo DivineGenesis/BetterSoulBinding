@@ -36,9 +36,9 @@ abstract class Database {
                 statement?.executeQuery("SELECT * FROM soulbound").use { results ->
                     while (results?.next() == true) {
                         val itemID: String = results.getString("itemID")
-                        val interact: Short = results.getShort("interact")
-                        val pickup: Short = results.getShort("pickup")
-                        val craft: Short = results.getShort("craft")
+                        val interact: Int = results.getInt("interact")
+                        val pickup: Int = results.getInt("pickup")
+                        val craft: Int = results.getInt("craft")
                         val dataStack = DataStack(itemID, interact, pickup, craft)
                         data[itemID] = dataStack
                     }
@@ -58,9 +58,9 @@ abstract class Database {
         try {
             connection?.prepareStatement(sql).use { statement ->
                 statement?.setString(1, data.itemID)
-                statement?.setShort(2, data.interact)
-                statement?.setShort(3, data.pickup)
-                statement?.setShort(4, data.craft)
+                statement?.setInt(2, data.interact)
+                statement?.setInt(3, data.pickup)
+                statement?.setInt(4, data.craft)
                 statement?.execute()
             }
         } catch (e: SQLException) {
@@ -81,4 +81,4 @@ abstract class Database {
     }
 }
 
-data class DataStack(val itemID: String, val interact: Short = 0, val pickup: Short = 0, val craft: Short = 0)
+data class DataStack(val itemID: String, var interact: Int = 0, var pickup: Int = 0, var craft: Int = 0)

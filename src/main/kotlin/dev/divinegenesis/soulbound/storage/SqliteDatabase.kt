@@ -25,9 +25,9 @@ class SqliteDatabase : Database() {
                 statement.executeQuery("SELECT * FROM soulbound").use { results ->
                     while (results.next()) {
                         val itemID: String = results.getString("itemID")
-                        val interact: Short = results.getShort("interact")
-                        val pickup: Short = results.getShort("pickup")
-                        val craft: Short = results.getShort("craft")
+                        val interact: Int = results.getInt("interact")
+                        val pickup: Int = results.getInt("pickup")
+                        val craft: Int = results.getInt("craft")
                         val dataStack = DataStack(itemID, interact, pickup, craft)
                         data[itemID] = dataStack
                     }
