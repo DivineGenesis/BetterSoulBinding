@@ -16,9 +16,9 @@ class SqliteDatabase : Database() {
     override fun loadData(): Map<String, DataStack> {
         val data = hashMapOf<String, DataStack>()
         try {
-            connection!!.createStatement().use { statement ->
-                statement.executeQuery("SELECT * FROM soulbound").use { results ->
-                    while (results.next()) {
+            connection?.createStatement().use { statement ->
+                statement?.executeQuery("SELECT * FROM soulbound").use { results ->
+                    while (results?.next() == true) {
                         val itemID: String = results.getString("itemID")
                         val interact: Int = results.getInt("interact")
                         val pickup: Int = results.getInt("pickup")
@@ -32,7 +32,7 @@ class SqliteDatabase : Database() {
         } catch (e: SQLException) {
             logger<SqliteDatabase>().error("Unable to read from the database:", e)
         }
-        logger<SqliteDatabase>().info("Loaded Soulbound SQLite Data. Count: {}", data.size)
+        logger<SqliteDatabase>().info("Loaded Soulbound SQLite Data. Count: ${data.size}")
         return data
     }
 
