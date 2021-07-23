@@ -42,7 +42,7 @@ class SqliteDatabase : Database() {
         try {
             Class.forName("org.sqlite.JDBC")
             connection = DriverManager.getConnection(
-                String.format("jdbc:sqlite:${Soulbound.configDir}${File.pathSeparator}soulbound.db")
+                "jdbc:sqlite:${Soulbound.configDir}${File.separatorChar}soulbound.db"
             )
             logger<SqliteDatabase>().info("Successfully connected to Soulbound SQLite DB.")
         } catch (e: ClassNotFoundException) {
