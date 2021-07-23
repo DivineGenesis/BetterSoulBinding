@@ -1,6 +1,8 @@
 package dev.divinegenesis.soulbound.commands
 
+import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.Utils
+import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.DataStack
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import net.kyori.adventure.text.Component
@@ -33,10 +35,22 @@ class BaseCommand {
         .permission("")
         .build()
 
-    private val setStorage = builder()
+    private val removeBindCommand = builder()
+        .shortDescription(Component.text("Removes binding from the item the player is holding"))
+        .executor(this::removeBindCommandResult)
+        .permission("")
+        .build()
+
+    private val setStorageCommand = builder()
         .shortDescription(Component.text("Adds the item to the database!"))
         .executor(this::storageCommandResult)
         .addParameter(Parameter.seq(enumParameter, CommonParameters.BOOLEAN))
+        .permission("")
+        .build()
+
+    private val checkBindingCommand = builder()
+        .shortDescription(Component.text("Checks if an item has bind data on it!"))
+        .executor(this::checkBindingResult)
         .permission("")
         .build()
 
@@ -46,7 +60,9 @@ class BaseCommand {
         .executor(this::helpCommandResult)
         .permission("")
         .addChild(bindCommand, "bind")
-        .addChild(setStorage, "set", "add")
+        .addChild(removeBindCommand, "unbind")
+        .addChild(setStorageCommand, "set", "add")
+        .addChild(checkBindingCommand, "check")
         .build()
 
     @Throws(CommandException::class)
@@ -64,6 +80,20 @@ class BaseCommand {
             """.trimIndent()
                 )
             )
+        }
+        return CommandResult.success()
+    }
+
+    @Throws(CommandException::class)
+    private fun checkBindingResult(context: CommandContext): CommandResult {
+
+        val sender = context.cause().root()
+        if (sender is ServerPlayer) {
+            val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
+            if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
+                return CommandResult.error(Component.text("You need to have an item in your main hand!"))
+            }
+            sender.sendMessage(Component.text("${Utils().containsData(itemStack)}"))
         }
         return CommandResult.success()
     }
@@ -95,7 +125,8 @@ class BaseCommand {
                 }
             }
             sql.saveStack(dataStack)
-            sender.sendMessage(Component.text("${sql.loadData().size} entries"))
+            Soulbound.database = sql.loadData() //Refresh connection
+            logger<BaseCommand>().info("Database entries: ${Soulbound.database.size}")
         }
         return CommandResult.success()
     }
@@ -113,6 +144,23 @@ class BaseCommand {
             }
             val finalStack = Utils().sortData(itemStack, sender.uniqueId()).first
             sender.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+        }
+        return CommandResult.success()
+    }
+
+    @Throws(CommandException::class)
+    private fun removeBindCommandResult(context: CommandContext): CommandResult {
+
+        val sender = context.cause().root()
+
+        if (sender is ServerPlayer) {
+            val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
+            if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
+                return CommandResult.error(Component.text("You need to have an item in your main hand!"))
+            }
+            Utils().removeData(itemStack)
+            sender.setItemInHand(HandTypes.MAIN_HAND, itemStack)
+            logger<BaseCommand>().info(Utils().containsData(itemStack))
         }
         return CommandResult.success()
     }
