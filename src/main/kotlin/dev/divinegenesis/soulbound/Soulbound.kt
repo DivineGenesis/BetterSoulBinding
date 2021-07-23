@@ -6,6 +6,7 @@ import com.google.inject.Inject
 import dev.divinegenesis.soulbound.commands.BaseCommand
 import dev.divinegenesis.soulbound.config.Config
 import dev.divinegenesis.soulbound.customdata.Data
+import dev.divinegenesis.soulbound.storage.DataStack
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import org.apache.logging.log4j.LogManager
 import org.spongepowered.api.Engine
@@ -35,12 +36,14 @@ class Soulbound @Inject internal constructor(
         lateinit var plugin: PluginContainer
         lateinit var config: ValueReference<Config, CommentedConfigurationNode>
         lateinit var configDir: Path
+        lateinit var database: Map<String,DataStack>
     }
 
     init {
         plugin = container
         config = reference.referenceTo(Config::class.java)
         Soulbound.configDir = configDir
+        database = SqliteDatabase().loadData()
     }
 
     @Listener
