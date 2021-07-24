@@ -16,6 +16,8 @@ import org.spongepowered.api.config.ConfigDir
 import org.spongepowered.api.config.DefaultConfig
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.lifecycle.*
+import org.spongepowered.api.item.inventory.ItemStack
+import org.spongepowered.api.registry.RegistryTypes
 import org.spongepowered.configurate.CommentedConfigurationNode
 import org.spongepowered.configurate.ConfigurateException
 import org.spongepowered.configurate.reference.ConfigurationReference
@@ -36,7 +38,7 @@ class Soulbound @Inject internal constructor(
         lateinit var plugin: PluginContainer
         lateinit var config: ValueReference<Config, CommentedConfigurationNode>
         lateinit var configDir: Path
-        lateinit var database: Map<String,DataStack>
+        lateinit var database: Map<String, DataStack>
     }
 
     init {
@@ -44,10 +46,7 @@ class Soulbound @Inject internal constructor(
         config = reference.referenceTo(Config::class.java)
         Soulbound.configDir = configDir
         database = SqliteDatabase().loadData()
-    }
 
-    @Listener
-    fun onPluginConstruction(event: ConstructPluginEvent) {
         logger.info("Soulbound constructing..")
         try {
             this.reference.save()
@@ -56,6 +55,10 @@ class Soulbound @Inject internal constructor(
         }
         Sponge.eventManager().registerListeners(container, EventListener())
         Sponge.eventManager().registerListeners(container, Data(container))
+    }
+
+    @Listener
+    fun onPluginConstruction(event: ConstructPluginEvent) {
     }
 
     @Listener
@@ -70,10 +73,7 @@ class Soulbound @Inject internal constructor(
 
     @Listener
     fun onServerStart(event: StartedEngineEvent<Engine>) {
-        val database = SqliteDatabase()
-
-        val loadedData = database.loadData()
-        logger.info("Data loaded: ${loadedData.size} entries")
+        logger.info("Data loaded: ${database.size} entries")
     }
 
     @Listener
@@ -86,5 +86,7 @@ class Soulbound @Inject internal constructor(
         logger.info("Server shutting down")
     }
 }
+
+fun ItemStack.getID() = Sponge.game().registries().registry(RegistryTypes.ITEM_TYPE).valueKey(this.type()).asString()
 
 inline fun <reified T> logger(): Logger = LogManager.getLogger(T::class.java)
