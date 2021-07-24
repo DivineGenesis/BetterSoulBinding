@@ -2,6 +2,7 @@ package dev.divinegenesis.soulbound.commands
 
 import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.Utils
+import dev.divinegenesis.soulbound.getID
 import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.DataStack
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
@@ -93,7 +94,21 @@ class BaseCommand {
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
-            sender.sendMessage(Component.text("${Utils().containsData(itemStack)}"))
+            val isData = Utils().containsData(itemStack)
+            val dataStack = Soulbound.database[itemStack.getID()]
+            sender.sendMessage(
+                Component.text(
+                    """
+                Is data applied? : $isData
+                
+                        -Configuration-
+                ItemStack: ${dataStack?.itemID}
+                Interact: ${dataStack?.interact}
+                Pickup: ${dataStack?.pickup}
+                Craft: ${dataStack?.craft}
+            """.trimIndent()
+                )
+            )
         }
         return CommandResult.success()
     }
