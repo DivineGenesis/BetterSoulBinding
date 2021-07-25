@@ -1,5 +1,6 @@
 package dev.divinegenesis.soulbound.customdata
 
+import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.logger
 import org.spongepowered.api.data.DataRegistration
 import org.spongepowered.api.data.Key
@@ -15,7 +16,7 @@ import java.util.UUID
  *
  * This class exists only to hold Key data, and register the key on load.
  */
-class Data(private val container: PluginContainer) {
+class Data {
 
     companion object DataKey {
         var identityDataKey: Key<Value<UUID>>? = null
@@ -23,14 +24,14 @@ class Data(private val container: PluginContainer) {
 
     @Listener
     fun onRegisterData(event: RegisterDataEvent) {
-        identityDataKey = Key.from(container, "identitydata", UUID::class.java)
+        identityDataKey = Key.from(Soulbound.plugin, "identitydata", UUID::class.java)
 
         logger<Data>().info(
             """
             =
             =============================================================
             Key         :   $identityDataKey
-            Plugin   :   ${container.metadata().name()}
+            Plugin   :   ${Soulbound.plugin.metadata().name()}
             =============================================================
             
         """.trimIndent()
