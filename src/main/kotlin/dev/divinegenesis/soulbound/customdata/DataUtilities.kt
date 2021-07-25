@@ -86,3 +86,6 @@ data class DataStack(val itemID: String, var interact: Int = 0, var pickup: Int 
 
 fun Pair<ItemStack, Boolean>.stack() = first
 fun Pair<ItemStack, Boolean>.cancelEvent() = second
+
+fun Boolean.toInt() = compareTo(false)
+fun Int.toBool() = this == 1
