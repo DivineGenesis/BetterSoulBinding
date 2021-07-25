@@ -7,10 +7,10 @@ import org.apache.logging.log4j.Logger
 import org.spongepowered.api.item.inventory.ItemStack
 import java.lang.NullPointerException
 import java.util.*
+import dev.divinegenesis.soulbound.customdata.Data.DataKey.identityDataKey as identityDataKey
 
 class DataUtilities {
 
-    private val identityDataKey = Data.identityDataKey
     private val logger: Logger = logger<DataUtilities>()
 
     companion object BlankUUID {
@@ -18,16 +18,6 @@ class DataUtilities {
     }
 
     fun containsData(stack: ItemStack): Boolean {
-        logger.info(
-            """
-            =
-            ===================================================
-            Stack   :   $stack
-            Key     :   $identityDataKey
-            Data    :   ${stack.keys.contains(identityDataKey)}
-            ===================================================
-        """.trimIndent()
-        )
         return stack.keys.contains(identityDataKey)
     }
 
