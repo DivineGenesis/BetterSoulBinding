@@ -6,7 +6,7 @@ import com.google.inject.Inject
 import dev.divinegenesis.soulbound.commands.BaseCommand
 import dev.divinegenesis.soulbound.config.Config
 import dev.divinegenesis.soulbound.customdata.Data
-import dev.divinegenesis.soulbound.storage.DataStack
+import dev.divinegenesis.soulbound.customdata.DataStack
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import org.apache.logging.log4j.LogManager
 import org.spongepowered.api.Engine

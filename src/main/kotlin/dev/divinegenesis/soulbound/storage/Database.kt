@@ -1,5 +1,6 @@
 package dev.divinegenesis.soulbound.storage
 
+import dev.divinegenesis.soulbound.customdata.DataStack
 import dev.divinegenesis.soulbound.logger
 import java.sql.Connection
 import java.sql.SQLException
@@ -68,4 +69,3 @@ abstract class Database {
     }
 }
 
-data class DataStack(val itemID: String, var interact: Int = 0, var pickup: Int = 0, var craft: Int = 0)

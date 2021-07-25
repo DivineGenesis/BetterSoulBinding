@@ -1,7 +1,8 @@
 package dev.divinegenesis.soulbound
 
-import dev.divinegenesis.soulbound.customdata.Data
-import org.apache.logging.log4j.Logger
+import dev.divinegenesis.soulbound.customdata.DataUtilities
+import dev.divinegenesis.soulbound.customdata.cancelEvent
+import dev.divinegenesis.soulbound.customdata.stack
 import org.spongepowered.api.data.type.HandTypes
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.event.EventContextKeys
@@ -14,24 +15,23 @@ import org.spongepowered.api.event.filter.cause.Root
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent
 import org.spongepowered.api.event.item.inventory.CraftItemEvent
 import org.spongepowered.api.event.item.inventory.InteractItemEvent
-import org.spongepowered.api.item.inventory.ItemStack
-import java.lang.NullPointerException
-import java.util.*
 
 
 class EventListener {
+
+    init {
+        logger<EventListener>().info("EventListener Initialized!") //todo: Remove later
+    }
 
     @Listener(order = Order.FIRST)
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
 
         val originalStack = event.originalStack().createStack()
 
-        val dataPair = Utils().sortData(originalStack, player.uniqueId())
-        val finalStack = dataPair.first.createSnapshot()
-        val denyEvent = dataPair.second
+        val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
+        event.isCancelled = dataPair.cancelEvent()
 
-        event.isCancelled = denyEvent
-        event.setCustom(mutableListOf(finalStack))
+        event.setCustom(mutableListOf(dataPair.stack().createSnapshot()))
     }
 
     @Listener
@@ -39,12 +39,10 @@ class EventListener {
 
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
 
-        val dataPair = Utils().sortData(originalStack, player.uniqueId())
-        val finalStack = dataPair.first
-        val denyEvent = dataPair.second
+        val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
+        event.isCancelled = dataPair.cancelEvent()
 
-        event.isCancelled = denyEvent
-        player.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+        player.setItemInHand(HandTypes.MAIN_HAND, dataPair.stack())
     }
 
     @Listener
@@ -52,12 +50,10 @@ class EventListener {
 
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
 
-        val dataPair = Utils().sortData(originalStack, player.uniqueId())
-        val finalStack = dataPair.first
-        val denyEvent = dataPair.second
+        val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
+        event.isCancelled = dataPair.cancelEvent()
 
-        event.isCancelled = denyEvent
-        player.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+        player.setItemInHand(HandTypes.MAIN_HAND, dataPair.stack())
     }
 
     @Listener
@@ -65,24 +61,21 @@ class EventListener {
 
         val originalStack = event.itemStack().createStack()
 
-        val dataPair = Utils().sortData(originalStack, player.uniqueId())
-        val finalStack = dataPair.first
-        val denyEvent = dataPair.second
+        val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
+        event.isCancelled = dataPair.cancelEvent()
 
-        event.isCancelled = denyEvent
-        player.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+        player.setItemInHand(HandTypes.MAIN_HAND, dataPair.stack())
     }
 
     @Listener
     fun onCraft(event: CraftItemEvent.Preview, @Root player: ServerPlayer) {
         val originalStack = event.preview().finalReplacement().createStack()
 
-        val dataPair = Utils().sortData(originalStack, player.uniqueId())
-        val finalStack = dataPair.first
+        val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
 
         //Should never need to deny this event.
 
-        event.preview().setCustom(finalStack)
+        event.preview().setCustom(dataPair.stack())
     }
 }
 /*
@@ -255,69 +248,3 @@ class EventListener {
     }
 */
 
-class Utils {
-
-    private val identityDataKey = Data.identityDataKey
-    private val blankUUID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
-    private val logger: Logger = logger<Utils>()
-
-    fun containsData(stack: ItemStack): Boolean {
-        logger.info(
-            """
-            =
-            ===================================================
-            Stack   :   $stack
-            Key     :   $identityDataKey
-            Data    :   ${stack.keys.contains(identityDataKey)}
-            ===================================================
-        """.trimIndent()
-        )
-        return stack.keys.contains(identityDataKey)
-    }
-
-    fun removeData(stack: ItemStack): Boolean { //return true if operation didn't fail
-        return if (containsData(stack)) {
-            stack.remove(identityDataKey).isSuccessful
-        } else {
-            true
-        }
-    }
-
-    private fun applyData(stack: ItemStack, userUUID: UUID) {
-        try {
-            stack.offer(identityDataKey, userUUID)
-
-        } catch (e: NullPointerException) {
-            logger.error(
-                """
-                =
-                ==============NPE FIRED========================
-                Identity Key    :   $identityDataKey
-                User UUID       :   $userUUID
-                ===============================================
-            """.trimIndent()
-            )
-        }
-    }
-
-    fun sortData(stack: ItemStack, userUUID: UUID): Pair<ItemStack, Boolean> {
-        if (containsData(stack)) {
-            return when (stack.get(identityDataKey).get()) {
-                blankUUID -> {
-                    removeData(stack)
-                    applyData(stack, userUUID)
-                    Pair(stack, true)
-                }
-                userUUID -> {
-                    Pair(stack, false)
-                }
-                else -> {
-                    Pair(stack, true)
-                }
-            }
-        } else {
-            applyData(stack, userUUID)
-            return Pair(stack, false)
-        }
-    }
-}

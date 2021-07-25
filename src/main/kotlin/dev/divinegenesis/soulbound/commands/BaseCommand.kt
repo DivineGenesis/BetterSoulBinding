@@ -1,10 +1,10 @@
 package dev.divinegenesis.soulbound.commands
 
 import dev.divinegenesis.soulbound.Soulbound
-import dev.divinegenesis.soulbound.Utils
+import dev.divinegenesis.soulbound.customdata.DataStack
+import dev.divinegenesis.soulbound.customdata.DataUtilities
 import dev.divinegenesis.soulbound.getID
 import dev.divinegenesis.soulbound.logger
-import dev.divinegenesis.soulbound.storage.DataStack
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import net.kyori.adventure.text.Component
 import org.spongepowered.api.Sponge
@@ -25,7 +25,11 @@ class BaseCommand {
     enum class Choices {
         INTERACT,
         CRAFT,
-        PICKUP
+        PICKUP;
+
+        override fun toString(): String {
+            return super.toString().toLowerCase().capitalize() //todo: Test this
+        }
     }
 
     private val enumParameter = Parameter.enumValue(Choices::class.java).key("enum").build()
@@ -94,7 +98,7 @@ class BaseCommand {
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
-            val isData = Utils().containsData(itemStack)
+            val isData = DataUtilities().containsData(itemStack)
             val dataStack = Soulbound.database[itemStack.getID()]
             sender.sendMessage(
                 Component.text(
@@ -157,7 +161,7 @@ class BaseCommand {
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
-            val finalStack = Utils().sortData(itemStack, sender.uniqueId()).first
+            val finalStack = DataUtilities().sortData(itemStack, sender.uniqueId()).first
             sender.setItemInHand(HandTypes.MAIN_HAND, finalStack)
         }
         return CommandResult.success()
@@ -173,9 +177,9 @@ class BaseCommand {
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
-            Utils().removeData(itemStack)
+            DataUtilities().removeData(itemStack)
             sender.setItemInHand(HandTypes.MAIN_HAND, itemStack)
-            logger<BaseCommand>().info(Utils().containsData(itemStack))
+            logger<BaseCommand>().info(DataUtilities().containsData(itemStack))
         }
         return CommandResult.success()
     }

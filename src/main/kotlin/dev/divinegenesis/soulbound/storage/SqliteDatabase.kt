@@ -1,6 +1,7 @@
 package dev.divinegenesis.soulbound.storage
 
 import dev.divinegenesis.soulbound.Soulbound
+import dev.divinegenesis.soulbound.customdata.DataStack
 import dev.divinegenesis.soulbound.logger
 import java.io.File
 import java.sql.Connection
