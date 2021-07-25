@@ -3,6 +3,7 @@ package dev.divinegenesis.soulbound.commands
 import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.customdata.DataStack
 import dev.divinegenesis.soulbound.customdata.DataUtilities
+import dev.divinegenesis.soulbound.customdata.toInt
 import dev.divinegenesis.soulbound.getID
 import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
@@ -85,7 +86,9 @@ class BaseCommand {
             """.trimIndent()
                 )
             )
-        } //todo: Send error on else, use pagination service
+        } else {
+            return errorText
+        }
         return CommandResult.success()
     }
 
@@ -113,7 +116,9 @@ class BaseCommand {
             """.trimIndent()
                 )
             )
-        } //todo: Send error on else, tell user it worked
+        } else {
+            return errorText
+        }
         return CommandResult.success()
     }
 
@@ -146,7 +151,9 @@ class BaseCommand {
             sql.saveStack(dataStack)
             Soulbound.database = sql.loadData() //Refresh connection
             logger<BaseCommand>().info("Database entries: ${Soulbound.database.size}")
-        } //todo: Send error on else, tell user it worked
+        } else {
+            return errorText
+        }
         return CommandResult.success()
     }
 
@@ -162,8 +169,10 @@ class BaseCommand {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
             val finalStack = DataUtilities().sortData(itemStack, DataUtilities.blankUUID).first
-            //todo: Send error on else, tell user it worked
+
             sender.setItemInHand(HandTypes.MAIN_HAND, finalStack)
+        } else {
+            return errorText
         }
         return CommandResult.success()
     }
@@ -181,11 +190,14 @@ class BaseCommand {
             DataUtilities().removeData(itemStack)
             sender.setItemInHand(HandTypes.MAIN_HAND, itemStack)
             logger<BaseCommand>().info(DataUtilities().containsData(itemStack))
+        } else {
+            return errorText
         }
-        //todo: Send error on else, tell user it worked
         return CommandResult.success()
     }
+
+    private val errorText = CommandResult.error(Component.text("This command must be ran by a player!"))
 }
 
-fun Boolean.toInt() = compareTo(false)
+
 
