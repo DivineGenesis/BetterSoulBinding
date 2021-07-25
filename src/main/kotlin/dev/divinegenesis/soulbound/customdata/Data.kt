@@ -26,22 +26,12 @@ class Data {
     fun onRegisterData(event: RegisterDataEvent) {
         identityDataKey = Key.from(Soulbound.plugin, "identitydata", UUID::class.java)
 
-        logger<Data>().info(
-            """
-            =
-            =============================================================
-            Key         :   $identityDataKey
-            Plugin   :   ${Soulbound.plugin.metadata().name()}
-            =============================================================
-            
-        """.trimIndent()
-        )
-
         event.register(
             DataRegistration.of(
                 identityDataKey,
                 ItemStack::class.java
             )
         )
+        logger<Data>().info("Data key registered: $identityDataKey")
     }
 }
