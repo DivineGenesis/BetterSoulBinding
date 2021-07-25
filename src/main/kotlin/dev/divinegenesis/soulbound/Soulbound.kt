@@ -42,23 +42,22 @@ class Soulbound @Inject internal constructor(
     }
 
     init {
-        plugin = container
         config = reference.referenceTo(Config::class.java)
         Soulbound.configDir = configDir
         database = SqliteDatabase().loadData()
+    }
 
+    @Listener
+    fun onPluginConstruction(event: ConstructPluginEvent) {
+        plugin = this.container
         logger.info("Soulbound constructing..")
         try {
             this.reference.save()
         } catch (e: ConfigurateException) {
             logger.error("Unable to load configuration", e)
         }
-        Sponge.eventManager().registerListeners(container, EventListener())
-        Sponge.eventManager().registerListeners(container, Data(container))
-    }
-
-    @Listener
-    fun onPluginConstruction(event: ConstructPluginEvent) {
+        Sponge.eventManager().registerListeners(this.container, EventListener())
+        Sponge.eventManager().registerListeners(this.container, Data())
     }
 
     @Listener
