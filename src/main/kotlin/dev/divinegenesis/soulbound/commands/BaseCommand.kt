@@ -35,7 +35,7 @@ class BaseCommand {
     private val enumParameter = Parameter.enumValue(Choices::class.java).key("enum").build()
 
     private val bindCommand = builder()
-        .shortDescription(Component.text("Binds the item to the player holding it"))
+        .shortDescription(Component.text("Binds the item with blank data to be bound later"))
         .executor(this::bindCommandResult)
         .permission("")
         .build()
@@ -85,7 +85,7 @@ class BaseCommand {
             """.trimIndent()
                 )
             )
-        }
+        } //todo: Send error on else, use pagination service
         return CommandResult.success()
     }
 
@@ -113,7 +113,7 @@ class BaseCommand {
             """.trimIndent()
                 )
             )
-        }
+        } //todo: Send error on else, tell user it worked
         return CommandResult.success()
     }
 
@@ -146,7 +146,7 @@ class BaseCommand {
             sql.saveStack(dataStack)
             Soulbound.database = sql.loadData() //Refresh connection
             logger<BaseCommand>().info("Database entries: ${Soulbound.database.size}")
-        }
+        } //todo: Send error on else, tell user it worked
         return CommandResult.success()
     }
 
@@ -161,7 +161,8 @@ class BaseCommand {
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
-            val finalStack = DataUtilities().sortData(itemStack, sender.uniqueId()).first
+            val finalStack = DataUtilities().sortData(itemStack, DataUtilities.blankUUID).first
+            //todo: Send error on else, tell user it worked
             sender.setItemInHand(HandTypes.MAIN_HAND, finalStack)
         }
         return CommandResult.success()
@@ -181,6 +182,7 @@ class BaseCommand {
             sender.setItemInHand(HandTypes.MAIN_HAND, itemStack)
             logger<BaseCommand>().info(DataUtilities().containsData(itemStack))
         }
+        //todo: Send error on else, tell user it worked
         return CommandResult.success()
     }
 }

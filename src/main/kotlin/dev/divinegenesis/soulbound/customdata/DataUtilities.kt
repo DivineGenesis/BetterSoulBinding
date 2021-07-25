@@ -10,10 +10,12 @@ import java.util.*
 
 class DataUtilities {
 
-
     private val identityDataKey = Data.identityDataKey
-    private val blankUUID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
     private val logger: Logger = logger<DataUtilities>()
+
+    companion object BlankUUID {
+        val blankUUID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+    }
 
     fun containsData(stack: ItemStack): Boolean {
         logger.info(
