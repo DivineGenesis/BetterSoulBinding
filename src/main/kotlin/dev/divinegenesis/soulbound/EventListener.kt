@@ -3,6 +3,7 @@ package dev.divinegenesis.soulbound
 import dev.divinegenesis.soulbound.customdata.DataUtilities
 import dev.divinegenesis.soulbound.customdata.cancelEvent
 import dev.divinegenesis.soulbound.customdata.stack
+import dev.divinegenesis.soulbound.customdata.toBool
 import org.spongepowered.api.data.type.HandTypes
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.event.EventContextKeys
@@ -19,14 +20,16 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent
 
 class EventListener {
 
-    init {
-        logger<EventListener>().info("EventListener Initialized!") //todo: Remove later
-    }
-
     @Listener(order = Order.FIRST)
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
 
         val originalStack = event.originalStack().createStack()
+
+        val bindItem = Soulbound.database[originalStack.getID()]?.pickup ?: 0
+
+        if (!bindItem.toBool()) {
+            return
+        }
 
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
         event.isCancelled = dataPair.cancelEvent()
@@ -39,6 +42,12 @@ class EventListener {
 
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
 
+        val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
+
+        if (!bindItem.toBool()) {
+            return
+        }
+
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
         event.isCancelled = dataPair.cancelEvent()
 
@@ -49,6 +58,12 @@ class EventListener {
     fun onInteractEntity(event: InteractEntityEvent.Primary, @Root player: ServerPlayer) {
 
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
+
+        val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
+
+        if (!bindItem.toBool()) {
+            return
+        }
 
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
         event.isCancelled = dataPair.cancelEvent()
@@ -61,6 +76,12 @@ class EventListener {
 
         val originalStack = event.itemStack().createStack()
 
+        val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
+
+        if (!bindItem.toBool()) {
+            return
+        }
+
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
         event.isCancelled = dataPair.cancelEvent()
 
@@ -70,6 +91,13 @@ class EventListener {
     @Listener
     fun onCraft(event: CraftItemEvent.Preview, @Root player: ServerPlayer) {
         val originalStack = event.preview().finalReplacement().createStack()
+
+        val bindItem = Soulbound.database[originalStack.getID()]?.craft ?: 0
+
+        if (!bindItem.toBool()) {
+            return
+        }
+
 
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
 
