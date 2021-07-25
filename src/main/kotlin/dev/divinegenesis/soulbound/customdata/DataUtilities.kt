@@ -1,5 +1,7 @@
 package dev.divinegenesis.soulbound.customdata
 
+import dev.divinegenesis.soulbound.Soulbound
+import dev.divinegenesis.soulbound.getID
 import dev.divinegenesis.soulbound.logger
 import org.apache.logging.log4j.Logger
 import org.spongepowered.api.item.inventory.ItemStack
@@ -53,30 +55,32 @@ class DataUtilities {
     }
 
     fun sortData(stack: ItemStack, userUUID: UUID): Pair<ItemStack, Boolean> {
-        if (containsData(stack)) {
-            return when (stack.get(identityDataKey).get()) {
-                blankUUID -> {
-                    removeData(stack)
-                    applyData(stack, userUUID)
-                    Pair(stack, true)
+
+        if (Soulbound.database.containsKey(stack.getID())) {
+            if (containsData(stack)) {
+                return when (stack.get(identityDataKey).get()) {
+                    blankUUID -> {
+                        removeData(stack)
+                        applyData(stack, userUUID)
+                        Pair(stack, true)
+                    }
+                    userUUID -> {
+                        Pair(stack, false)
+                    }
+                    else -> {
+                        Pair(stack, true)
+                    }
                 }
-                userUUID -> {
-                    Pair(stack, false)
-                }
-                else -> {
-                    Pair(stack, true)
-                }
+            } else {
+                applyData(stack, userUUID)
+                return Pair(stack, false)
             }
-        } else {
-            applyData(stack, userUUID)
-            return Pair(stack, false)
         }
+        return Pair(stack, false)
     }
-
-
 }
 
 data class DataStack(val itemID: String, var interact: Int = 0, var pickup: Int = 0, var craft: Int = 0)
 
-fun Pair<ItemStack,Boolean>.stack() = first
-fun Pair<ItemStack,Boolean>.cancelEvent() = second
+fun Pair<ItemStack, Boolean>.stack() = first
+fun Pair<ItemStack, Boolean>.cancelEvent() = second
