@@ -8,6 +8,8 @@ import dev.divinegenesis.soulbound.getID
 import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.format.TextDecoration
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.command.Command.*
 import org.spongepowered.api.command.CommandResult
@@ -18,7 +20,9 @@ import org.spongepowered.api.command.parameter.Parameter
 import org.spongepowered.api.data.type.HandTypes
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.item.ItemTypes
+import org.spongepowered.api.item.inventory.ItemStack
 import org.spongepowered.api.registry.RegistryTypes
+import org.spongepowered.api.service.pagination.PaginationList
 
 
 class BaseCommand {
@@ -27,10 +31,6 @@ class BaseCommand {
         INTERACT,
         CRAFT,
         PICKUP;
-
-        override fun toString(): String {
-            return super.toString().toLowerCase().capitalize() //todo: Test this
-        }
     }
 
     private val enumParameter = Parameter.enumValue(Choices::class.java).key("enum").build()
@@ -101,21 +101,8 @@ class BaseCommand {
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
-            val isData = DataUtilities().containsData(itemStack)
             val dataStack = Soulbound.database[itemStack.getID()]
-            sender.sendMessage(
-                Component.text(
-                    """
-                Is data applied? : $isData
-                
-                        -Configuration-
-                ItemStack: ${dataStack?.itemID}
-                Interact: ${dataStack?.interact}
-                Pickup: ${dataStack?.pickup}
-                Craft: ${dataStack?.craft}
-            """.trimIndent()
-                )
-            )
+            checkStackText(itemStack, dataStack).sendTo(sender)
         } else {
             return errorText
         }
@@ -127,14 +114,16 @@ class BaseCommand {
 
         val sender = context.cause().root()
         val sql = SqliteDatabase()
+        val databaseCache = Soulbound.database
 
         if (sender is ServerPlayer) {
-            val itemType = sender.itemInHand(HandTypes.MAIN_HAND).type()
-            if (itemType.isAnyOf(ItemTypes.AIR)) {
+            val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
+            if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(Component.text("You need to have an item in your main hand!"))
             }
-            val itemID = Sponge.game().registries().registry(RegistryTypes.ITEM_TYPE).valueKey(itemType).formatted()
-            val dataStack = sql.loadData()[itemID] ?: DataStack(itemID)
+            val itemID =
+                Sponge.game().registries().registry(RegistryTypes.ITEM_TYPE).valueKey(itemStack.type()).formatted()
+            val dataStack = databaseCache[itemID] ?: DataStack(itemID)
             val checkInteraction = context.one(CommonParameters.BOOLEAN).get()
 
             when (context.one(enumParameter).get()) {
@@ -150,6 +139,7 @@ class BaseCommand {
             }
             sql.saveStack(dataStack)
             Soulbound.database = sql.loadData() //Refresh connection
+            checkStackText(itemStack, dataStack).sendTo(sender)
             logger<BaseCommand>().info("Database entries: ${Soulbound.database.size}")
         } else {
             return errorText
@@ -197,6 +187,30 @@ class BaseCommand {
     }
 
     private val errorText = CommandResult.error(Component.text("This command must be ran by a player!"))
+
+    private fun checkStackText(itemStack: ItemStack, dataStack: DataStack?): PaginationList {
+        val hasData = DataUtilities().containsData(itemStack)
+
+        val paginationService = Sponge.serviceProvider().paginationService()
+
+        return paginationService.builder()
+            .title(Component.text("Soulbound"))
+            .padding(Component.text("=").decorate(TextDecoration.STRIKETHROUGH).color(TextColor.color(200,200,50)))
+            .contents(
+                Component.text(
+                    """
+                Is item soulbound? : $hasData
+                
+                        -Configuration-
+                ItemStack   :   ${dataStack?.itemID}
+                Interact    :   ${dataStack?.interact}
+                Pickup       :   ${dataStack?.pickup}
+                Craft        :   ${dataStack?.craft}
+            """.trimIndent()
+                )
+            )
+            .build()
+    }
 }
 
 
