@@ -3,8 +3,9 @@ package dev.divinegenesis.soulbound.commands
 import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.customdata.DataStack
 import dev.divinegenesis.soulbound.customdata.DataUtilities
+import dev.divinegenesis.soulbound.customdata.getID
 import dev.divinegenesis.soulbound.customdata.toInt
-import dev.divinegenesis.soulbound.getID
+import dev.divinegenesis.soulbound.customdata.not
 import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import net.kyori.adventure.text.Component
@@ -77,6 +78,12 @@ class BaseCommand {
         val sender = context.cause().root()
 
         if (sender is ServerPlayer) {
+
+            val paginationService = Sponge.serviceProvider().paginationService()
+
+            paginationService.builder()
+                .title(!"Test")
+
             sender.sendMessage(
                 Component.text(
                     """
@@ -212,6 +219,7 @@ class BaseCommand {
             .build()
     }
 }
+
 
 
 
