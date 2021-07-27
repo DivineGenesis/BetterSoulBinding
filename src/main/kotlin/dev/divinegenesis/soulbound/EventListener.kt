@@ -1,30 +1,35 @@
 package dev.divinegenesis.soulbound
 
-import dev.divinegenesis.soulbound.customdata.DataUtilities
-import dev.divinegenesis.soulbound.customdata.cancelEvent
-import dev.divinegenesis.soulbound.customdata.stack
-import dev.divinegenesis.soulbound.customdata.toBool
+import dev.divinegenesis.soulbound.customdata.*
+import org.spongepowered.api.data.Keys
 import org.spongepowered.api.data.type.HandTypes
+import org.spongepowered.api.data.value.Value
+import org.spongepowered.api.entity.Entity
+import org.spongepowered.api.entity.EntityTypes
+import org.spongepowered.api.entity.Item
+import org.spongepowered.api.entity.attribute.Attribute
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.event.EventContextKeys
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.Order
 import org.spongepowered.api.event.block.InteractBlockEvent
+import org.spongepowered.api.event.entity.ExpireEntityEvent
 import org.spongepowered.api.event.entity.InteractEntityEvent
+import org.spongepowered.api.event.filter.Getter
 import org.spongepowered.api.event.filter.cause.First
 import org.spongepowered.api.event.filter.cause.Root
 import org.spongepowered.api.event.item.inventory.ChangeInventoryEvent
 import org.spongepowered.api.event.item.inventory.CraftItemEvent
+import org.spongepowered.api.event.item.inventory.DropItemEvent
 import org.spongepowered.api.event.item.inventory.InteractItemEvent
+import org.spongepowered.api.item.inventory.ItemStackSnapshot
 
 
 class EventListener {
 
     @Listener(order = Order.FIRST)
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
-
         val originalStack = event.originalStack().createStack()
-
         val bindItem = Soulbound.database[originalStack.getID()]?.pickup ?: 0
 
         if (!bindItem.toBool()) {
@@ -39,9 +44,7 @@ class EventListener {
 
     @Listener(order = Order.FIRST)
     fun onInteractBlock(event: InteractBlockEvent.Primary.Start, @Root player: ServerPlayer) {
-
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
-
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
         if (!bindItem.toBool()) {
@@ -56,9 +59,7 @@ class EventListener {
 
     @Listener(order = Order.FIRST)
     fun onInteractEntity(event: InteractEntityEvent.Primary, @Root player: ServerPlayer) {
-
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
-
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
         if (!bindItem.toBool()) {
@@ -73,7 +74,6 @@ class EventListener {
 
     @Listener(order = Order.FIRST)
     fun onInteractItemSecondary(event: InteractItemEvent.Secondary, @Root player: ServerPlayer) {
-
         val originalStack = event.itemStack().createStack()
 
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
@@ -91,13 +91,11 @@ class EventListener {
     @Listener(order = Order.FIRST)
     fun onCraft(event: CraftItemEvent.Preview, @Root player: ServerPlayer) {
         val originalStack = event.preview().finalReplacement().createStack()
-
         val bindItem = Soulbound.database[originalStack.getID()]?.craft ?: 0
 
         if (!bindItem.toBool()) {
             return
         }
-
 
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
 
@@ -105,25 +103,37 @@ class EventListener {
 
         event.preview().setCustom(dataPair.stack())
     }
-}
-/*
 
-        @Listener
-        fun onCraft(event: CraftItemEvent.Preview, @Root player: Player) {
-            if (plugin.getSBConfig().modules.DebugInfo) {
-                eventUtils.debugInfo(event)
-            }
-            if (player.hasPermission(reference.CRAFT) || !plugin.getSBConfig().craft.CraftPermissions) {
-                if (!event.getPreview().getFinal().isEmpty()) {
-                    val stack: ItemStack = event.getPreview().getFinal().createStack()
-                    val id: String = eventUtils.getID(stack)
-                    if (plugin.getSBConfig().craft.BindOnCraft.contains(id)) {
-                        eventUtils.bindItem(player, stack, eventUtils.getItemLore())
-                        event.getPreview().setCustom(stack)
-                    }
-                }
+    @Listener
+    fun itemEntityClear(event: ExpireEntityEvent, @Getter("entity") entity: Entity) {
+        if (entity.type() == EntityTypes.ITEM) {
+            val stack = entity[Keys.ITEM_STACK_SNAPSHOT].get().createStack()
+            if (stack.containsData()) {
+                val location = entity.location()
+                location.world().spawnEntity(entity)
             }
         }
+    }
+
+    @Listener
+    fun onDeath(event: DropItemEvent.Destruct, @First player: ServerPlayer) {
+        val soulboundItems: List<Entity?> = event.filterEntities { entity ->
+            entity !is Item || !entity.item()
+                .get()
+                .createStack()
+                .containsData()
+        }
+        soulboundItems.stream()
+            .map(Item::class.java::cast)
+            .map(Item::item)
+            .map(Value<ItemStackSnapshot>::get)
+            .map(ItemStackSnapshot::createStack)
+            .forEach {
+                player.inventory().offer(it)
+            }
+    }
+}
+/*
 
         @Listener
         fun onInventoryClick(event: ClickInventoryEvent, @Root player: Player) {
@@ -224,55 +234,6 @@ class EventListener {
             }
         }
 
-        @Listener
-        fun itemEntityClear(event: ExpireEntityEvent.TargetItem) {
-            if (plugin.getSBConfig().modules.DebugInfo) {
-                eventUtils.debugInfo(event)
-            }
-            val user: Optional<User> = event.getContext().get(EventContextKeys.OWNER)
-            if (user.isPresent()) {
-                val player: Optional<Player> = user.get().getPlayer()
-                if (player.isPresent()) {
-                    if (player.get()
-                            .hasPermission(reference.PREVENT_CLEAR) || !plugin.getSBConfig().modules.preventClearPermissions
-                    ) {
-                        val e: Item = event.getTargetEntity()
-                        val stack: ItemStack = e.item().get().createStack()
-                        if (stack.get(IdentityKeys.IDENTITY).isPresent()) {
-                            val location: Location<World> = event.getTargetEntity().getLocation()
-                            val item: Entity = location.createEntity(EntityTypes.ITEM)
-                            item.offer(Keys.REPRESENTED_ITEM, stack.createSnapshot())
-                            location.spawnEntity(item)
-                        }
-                    }
-                }
-            }
-        }
 
-        @Listener
-        fun onDeath(event: DropItemEvent.Destruct, @First player: Player) {
-            if (plugin.getSBConfig().modules.DebugInfo) {
-                eventUtils.debugInfo(event)
-            }
-            if (player.hasPermission(reference.KEEP_ON_DEATH) || !plugin.getSBConfig().modules.KeepItemsOnDeath) {
-                //e.item().get().createStack().get(IDENTITY).isPresent();
-                val soulboundItems: List<Entity?> = event.filterEntities { entity ->
-                    entity !is Item || !(entity as Item).item()
-                        .get()
-                        .createStack()
-                        .get(IdentityKeys.IDENTITY)
-                        .isPresent()
-                }
-                soulboundItems.stream()
-                    .map { `object`: Any? -> Item::class.java.cast(`object`) }
-                    .map<Any>(Item::item)
-                    .map<Any>(BaseValue::get)
-                    .map<Any>(ItemStackSnapshot::createStack)
-                    .forEach(Consumer { itemStack: Any? ->
-                        player.getInventory().offer(itemStack)
-                    })
-            }
-        }
-    }
 */
 
