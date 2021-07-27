@@ -37,7 +37,7 @@ class EventListener {
         event.setCustom(mutableListOf(dataPair.stack().createSnapshot()))
     }
 
-    @Listener
+    @Listener(order = Order.FIRST)
     fun onInteractBlock(event: InteractBlockEvent.Primary.Start, @Root player: ServerPlayer) {
 
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
@@ -54,7 +54,7 @@ class EventListener {
         player.setItemInHand(HandTypes.MAIN_HAND, dataPair.stack())
     }
 
-    @Listener
+    @Listener(order = Order.FIRST)
     fun onInteractEntity(event: InteractEntityEvent.Primary, @Root player: ServerPlayer) {
 
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
@@ -71,7 +71,7 @@ class EventListener {
         player.setItemInHand(HandTypes.MAIN_HAND, dataPair.stack())
     }
 
-    @Listener
+    @Listener(order = Order.FIRST)
     fun onInteractItemSecondary(event: InteractItemEvent.Secondary, @Root player: ServerPlayer) {
 
         val originalStack = event.itemStack().createStack()
@@ -88,7 +88,7 @@ class EventListener {
         player.setItemInHand(HandTypes.MAIN_HAND, dataPair.stack())
     }
 
-    @Listener
+    @Listener(order = Order.FIRST)
     fun onCraft(event: CraftItemEvent.Preview, @Root player: ServerPlayer) {
         val originalStack = event.preview().finalReplacement().createStack()
 
