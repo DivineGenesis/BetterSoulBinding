@@ -1,10 +1,12 @@
 package dev.divinegenesis.soulbound.customdata
 
 import dev.divinegenesis.soulbound.Soulbound
-import dev.divinegenesis.soulbound.getID
 import dev.divinegenesis.soulbound.logger
+import net.kyori.adventure.text.Component
 import org.apache.logging.log4j.Logger
+import org.spongepowered.api.Sponge
 import org.spongepowered.api.item.inventory.ItemStack
+import org.spongepowered.api.registry.RegistryTypes
 import java.lang.NullPointerException
 import java.util.*
 import dev.divinegenesis.soulbound.customdata.Data.DataKey.identityDataKey as identityDataKey
@@ -79,3 +81,8 @@ fun Pair<ItemStack, Boolean>.cancelEvent() = second
 
 fun Boolean.toInt() = compareTo(false)
 fun Int.toBool() = this == 1
+
+operator fun String.not(): Component = Component.text(this)
+
+fun ItemStack.getID() = Sponge.game().registries().registry(RegistryTypes.ITEM_TYPE).valueKey(this.type()).asString()
+fun ItemStack.containsData() = DataUtilities().containsData(this)
