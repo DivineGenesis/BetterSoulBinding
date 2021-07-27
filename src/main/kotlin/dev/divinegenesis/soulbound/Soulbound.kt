@@ -41,15 +41,13 @@ class Soulbound @Inject internal constructor(
         lateinit var database: Map<String, DataStack>
     }
 
-    init {
-        config = reference.referenceTo(Config::class.java)
-        Soulbound.configDir = configDir
-        database = SqliteDatabase().loadData()
-    }
-
     @Listener
     fun onPluginConstruction(event: ConstructPluginEvent) {
         plugin = this.container
+        config = reference.referenceTo(Config::class.java)
+        Soulbound.configDir = configDir
+        database = SqliteDatabase().loadData()
+
         logger.info("Soulbound constructing..")
         try {
             this.reference.save()
