@@ -16,8 +16,6 @@ import org.spongepowered.api.config.ConfigDir
 import org.spongepowered.api.config.DefaultConfig
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.lifecycle.*
-import org.spongepowered.api.item.inventory.ItemStack
-import org.spongepowered.api.registry.RegistryTypes
 import org.spongepowered.configurate.CommentedConfigurationNode
 import org.spongepowered.configurate.ConfigurateException
 import org.spongepowered.configurate.reference.ConfigurationReference
@@ -84,6 +82,6 @@ class Soulbound @Inject internal constructor(
     }
 }
 
-fun ItemStack.getID() = Sponge.game().registries().registry(RegistryTypes.ITEM_TYPE).valueKey(this.type()).asString()
+
 
 inline fun <reified T> logger(): Logger = LogManager.getLogger(T::class.java)
