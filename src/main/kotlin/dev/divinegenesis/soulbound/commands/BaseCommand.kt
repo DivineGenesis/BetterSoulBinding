@@ -1,11 +1,7 @@
 package dev.divinegenesis.soulbound.commands
 
 import dev.divinegenesis.soulbound.Soulbound
-import dev.divinegenesis.soulbound.customdata.DataStack
-import dev.divinegenesis.soulbound.customdata.DataUtilities
-import dev.divinegenesis.soulbound.customdata.getID
-import dev.divinegenesis.soulbound.customdata.toInt
-import dev.divinegenesis.soulbound.customdata.not
+import dev.divinegenesis.soulbound.customdata.*
 import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import net.kyori.adventure.text.Component
@@ -22,7 +18,6 @@ import org.spongepowered.api.data.type.HandTypes
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.item.ItemTypes
 import org.spongepowered.api.item.inventory.ItemStack
-import org.spongepowered.api.registry.RegistryTypes
 import org.spongepowered.api.service.pagination.PaginationList
 
 
@@ -37,33 +32,33 @@ class BaseCommand {
     private val enumParameter = Parameter.enumValue(Choices::class.java).key("enum").build()
 
     private val bindCommand = builder()
-        .shortDescription(Component.text("Binds the item with blank data to be bound later"))
+        .shortDescription(!"Binds the item with blank data to be bound later")
         .executor(this::bindCommandResult)
         .permission("")
         .build()
 
     private val removeBindCommand = builder()
-        .shortDescription(Component.text("Removes binding from the item the player is holding"))
+        .shortDescription(!"Removes binding from the item the player is holding")
         .executor(this::removeBindCommandResult)
         .permission("")
         .build()
 
     private val setStorageCommand = builder()
-        .shortDescription(Component.text("Adds the item to the database!"))
+        .shortDescription(!"Adds the item to the database!")
         .executor(this::storageCommandResult)
         .addParameter(Parameter.seq(enumParameter, CommonParameters.BOOLEAN))
         .permission("")
         .build()
 
     private val checkBindingCommand = builder()
-        .shortDescription(Component.text("Checks if an item has bind data on it!"))
+        .shortDescription(!"Checks if an item has bind data on it!")
         .executor(this::checkBindingResult)
         .permission("")
         .build()
 
     //Base Command for above commands, as commands are added, create additional children
     var helpCommand = builder()
-        .shortDescription(Component.text("Shows help"))
+        .shortDescription(!"Shows help")
         .executor(this::helpCommandResult)
         .permission("")
         .addChild(bindCommand, "bind")
@@ -78,21 +73,13 @@ class BaseCommand {
         val sender = context.cause().root()
 
         if (sender is ServerPlayer) {
-
-            val paginationService = Sponge.serviceProvider().paginationService()
-
-            paginationService.builder()
-                .title(!"Test")
-
-            sender.sendMessage(
-                Component.text(
-                    """
+            paginationBuilder(
+                !"""
                 Welcome to Soulbound
                 /sb is the root command
                 /sb bind will let you bind an item
-            """.trimIndent()
-                )
-            )
+                """.trimIndent()
+            ).sendTo(sender)
         } else {
             return errorText
         }
@@ -106,9 +93,10 @@ class BaseCommand {
         if (sender is ServerPlayer) {
             val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
-                return CommandResult.error(Component.text("You need to have an item in your main hand!"))
+                return CommandResult.error(!"You need to have an item in your main hand!")
             }
-            val dataStack = Soulbound.database[itemStack.getID()]
+            val itemID = itemStack.getID()
+            val dataStack = Soulbound.database[itemID] ?: DataStack(itemID)
             checkStackText(itemStack, dataStack).sendTo(sender)
         } else {
             return errorText
@@ -126,10 +114,9 @@ class BaseCommand {
         if (sender is ServerPlayer) {
             val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
-                return CommandResult.error(Component.text("You need to have an item in your main hand!"))
+                return CommandResult.error(!"You need to have an item in your main hand!")
             }
-            val itemID =
-                Sponge.game().registries().registry(RegistryTypes.ITEM_TYPE).valueKey(itemStack.type()).formatted()
+            val itemID = itemStack.getID()
             val dataStack = databaseCache[itemID] ?: DataStack(itemID)
             val checkInteraction = context.one(CommonParameters.BOOLEAN).get()
 
@@ -163,7 +150,7 @@ class BaseCommand {
         if (sender is ServerPlayer) {
             val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
-                return CommandResult.error(Component.text("You need to have an item in your main hand!"))
+                return CommandResult.error(!"You need to have an item in your main hand!")
             }
             val finalStack = DataUtilities().sortData(itemStack, DataUtilities.blankUUID).first
 
@@ -182,7 +169,7 @@ class BaseCommand {
         if (sender is ServerPlayer) {
             val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
-                return CommandResult.error(Component.text("You need to have an item in your main hand!"))
+                return CommandResult.error(!"You need to have an item in your main hand!")
             }
             DataUtilities().removeData(itemStack)
             sender.setItemInHand(HandTypes.MAIN_HAND, itemStack)
@@ -193,33 +180,36 @@ class BaseCommand {
         return CommandResult.success()
     }
 
-    private val errorText = CommandResult.error(Component.text("This command must be ran by a player!"))
+    private val errorText = CommandResult.error(!"This command must be ran by a player!")
 
     private fun checkStackText(itemStack: ItemStack, dataStack: DataStack?): PaginationList {
         val hasData = DataUtilities().containsData(itemStack)
 
+        return paginationBuilder(
+            !
+            """
+            Is item soulbound? : $hasData
+                        
+                        -Configuration-
+            ItemStack   :   ${dataStack?.itemID}
+            Interact    :   ${dataStack?.interact}
+            Pickup       :   ${dataStack?.pickup}
+            Craft        :   ${dataStack?.craft}
+            """.trimIndent()
+        )
+    }
+
+    private fun paginationBuilder(component: Component): PaginationList {
         val paginationService = Sponge.serviceProvider().paginationService()
 
         return paginationService.builder()
-            .title(Component.text("Soulbound"))
-            .padding(Component.text("=").decorate(TextDecoration.STRIKETHROUGH).color(TextColor.color(200,200,50)))
-            .contents(
-                Component.text(
-                    """
-                Is item soulbound? : $hasData
-                
-                        -Configuration-
-                ItemStack   :   ${dataStack?.itemID}
-                Interact    :   ${dataStack?.interact}
-                Pickup       :   ${dataStack?.pickup}
-                Craft        :   ${dataStack?.craft}
-            """.trimIndent()
-                )
-            )
+            .title(!"Soulbound")
+            .padding((!"=").decorate(TextDecoration.STRIKETHROUGH).color(TextColor.color(200, 200, 50)))
+            .contents(component)
             .build()
+
     }
 }
-
 
 
 

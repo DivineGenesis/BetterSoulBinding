@@ -23,7 +23,7 @@ import org.spongepowered.configurate.reference.ValueReference
 import org.spongepowered.plugin.PluginContainer
 import java.nio.file.Path
 
-
+@Suppress("UNUSED_PARAMETER")
 @Plugin("soulbound")
 class Soulbound @Inject internal constructor(
     private val container: PluginContainer,

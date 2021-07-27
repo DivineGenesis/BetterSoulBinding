@@ -7,7 +7,6 @@ import org.spongepowered.api.data.value.Value
 import org.spongepowered.api.entity.Entity
 import org.spongepowered.api.entity.EntityTypes
 import org.spongepowered.api.entity.Item
-import org.spongepowered.api.entity.attribute.Attribute
 import org.spongepowered.api.entity.living.player.server.ServerPlayer
 import org.spongepowered.api.event.EventContextKeys
 import org.spongepowered.api.event.Listener
@@ -27,12 +26,15 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot
 
 class EventListener {
 
+    //I'm honestly throwing caution to the wind here
+    private val config = Soulbound.config.get()!!.modules
+
     @Listener(order = Order.FIRST)
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
         val originalStack = event.originalStack().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.pickup ?: 0
 
-        if (!bindItem.toBool()) {
+        if(!config.pickupItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -47,7 +49,7 @@ class EventListener {
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
-        if (!bindItem.toBool()) {
+        if(!config.interactItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -62,7 +64,7 @@ class EventListener {
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
-        if (!bindItem.toBool()) {
+        if(!config.interactItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -75,10 +77,9 @@ class EventListener {
     @Listener(order = Order.FIRST)
     fun onInteractItemSecondary(event: InteractItemEvent.Secondary, @Root player: ServerPlayer) {
         val originalStack = event.itemStack().createStack()
-
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
-        if (!bindItem.toBool()) {
+        if(!config.interactItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -93,19 +94,22 @@ class EventListener {
         val originalStack = event.preview().finalReplacement().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.craft ?: 0
 
-        if (!bindItem.toBool()) {
+        if(!config.craftItemModule || !bindItem.toBool()) {
             return
         }
 
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
 
-        //Should never need to deny this event.
-
         event.preview().setCustom(dataPair.stack())
     }
 
+    @Suppress("UNUSED_PARAMETER")
     @Listener
     fun itemEntityClear(event: ExpireEntityEvent, @Getter("entity") entity: Entity) {
+        if(!config.itemDeSpawnModule) {
+            return
+        }
+
         if (entity.type() == EntityTypes.ITEM) {
             val stack = entity[Keys.ITEM_STACK_SNAPSHOT].get().createStack()
             if (stack.containsData()) {
@@ -117,6 +121,10 @@ class EventListener {
 
     @Listener
     fun onDeath(event: DropItemEvent.Destruct, @First player: ServerPlayer) {
+        if(!config.onDeathModule) {
+            return
+        }
+
         val soulboundItems: List<Entity?> = event.filterEntities { entity ->
             entity !is Item || !entity.item()
                 .get()

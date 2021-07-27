@@ -49,7 +49,6 @@ class DataUtilities {
     }
 
     fun sortData(stack: ItemStack, userUUID: UUID): Pair<ItemStack, Boolean> {
-
         if (Soulbound.database.containsKey(stack.getID())) {
             if (containsData(stack)) {
                 return when (stack.get(identityDataKey).get()) {

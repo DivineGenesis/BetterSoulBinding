@@ -1,8 +1,8 @@
 package dev.divinegenesis.soulbound.config
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import org.spongepowered.configurate.objectmapping.meta.Setting
-
 
 @ConfigSerializable
 class Config {
@@ -20,4 +20,12 @@ class Modules {
 
     @Setting("Craft-Item")
     val craftItemModule = true
+
+    @Setting("Item-DeSpawn")
+    @Comment("Prevents bound items from de-spawning due to Minecrafts natural clear cycle")
+    val itemDeSpawnModule = true
+
+    @Setting("OnDeath-Return")
+    @Comment("Returns bound items upon players death")
+    val onDeathModule = true
 }
