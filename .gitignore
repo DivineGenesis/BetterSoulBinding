@@ -1,9 +1,8 @@
-.idea
 .gradle
-gradle
-gradlew.bat
-gradlew
-README.md
-out/**
-build/**
+.idea
 
+build/**
+gradle/**
+out/**
+
+gradlew*
