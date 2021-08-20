@@ -8,7 +8,6 @@ import org.spongepowered.api.data.value.Value
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.lifecycle.RegisterDataEvent
 import org.spongepowered.api.item.inventory.ItemStack
-import org.spongepowered.plugin.PluginContainer
 import java.util.UUID
 
 /**
