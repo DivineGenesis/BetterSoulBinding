@@ -15,7 +15,7 @@ import dev.divinegenesis.soulbound.customdata.Data.DataKey.identityDataKey as id
 class DataUtilities {
 
     private val logger: Logger = logger<DataUtilities>()
-    private var loreList = mutableListOf(!"")
+    private var loreList = mutableListOf<Component>()
 
     companion object BlankUUID {
         val blankUUID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
@@ -40,7 +40,7 @@ class DataUtilities {
         try {
             val userManager = Sponge.server().userManager()
             if(userManager.exists(userUUID)) {
-                loreList.add(!userManager.load(userUUID).get().get().name())
+                loreList.add(!"Bound to: ${userManager.load(userUUID).get().get().name()}")
 
                 stack.offer(Keys.LORE,loreList)
             }
