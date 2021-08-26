@@ -10,7 +10,7 @@ import org.spongepowered.api.item.inventory.ItemStack
 import org.spongepowered.api.registry.RegistryTypes
 import java.lang.NullPointerException
 import java.util.*
-import dev.divinegenesis.soulbound.customdata.Data.DataKey.identityDataKey as identityDataKey
+import dev.divinegenesis.soulbound.customdata.Data.DataKey.identityDataKey
 
 class DataUtilities {
 
@@ -26,10 +26,11 @@ class DataUtilities {
     }
 
     fun removeData(stack: ItemStack): Boolean { //return true if operation didn't fail
-        if(stack.keys.contains(Keys.LORE)) {
-            stack.remove(Keys.LORE)
-        }
         return if (containsData(stack)) {
+            if(stack.keys.contains(Keys.LORE)) {
+                //todo: Remove only my lore, not all lore
+                stack.remove(Keys.LORE)
+            }
             stack.remove(identityDataKey).isSuccessful
         } else {
             true

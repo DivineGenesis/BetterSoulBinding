@@ -152,7 +152,7 @@ class BaseCommand {
             if (itemStack.type().isAnyOf(ItemTypes.AIR)) {
                 return CommandResult.error(!"You need to have an item in your main hand!")
             }
-            val finalStack = DataUtilities().sortData(itemStack, DataUtilities.blankUUID).first
+            val finalStack = DataUtilities().sortData(itemStack, DataUtilities.blankUUID).stack()
 
             sender.setItemInHand(HandTypes.MAIN_HAND, finalStack)
         } else {
