@@ -22,6 +22,7 @@ import org.spongepowered.api.event.item.inventory.CraftItemEvent
 import org.spongepowered.api.event.item.inventory.DropItemEvent
 import org.spongepowered.api.event.item.inventory.InteractItemEvent
 import org.spongepowered.api.item.inventory.ItemStackSnapshot
+import kotlin.math.abs
 
 
 class EventListener {
@@ -34,7 +35,7 @@ class EventListener {
         val originalStack = event.originalStack().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.pickup ?: 0
 
-        if(!config.pickupItemModule || !bindItem.toBool()) {
+        if (!config.pickupItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -49,7 +50,7 @@ class EventListener {
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
-        if(!config.interactItemModule || !bindItem.toBool()) {
+        if (!config.interactItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -64,7 +65,7 @@ class EventListener {
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
-        if(!config.interactItemModule || !bindItem.toBool()) {
+        if (!config.interactItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -79,7 +80,7 @@ class EventListener {
         val originalStack = event.itemStack().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
 
-        if(!config.interactItemModule || !bindItem.toBool()) {
+        if (!config.interactItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -94,7 +95,7 @@ class EventListener {
         val originalStack = event.preview().finalReplacement().createStack()
         val bindItem = Soulbound.database[originalStack.getID()]?.craft ?: 0
 
-        if(!config.craftItemModule || !bindItem.toBool()) {
+        if (!config.craftItemModule || !bindItem.toBool()) {
             return
         }
 
@@ -106,7 +107,7 @@ class EventListener {
     @Suppress("UNUSED_PARAMETER")
     @Listener
     fun itemEntityClear(event: ExpireEntityEvent, @Getter("entity") entity: Entity) {
-        if(!config.itemDeSpawnModule) {
+        if (!config.itemDeSpawnModule) {
             return
         }
 
@@ -121,7 +122,7 @@ class EventListener {
 
     @Listener
     fun onDeath(event: DropItemEvent.Destruct, @First player: ServerPlayer) {
-        if(!config.onDeathModule) {
+        if (!config.onDeathModule) {
             return
         }
 
@@ -139,6 +140,14 @@ class EventListener {
             .forEach {
                 player.inventory().offer(it)
             }
+    }
+
+    fun twoOldestAges(ages: List<Int>): List<Int> {
+
+
+        var first: Int = ages.maxOrNull()!!
+        var second: Int = ages.maxOrNull()!!
+        return listOf(first, second)
     }
 }
 /*

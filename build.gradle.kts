@@ -1,9 +1,9 @@
 import org.spongepowered.gradle.plugin.config.PluginLoaders
-import org.spongepowered.plugin.metadata.PluginDependency
+import org.spongepowered.plugin.metadata.model.PluginDependency
 
 plugins {
     kotlin("jvm") version "1.4.21"
-    id("org.spongepowered.gradle.plugin") version "1.1.1"
+    id("org.spongepowered.gradle.plugin") version "2.0.0"
 }
 
 project.group = "dev.divinegenesis"
@@ -13,11 +13,15 @@ repositories {
 }
 
 sponge {
-    apiVersion("8.0.0")
+    apiVersion("8.0.0-SNAPSHOT")
+    license("CHANGEME")
+    loader {
+        name(PluginLoaders.JAVA_PLAIN)
+        version("1.0")
+    }
     plugin("soulbound") {
-        loader(PluginLoaders.JAVA_PLAIN)
         displayName("Soulbound")
-        mainClass("dev.divinegenesis.soulbound.Soulbound")
+        entrypoint("dev.divinegenesis.soulbound.Soulbound")
         description("Bind items to users soul")
         version("0.2.0")
         links {

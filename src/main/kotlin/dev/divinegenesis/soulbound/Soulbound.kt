@@ -1,7 +1,6 @@
 package dev.divinegenesis.soulbound
 
 import org.apache.logging.log4j.Logger
-import org.spongepowered.plugin.jvm.Plugin
 import com.google.inject.Inject
 import dev.divinegenesis.soulbound.commands.BaseCommand
 import dev.divinegenesis.soulbound.config.Config
@@ -21,6 +20,7 @@ import org.spongepowered.configurate.ConfigurateException
 import org.spongepowered.configurate.reference.ConfigurationReference
 import org.spongepowered.configurate.reference.ValueReference
 import org.spongepowered.plugin.PluginContainer
+import org.spongepowered.plugin.builtin.jvm.Plugin
 import java.nio.file.Path
 
 @Suppress("UNUSED_PARAMETER")
