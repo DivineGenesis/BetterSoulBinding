@@ -142,13 +142,6 @@ class EventListener {
             }
     }
 
-    fun twoOldestAges(ages: List<Int>): List<Int> {
-
-
-        var first: Int = ages.maxOrNull()!!
-        var second: Int = ages.maxOrNull()!!
-        return listOf(first, second)
-    }
 }
 /*
 
