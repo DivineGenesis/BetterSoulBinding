@@ -23,7 +23,7 @@ sponge {
         displayName("Soulbound")
         entrypoint("dev.divinegenesis.soulbound.Soulbound")
         description("Bind items to users soul")
-        version("0.2.1")
+        version("0.3.0")
         links {
             homepage("https://github.com/DivineGenesis/BetterSoulBinding")
             source("https://github.com/DivineGenesis/BetterSoulBinding")
