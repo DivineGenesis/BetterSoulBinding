@@ -28,22 +28,25 @@ import java.nio.file.Path
 class Soulbound @Inject internal constructor(
     private val container: PluginContainer,
     @DefaultConfig(sharedRoot = false) val reference: ConfigurationReference<CommentedConfigurationNode>,
-    @ConfigDir(sharedRoot = false) val configDir: Path
+    @ConfigDir(sharedRoot = false) val path: Path
 ) {
 
     companion object {
-        val logger = logger<Soulbound>()
-        lateinit var plugin: PluginContainer
-        lateinit var config: ValueReference<Config, CommentedConfigurationNode>
-        lateinit var configDir: Path
-        lateinit var database: Map<String, DataStack>
+        lateinit var instance : Soulbound
     }
+
+    init {
+        instance = this
+    }
+
+    lateinit var database : Map<String, DataStack>
+    val config: ValueReference<Config, CommentedConfigurationNode> = reference.referenceTo(Config::class.java)
+    val configDir : Path = this.path
+    val logger = logger()
+    val pluginContainer = this.container
 
     @Listener
     fun onPluginConstruction(event: ConstructPluginEvent) {
-        plugin = this.container
-        config = reference.referenceTo(Config::class.java)
-        Soulbound.configDir = configDir
         database = SqliteDatabase().loadData()
 
         logger.info("Soulbound constructing..")
@@ -80,8 +83,6 @@ class Soulbound @Inject internal constructor(
     fun onShutdown(event: StoppingEngineEvent<Engine>) {
         logger.info("Server shutting down")
     }
+
+    private fun logger(): Logger = LogManager.getLogger(Soulbound::class.java)
 }
-
-
-
-inline fun <reified T> logger(): Logger = LogManager.getLogger(T::class.java)

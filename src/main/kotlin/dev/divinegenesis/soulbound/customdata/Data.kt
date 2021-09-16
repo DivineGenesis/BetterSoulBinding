@@ -1,7 +1,6 @@
 package dev.divinegenesis.soulbound.customdata
 
 import dev.divinegenesis.soulbound.Soulbound
-import dev.divinegenesis.soulbound.logger
 import org.spongepowered.api.data.DataRegistration
 import org.spongepowered.api.data.Key
 import org.spongepowered.api.data.value.Value
@@ -23,7 +22,7 @@ class Data {
 
     @Listener
     fun onRegisterData(event: RegisterDataEvent) {
-        identityDataKey = Key.from(Soulbound.plugin, "identitydata", UUID::class.java)
+        identityDataKey = Key.from(Soulbound.instance.pluginContainer, "identitydata", UUID::class.java)
 
         event.register(
             DataRegistration.of(
@@ -31,6 +30,6 @@ class Data {
                 ItemStack::class.java
             )
         )
-        logger<Data>().info("Data key registered: $identityDataKey")
+        Soulbound.instance.logger.info("Data key registered: $identityDataKey")
     }
 }

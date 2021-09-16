@@ -1,7 +1,6 @@
 package dev.divinegenesis.soulbound.customdata
 
 import dev.divinegenesis.soulbound.Soulbound
-import dev.divinegenesis.soulbound.logger
 import net.kyori.adventure.text.Component
 import org.apache.logging.log4j.Logger
 import org.spongepowered.api.Sponge
@@ -14,7 +13,7 @@ import dev.divinegenesis.soulbound.customdata.Data.DataKey.identityDataKey
 
 class DataUtilities {
 
-    private val logger: Logger = logger<DataUtilities>()
+    private val logger: Logger = Soulbound.instance.logger
     private var loreList = mutableListOf<Component>()
 
     companion object BlankUUID {
@@ -44,6 +43,8 @@ class DataUtilities {
                 loreList.add(!"Bound to: ${userManager.load(userUUID).get().get().name()}")
 
                 stack.offer(Keys.LORE,loreList)
+            } else {
+                logger.info("ERROR User does not exist")
             }
             stack.offer(identityDataKey, userUUID)
 
@@ -61,7 +62,7 @@ class DataUtilities {
     }
 
     fun sortData(stack: ItemStack, userUUID: UUID): Pair<ItemStack, Boolean> {
-        if (Soulbound.database.containsKey(stack.getID())) {
+        if (Soulbound.instance.database.containsKey(stack.getID())) {
             if (containsData(stack)) {
                 return when (stack.get(identityDataKey).get()) {
                     blankUUID -> {

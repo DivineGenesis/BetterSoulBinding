@@ -2,7 +2,6 @@ package dev.divinegenesis.soulbound.commands
 
 import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.customdata.*
-import dev.divinegenesis.soulbound.logger
 import dev.divinegenesis.soulbound.storage.SqliteDatabase
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -30,6 +29,8 @@ class BaseCommand {
     }
 
     private val enumParameter = Parameter.enumValue(Choices::class.java).key("enum").build()
+
+    private val logger = Soulbound.instance.logger
 
     private val bindCommand = builder()
         .shortDescription(!"Binds the item with blank data to be bound later")
@@ -96,7 +97,7 @@ class BaseCommand {
                 return CommandResult.error(!"You need to have an item in your main hand!")
             }
             val itemID = itemStack.getID()
-            val dataStack = Soulbound.database[itemID] ?: DataStack(itemID)
+            val dataStack = Soulbound.instance.database[itemID] ?: DataStack(itemID)
             checkStackText(itemStack, dataStack).sendTo(sender)
         } else {
             return errorText
@@ -109,7 +110,6 @@ class BaseCommand {
 
         val sender = context.cause().root()
         val sql = SqliteDatabase()
-        val databaseCache = Soulbound.database
 
         if (sender is ServerPlayer) {
             val itemStack = sender.itemInHand(HandTypes.MAIN_HAND)
@@ -117,7 +117,7 @@ class BaseCommand {
                 return CommandResult.error(!"You need to have an item in your main hand!")
             }
             val itemID = itemStack.getID()
-            val dataStack = databaseCache[itemID] ?: DataStack(itemID)
+            val dataStack = Soulbound.instance.database[itemID] ?: DataStack(itemID)
             val checkInteraction = context.one(CommonParameters.BOOLEAN).get()
 
             when (context.one(enumParameter).get()) {
@@ -132,9 +132,8 @@ class BaseCommand {
                 }
             }
             sql.saveStack(dataStack)
-            Soulbound.database = sql.loadData() //Refresh connection
             checkStackText(itemStack, dataStack).sendTo(sender)
-            logger<BaseCommand>().info("Database entries: ${Soulbound.database.size}")
+            logger.info("Database entries: ${Soulbound.instance.database.size}")
         } else {
             return errorText
         }
@@ -173,7 +172,7 @@ class BaseCommand {
             }
             DataUtilities().removeData(itemStack)
             sender.setItemInHand(HandTypes.MAIN_HAND, itemStack)
-            logger<BaseCommand>().info(DataUtilities().containsData(itemStack))
+            logger.info(DataUtilities().containsData(itemStack))
         } else {
             return errorText
         }

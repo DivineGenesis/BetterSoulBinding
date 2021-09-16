@@ -28,12 +28,12 @@ import kotlin.math.abs
 class EventListener {
 
     //I'm honestly throwing caution to the wind here
-    private val config = Soulbound.config.get()!!.modules
+    private val config = Soulbound.instance.config.get()!!.modules
 
     @Listener(order = Order.FIRST)
     fun onPickup(event: ChangeInventoryEvent.Pickup.Pre, @First player: ServerPlayer) {
         val originalStack = event.originalStack().createStack()
-        val bindItem = Soulbound.database[originalStack.getID()]?.pickup ?: 0
+        val bindItem = Soulbound.instance.database[originalStack.getID()]?.pickup ?: 0
 
         if (!config.pickupItemModule || !bindItem.toBool()) {
             return
@@ -48,7 +48,7 @@ class EventListener {
     @Listener(order = Order.FIRST)
     fun onInteractBlock(event: InteractBlockEvent.Primary.Start, @Root player: ServerPlayer) {
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
-        val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
+        val bindItem = Soulbound.instance.database[originalStack.getID()]?.interact ?: 0
 
         if (!config.interactItemModule || !bindItem.toBool()) {
             return
@@ -63,7 +63,7 @@ class EventListener {
     @Listener(order = Order.FIRST)
     fun onInteractEntity(event: InteractEntityEvent.Primary, @Root player: ServerPlayer) {
         val originalStack = event.context().get(EventContextKeys.USED_ITEM).get().createStack()
-        val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
+        val bindItem = Soulbound.instance.database[originalStack.getID()]?.interact ?: 0
 
         if (!config.interactItemModule || !bindItem.toBool()) {
             return
@@ -76,16 +76,21 @@ class EventListener {
     }
 
     @Listener(order = Order.FIRST)
-    fun onInteractItemSecondary(event: InteractItemEvent.Secondary, @Root player: ServerPlayer) {
+    fun onInteractItem(event: InteractItemEvent, @Root player: ServerPlayer) {
         val originalStack = event.itemStack().createStack()
-        val bindItem = Soulbound.database[originalStack.getID()]?.interact ?: 0
+        val bindItem = Soulbound.instance.database[originalStack.getID()]?.interact ?: 0
 
         if (!config.interactItemModule || !bindItem.toBool()) {
             return
         }
 
         val dataPair = DataUtilities().sortData(originalStack, player.uniqueId())
-        event.isCancelled = dataPair.cancelEvent()
+
+        //Primary cannot be cancelled
+        //However we still want primary to be bound
+        if (event is InteractItemEvent.Secondary) {
+            event.isCancelled = dataPair.cancelEvent()
+        }
 
         player.setItemInHand(HandTypes.MAIN_HAND, dataPair.stack())
     }
@@ -93,7 +98,7 @@ class EventListener {
     @Listener(order = Order.FIRST)
     fun onCraft(event: CraftItemEvent.Preview, @Root player: ServerPlayer) {
         val originalStack = event.preview().finalReplacement().createStack()
-        val bindItem = Soulbound.database[originalStack.getID()]?.craft ?: 0
+        val bindItem = Soulbound.instance.database[originalStack.getID()]?.craft ?: 0
 
         if (!config.craftItemModule || !bindItem.toBool()) {
             return

@@ -1,13 +1,15 @@
 package dev.divinegenesis.soulbound.storage
 
+import dev.divinegenesis.soulbound.Soulbound
 import dev.divinegenesis.soulbound.customdata.DataStack
-import dev.divinegenesis.soulbound.logger
 import java.sql.Connection
 import java.sql.SQLException
 
 abstract class Database {
     @get:Throws(SQLException::class)
     abstract val connection: Connection?
+
+    private val logger = Soulbound.instance.logger
 
     fun createTable() {
         try {
@@ -25,7 +27,7 @@ abstract class Database {
                 statement?.executeUpdate(table)
             }
         } catch (e: SQLException) {
-            logger<Database>().error("Unable to create Soulbound database", e)
+            logger.error("Unable to create Soulbound database", e)
         }
     }
 
@@ -46,9 +48,9 @@ abstract class Database {
                 }
             }
         } catch (e: SQLException) {
-            logger<Database>().error("Unable to read from the database.", e)
+            logger.error("Unable to read from the database.", e)
         }
-        logger<Database>().info("Loaded Soulbound MySQL Data. Count: ${data.size}")
+        logger.info("Loaded Soulbound MySQL Data. Count: ${data.size}")
         return data
     }
 
@@ -64,7 +66,7 @@ abstract class Database {
                 statement?.execute()
             }
         } catch (e: SQLException) {
-            logger<Database>().error("Error inserting data into the database:", e)
+            logger.error("Error inserting data into the database:", e)
         }
     }
 }
